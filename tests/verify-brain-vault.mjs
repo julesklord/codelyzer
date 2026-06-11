@@ -81,7 +81,7 @@ function resolveTargets() {
 
 const targets = resolveTargets();
 
-let outPath = process.env.OUT || '/tmp/codeflow-verify.json';
+let outPath = process.env.OUT || '/tmp/codelyzer-verify.json';
 const results = {};
 
 for (const t of targets) {

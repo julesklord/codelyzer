@@ -59,7 +59,7 @@ const verbose = !json && args.includes('--verbose');
 const paths = args.filter((arg) => !arg.startsWith('--') && arg !== '--json');
 
 if (!paths.length) {
-  console.error('Usage: node tests/codeflow-repo-smoke.mjs [--json] [--limit=<files>] <repo-dir>...');
+  console.error('Usage: node tests/codelyzer-repo-smoke.mjs [--json] [--limit=<files>] <repo-dir>...');
   process.exit(2);
 }
 

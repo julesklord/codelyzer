@@ -1,4 +1,4 @@
-// Color tokens. Codeflow's site uses a dark indigo/purple palette; we mirror
+// Color tokens. Codelyzer's site uses a dark indigo/purple palette; we mirror
 // those values so the card looks like family.
 
 'use strict';
@@ -10,7 +10,7 @@ const DARK = {
   text: '#e6edf3',
   textDim: '#8b949e',
   textFaint: '#6e7681',
-  accent: '#a78bfa', // codeflow purple
+  accent: '#a78bfa', // codelyzer purple
   accentSoft: 'rgba(167,139,250,0.16)',
   green: '#3fb950',
   amber: '#d29922',

@@ -8,8 +8,8 @@ import vm from 'node:vm';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, '..');
 const htmlSource = await readFile(join(repoRoot, 'index.html'), 'utf8');
-const startMarker = '// ===== CODEFLOW_ANALYZER_START =====';
-const endMarker = '// ===== CODEFLOW_ANALYZER_END =====';
+const startMarker = '// ===== CODELYZER_ANALYZER_START =====';
+const endMarker = '// ===== CODELYZER_ANALYZER_END =====';
 const parserStart = htmlSource.indexOf(startMarker);
 const parserEnd = htmlSource.indexOf(endMarker, parserStart);
 
@@ -81,7 +81,7 @@ async function collectRepoFiles(root) {
   return files.sort((a, b) => a.path.localeCompare(b.path));
 }
 
-async function analyzeCodeflowRepo() {
+async function analyzeCodelyzerRepo() {
   const files = await collectRepoFiles(repoRoot);
   const analyzed = [];
   const allFns = [];
@@ -139,8 +139,8 @@ function hasDependency(diagram, fromSuffix, toSuffix, label) {
   );
 }
 
-test('codeflow architecture diagram hides tests by default', async () => {
-  const data = await analyzeCodeflowRepo();
+test('codelyzer architecture diagram hides tests by default', async () => {
+  const data = await analyzeCodelyzerRepo();
   const diagram = data.architectureDiagram;
 
   assert.ok(diagram);
@@ -165,8 +165,8 @@ test('codeflow architecture diagram hides tests by default', async () => {
   assert.doesNotMatch(mermaid, /uses \d+ calls/i);
 });
 
-test('codeflow architecture diagram uses semantic module dependencies', async () => {
-  const data = await analyzeCodeflowRepo();
+test('codelyzer architecture diagram uses semantic module dependencies', async () => {
+  const data = await analyzeCodelyzerRepo();
   const diagram = data.architectureDiagram;
 
   assert.ok(hasDependency(diagram, 'card/index.js', 'card/lib/collect.js'));
@@ -180,12 +180,12 @@ test('codeflow architecture diagram uses semantic module dependencies', async ()
   assert.equal(labels.some((label) => /^uses \d+ calls?$/i.test(label)), false);
 });
 
-test('codeflow architecture diagram can include tests', async () => {
-  const data = await analyzeCodeflowRepo();
+test('codelyzer architecture diagram can include tests', async () => {
+  const data = await analyzeCodelyzerRepo();
   const diagram = data.architectureDiagram;
   const withTests = blockPaths(diagram, true);
 
-  assert.ok(withTests.some((path) => path === 'tests/codeflow-golden.test.mjs'));
+  assert.ok(withTests.some((path) => path === 'tests/codelyzer-golden.test.mjs'));
   const mermaid = generateMermaidBlockDiagram(diagram, true, false);
   assert.match(mermaid, /Testing/);
 });

@@ -37,8 +37,8 @@ function asList(value, fallback) {
 }
 
 function loadInputs() {
-  const output = readInput('output', '.github/codeflow-card.svg');
-  const state = readInput('state', '.github/codeflow-card.json');
+  const output = readInput('output', '.github/codelyzer-card.svg');
+  const state = readInput('state', '.github/codelyzer-card.json');
   const theme = readInput('theme', 'auto');
   const accent = readInput('accent', '');
   const style = readInput('style', 'compact');
@@ -50,11 +50,11 @@ function loadInputs() {
   const receipts = asBool(readInput('receipts', ''), false);
   const sparklineWindow = asInt(readInput('sparkline-window', ''), 30);
   const pin = asBool(readInput('pin', ''), true);
-  const commitMessage = readInput('commit-message', 'chore: update codeflow card [skip ci]');
-  const commitAuthorName = readInput('commit-author-name', 'codeflow-card[bot]');
+  const commitMessage = readInput('commit-message', 'chore: update codelyzer card [skip ci]');
+  const commitAuthorName = readInput('commit-author-name', 'codelyzer-card[bot]');
   const commitAuthorEmail = readInput(
     'commit-author-email',
-    'codeflow-card[bot]@users.noreply.github.com'
+    'codelyzer-card[bot]@users.noreply.github.com'
   );
   const token = readInput('github-token', process.env.GITHUB_TOKEN || '');
   return {

@@ -43,7 +43,7 @@ function renderReceiptMarkdown(opts) {
 
   const lines = [];
   lines.push('```');
-  lines.push('--- CODEFLOW RECEIPT ---');
+  lines.push('--- CODELYZER RECEIPT ---');
   if (number || actor) {
     lines.push('PR ' + number + (actor ? '  @' + actor : ''));
   }
@@ -87,7 +87,7 @@ function renderReceiptMarkdown(opts) {
   lines.push('   thank you for your merge');
   lines.push('```');
   lines.push('');
-  lines.push('_powered by [codeflow](https://github.com/braedonsaunders/codeflow)_');
+  lines.push('_powered by [codelyzer](https://github.com/braedonsaunders/codelyzer)_');
   return lines.join('\n');
 }
 

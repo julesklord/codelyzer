@@ -16,7 +16,7 @@ test('card action loads analyzer from its own package', () => {
 });
 
 test('card action does not fall back to the repository being analyzed', async () => {
-  const tempRoot = await mkdtemp(join(tmpdir(), 'codeflow-card-'));
+  const tempRoot = await mkdtemp(join(tmpdir(), 'codelyzer-card-'));
   try {
     const actionDir = join(tempRoot, 'action', 'card');
     const consumerRepo = join(tempRoot, 'consumer');
@@ -26,7 +26,7 @@ test('card action does not fall back to the repository being analyzed', async ()
 
     assert.throws(
       () => locateIndexHtml(actionDir, consumerRepo),
-      /Could not find CodeFlow analyzer source/
+      /Could not find Codelyzer analyzer source/
     );
   } finally {
     await rm(tempRoot, { recursive: true, force: true });

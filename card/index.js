@@ -1,5 +1,5 @@
-// CodeFlow Card — GitHub Action entry point.
-// Reads codeflow's analyzer out of index.html, runs it on the consuming repo,
+// Codelyzer Card — GitHub Action entry point.
+// Reads codelyzer's analyzer out of index.html, runs it on the consuming repo,
 // renders an SVG card, optionally posts a PR receipt comment, then commits the
 // updated card + history file back to the repo.
 
@@ -18,7 +18,7 @@ const { commitAndPush } = require('./lib/git.js');
 const { upsertStickyComment } = require('./lib/pr.js');
 
 function log(msg) {
-  process.stdout.write('[codeflow-card] ' + msg + '\n');
+  process.stdout.write('[codelyzer-card] ' + msg + '\n');
 }
 
 function loadEvent() {
@@ -156,6 +156,6 @@ async function run() {
 }
 
 run().catch((err) => {
-  process.stderr.write('[codeflow-card] error: ' + (err.stack || err.message || err) + '\n');
+  process.stderr.write('[codelyzer-card] error: ' + (err.stack || err.message || err) + '\n');
   process.exit(1);
 });

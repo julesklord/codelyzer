@@ -127,13 +127,13 @@ function renderReceipt(opts) {
   return (
     '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + totalH + '" viewBox="0 0 ' + W + ' ' + totalH + '" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">' +
     '<rect width="' + W + '" height="' + totalH + '" rx="6" fill="' + theme.bg + '" stroke="' + theme.border + '"/>' +
-    '<text x="' + W / 2 + '" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="' + theme.accent + '" letter-spacing="2" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">CODEFLOW RECEIPT</text>' +
+    '<text x="' + W / 2 + '" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="' + theme.accent + '" letter-spacing="2" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">CODELYZER RECEIPT</text>' +
     '<text x="' + W / 2 + '" y="44" text-anchor="middle" font-size="11" fill="' + theme.textFaint + '" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">' + escapeXml(repo) + '</text>' +
     '<g transform="translate(0,' + (headerH - 12) + ')">' + dashes + '</g>' +
     rowsSvg +
     '<g transform="translate(0,' + (totalH - footerH + 12) + ')">' + dashes + '</g>' +
     '<text x="' + W / 2 + '" y="' + (totalH - 22) + '" text-anchor="middle" font-size="10" fill="' + theme.textFaint + '" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">thank you for your merge</text>' +
-    '<text x="' + W / 2 + '" y="' + (totalH - 8) + '" text-anchor="middle" font-size="9" fill="' + theme.textFaint + '">powered by codeflow</text>' +
+    '<text x="' + W / 2 + '" y="' + (totalH - 8) + '" text-anchor="middle" font-size="9" fill="' + theme.textFaint + '">powered by codelyzer</text>' +
     '</svg>'
   );
 }

@@ -8,8 +8,8 @@ import vm from 'node:vm';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, '..');
 const htmlSource = await readFile(join(repoRoot, 'index.html'), 'utf8');
-const startMarker = '// ===== CODEFLOW_ANALYZER_START =====';
-const endMarker = '// ===== CODEFLOW_ANALYZER_END =====';
+const startMarker = '// ===== CODELYZER_ANALYZER_START =====';
+const endMarker = '// ===== CODELYZER_ANALYZER_END =====';
 const parserStart = htmlSource.indexOf(startMarker);
 const parserEnd = htmlSource.indexOf(endMarker, parserStart);
 

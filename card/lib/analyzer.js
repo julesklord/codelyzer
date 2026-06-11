@@ -1,5 +1,5 @@
-// Extract the codeflow analyzer block from index.html and run it in a Node vm
-// context. Mirrors what tests/codeflow-golden.test.mjs does — the analyzer is
+// Extract the codelyzer analyzer block from index.html and run it in a Node vm
+// context. Mirrors what tests/codelyzer-golden.test.mjs does — the analyzer is
 // the single source of truth, lives in one file, never drifts.
 
 'use strict';
@@ -8,10 +8,10 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const START_MARKER = '// ===== CODEFLOW_ANALYZER_START =====';
-const END_MARKER = '// ===== CODEFLOW_ANALYZER_END =====';
-const METRICS_START = '// ===== CODEFLOW_METRICS_START =====';
-const METRICS_END = '// ===== CODEFLOW_METRICS_END =====';
+const START_MARKER = '// ===== CODELYZER_ANALYZER_START =====';
+const END_MARKER = '// ===== CODELYZER_ANALYZER_END =====';
+const METRICS_START = '// ===== CODELYZER_METRICS_START =====';
+const METRICS_END = '// ===== CODELYZER_METRICS_END =====';
 
 function sliceBlock(html, startMarker, endMarker, label) {
   const start = html.indexOf(startMarker);
@@ -53,7 +53,7 @@ function loadAnalyzer(htmlPath) {
     '\nthis.calcBlast = calcBlast;' +
     '\nthis.calcHealth = calcHealth;';
   const script = new vm.Script(analyzerSource + '\n' + metricsSource + exposeExports, {
-    filename: 'codeflow-analyzer.js',
+    filename: 'codelyzer-analyzer.js',
   });
   script.runInContext(context, { timeout: 1000 });
 
@@ -70,7 +70,7 @@ function locateIndexHtml(actionDir) {
   const adjacent = path.resolve(actionDir, '..', 'index.html');
   if (fs.existsSync(adjacent)) return adjacent;
   throw new Error(
-    'Could not find CodeFlow analyzer source at ' + adjacent + '.'
+    'Could not find Codelyzer analyzer source at ' + adjacent + '.'
   );
 }
 

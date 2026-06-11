@@ -1,6 +1,6 @@
 <div align="center">
 
-# CodeFlow
+# Codelyzer
 
 ### Visualize Your Codebase Architecture in Seconds
 
@@ -9,17 +9,17 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-[**Try it Now**](https://codeflow-five.vercel.app/) · [Report Bug](https://github.com/braedonsaunders/codeflow/issues) · [Request Feature](https://github.com/braedonsaunders/codeflow/issues)
+[**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/braedonsaunders/codelyzer/issues) · [Request Feature](https://github.com/braedonsaunders/codelyzer/issues)
 
-<img src="./screenshot.png" alt="CodeFlow Screenshot" width="100%"/>
+<img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
 
 </div>
 
 ---
 
-## Why CodeFlow?
+## Why Codelyzer?
 
-Ever opened a new codebase and felt completely lost? **CodeFlow** turns any GitHub repository or local codebase into an interactive architecture map in seconds.
+Ever opened a new codebase and felt completely lost? **Codelyzer** turns any GitHub repository or local codebase into an interactive architecture map in seconds.
 
 - **No installation required** — runs entirely in your browser
 - **No data collection** — your code never leaves your machine
@@ -38,7 +38,7 @@ Paste URL / Select Files -> See Architecture -> Make Better Decisions
 See how your files connect at a glance. Click any node to highlight its dependencies. Drag, zoom, and explore.
 
 ### Blast Radius Analysis
-*"If I change this file, what breaks?"* — CodeFlow answers this instantly. Select any file and see exactly how many files would be affected by changes.
+*"If I change this file, what breaks?"* — Codelyzer answers this instantly. Select any file and see exactly how many files would be affected by changes.
 
 ### Code Ownership
 Know who owns what. See the top contributors for any file based on git history. Perfect for code reviews and knowing who to ask.
@@ -71,11 +71,11 @@ Color files by commit frequency to see which parts of your codebase are most act
 ### PR Impact Analysis
 Paste a PR URL to see exactly which files it affects and calculate the blast radius of proposed changes.
 
-### CodeFlow Card (GitHub Action)
+### Codelyzer Card (GitHub Action)
 Health grade, scale, fragility, and hidden costs as a self-updating SVG on your README — recomputed every merge, with optional thermal-receipt PR comments. See [card/](./card/).
 
 ### Markdown & Wiki-Link Graph
-Point CodeFlow at an Obsidian vault or any markdown directory to see notes as a connected graph. Both `[[wiki-links]]` and `[text](./relative.md)` links become edges; each note is a `note`-layer node (distinct color) with a `dependencies[]` array in the JSON export.
+Point Codelyzer at an Obsidian vault or any markdown directory to see notes as a connected graph. Both `[[wiki-links]]` and `[text](./relative.md)` links become edges; each note is a `note`-layer node (distinct color) with a `dependencies[]` array in the JSON export.
 
 ### Local File Analysis
 Analyze code directly from your computer without uploading to GitHub:
@@ -88,12 +88,12 @@ Analyze code directly from your computer without uploading to GitHub:
 
 ---
 
-## CodeFlow Card
+## Codelyzer Card
 
 A GitHub Action that drops an auto-updating SVG card on your README, recomputed on every merge by the same analyzer as the web app. Five styles, accent presets, opt-in PR receipts, and a privacy mode for public repos. The card adapts to the viewer's light/dark theme automatically.
 
 <p align="center">
-  <img src="./card/examples/compact.svg" alt="CodeFlow card — compact style" width="100%" />
+  <img src="./card/examples/compact.svg" alt="Codelyzer card — compact style" width="100%" />
 </p>
 
 See [card/](./card/) for setup, or jump to the [style gallery](#card-style-gallery) below.
@@ -102,7 +102,7 @@ See [card/](./card/) for setup, or jump to the [style gallery](#card-style-galle
 
 ## Privacy First
 
-**Your code stays on your machine.** CodeFlow:
+**Your code stays on your machine.** Codelyzer:
 
 - Runs 100% in the browser
 - Makes API calls directly from your browser to GitHub
@@ -117,12 +117,12 @@ Your GitHub token (if used) is only stored in your browser's memory and is clear
 ## Quick Start
 
 ### Option 1: Use Online (Recommended)
-Just visit [CodeFlow](https://codeflow-five.vercel.app/) and paste any GitHub URL.
+Just visit [Codelyzer](https://codelyzer-five.vercel.app/) and paste any GitHub URL.
 
 ### Option 2: Self-Host
 ```bash
 # Clone the repo
-git clone https://github.com/braedonsaunders/codeflow.git
+git clone https://github.com/braedonsaunders/codelyzer.git
 
 # That's it! Just open index.html in your browser
 open index.html
@@ -133,10 +133,10 @@ No build process. No npm install. It is a single `index.html` app that loads pin
 ### Option 3: Analyze Local Files
 You can now analyze code directly from your local machine without uploading to GitHub:
 
-1. Open CodeFlow in your browser
+1. Open Codelyzer in your browser
 2. Click the "Open Folder" button
 3. Select the folder or files you want to analyze
-4. CodeFlow will process them entirely in your browser
+4. Codelyzer will process them entirely in your browser
 
 **Perfect for:**
 - Private projects you don't want to upload
@@ -197,7 +197,7 @@ Click the "Export" button in the top bar after analysis to access all export opt
 
 ## Supported Languages
 
-CodeFlow extracts functions and analyzes dependencies for:
+Codelyzer extracts functions and analyzes dependencies for:
 
 | Language | Extensions |
 |----------|------------|
@@ -295,7 +295,7 @@ For larger repositories or team usage, we recommend using GitHub App authenticat
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                   CodeFlow                      │
+│                   Codelyzer                     │
 ├─────────────────────────────────────────────────┤
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
 │  │  Parser  │  │  GitHub  │  │    D3    │       │
@@ -347,7 +347,7 @@ node --test tests/
 ## FAQ
 
 **Q: How does it work without a backend?**
-> CodeFlow runs entirely in your browser. It calls the GitHub API directly from your browser and processes everything client-side.
+> Codelyzer runs entirely in your browser. It calls the GitHub API directly from your browser and processes everything client-side.
 
 **Q: Is my code safe?**
 > Yes. Your code is fetched directly from GitHub to your browser. Nothing is sent to any server we control. Check the source — it's one file!
@@ -365,7 +365,7 @@ node --test tests/
 
 ## Card Style Gallery
 
-All examples below are real cards rendered by the [CodeFlow Card Action](./card/) against this very repo. Pick one and drop it on your README.
+All examples below are real cards rendered by the [Codelyzer Card Action](./card/) against this very repo. Pick one and drop it on your README.
 
 ### `style: compact` — default
 
@@ -414,7 +414,7 @@ Everything: grade, scale, language breakdown, composition (connections, tests, f
 
 ## Star History
 
-If you find CodeFlow useful, please star the repo.
+If you find Codelyzer useful, please star the repo.
 
 ---
 

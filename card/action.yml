@@ -1,5 +1,5 @@
-name: 'CodeFlow Card'
-description: 'Auto-updating SVG card of your repo health, fragility, and structure. Powered by codeflow.'
+name: 'Codelyzer Card'
+description: 'Auto-updating SVG card of your repo health, fragility, and structure. Powered by codelyzer.'
 author: 'braedonsaunders'
 branding:
   icon: 'activity'
@@ -8,11 +8,11 @@ inputs:
   output:
     description: 'Path to write the card SVG.'
     required: false
-    default: '.github/codeflow-card.svg'
+    default: '.github/codelyzer-card.svg'
   state:
     description: 'Path to the JSON history file used for sparklines and deltas.'
     required: false
-    default: '.github/codeflow-card.json'
+    default: '.github/codelyzer-card.json'
   theme:
     description: 'Card theme: dark | light | auto. `auto` (default) produces a single SVG that adapts to the viewer''s system theme via `prefers-color-scheme` — one card looks native on light and dark READMEs.'
     required: false
@@ -46,21 +46,21 @@ inputs:
     required: false
     default: '30'
   pin:
-    description: 'Show "Powered by codeflow" footer link.'
+    description: 'Show "Powered by codelyzer" footer link.'
     required: false
     default: 'true'
   commit-message:
     description: 'Commit message used when the SVG / state file change.'
     required: false
-    default: 'chore: update codeflow card [skip ci]'
+    default: 'chore: update codelyzer card [skip ci]'
   commit-author-name:
     description: 'Git commit author name.'
     required: false
-    default: 'codeflow-card[bot]'
+    default: 'codelyzer-card[bot]'
   commit-author-email:
     description: 'Git commit author email.'
     required: false
-    default: 'codeflow-card[bot]@users.noreply.github.com'
+    default: 'codelyzer-card[bot]@users.noreply.github.com'
   github-token:
     description: 'Token used to commit and post receipts. Defaults to the workflow token.'
     required: false

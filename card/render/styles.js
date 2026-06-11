@@ -89,14 +89,14 @@ function svgWrap(width, height, theme, body, opts) {
   );
 }
 
-const CODEFLOW_URL = 'https://github.com/braedonsaunders/codeflow';
+const CODELYZER_URL = 'https://github.com/braedonsaunders/codelyzer';
 
 function pinFooter(theme, x, y, showPin) {
   if (!showPin) return '';
   return (
-    '<a href="' + CODEFLOW_URL + '" target="_blank">' +
+    '<a href="' + CODELYZER_URL + '" target="_blank">' +
     '<text x="' + x + '" y="' + y + '" text-anchor="end" font-size="9" fill="' + theme.textFaint + '">' +
-    'powered by <tspan font-weight="600" fill="' + theme.accent + '">codeflow</tspan></text>' +
+    'powered by <tspan font-weight="600" fill="' + theme.accent + '">codelyzer</tspan></text>' +
     '</a>'
   );
 }
@@ -223,9 +223,9 @@ function renderRow(opts) {
     '<text x="' + (W - PAD - 96) + '" y="36" text-anchor="end" font-size="11" fill="' + theme.textDim + '" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">' + escapeXml(statsText) + '</text>';
 
   const pin = opts.pin !== false
-    ? '<a href="' + CODEFLOW_URL + '" target="_blank">' +
+    ? '<a href="' + CODELYZER_URL + '" target="_blank">' +
       '<text x="' + (W - PAD) + '" y="36" text-anchor="end" font-size="10" fill="' + theme.textFaint + '">' +
-      '<tspan font-weight="600" fill="' + theme.accent + '">codeflow</tspan></text>' +
+      '<tspan font-weight="600" fill="' + theme.accent + '">codelyzer</tspan></text>' +
       '</a>'
     : '';
 
@@ -268,8 +268,8 @@ function renderMinimal(opts) {
     '<tspan fill="' + theme.textDim + '"> langs</tspan>' +
     '</text>' +
     (opts.pin !== false
-      ? '<a href="' + CODEFLOW_URL + '" target="_blank">' +
-        '<text x="' + (W - PAD) + '" y="25" text-anchor="end" font-size="10" fill="' + theme.accent + '" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">codeflow</text>' +
+      ? '<a href="' + CODELYZER_URL + '" target="_blank">' +
+        '<text x="' + (W - PAD) + '" y="25" text-anchor="end" font-size="10" fill="' + theme.accent + '" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">codelyzer</text>' +
         '</a>'
       : '');
 
@@ -309,7 +309,7 @@ function renderHero(opts) {
 
   const header =
     '<text x="' + PAD + '" y="32" font-size="9" font-weight="600" fill="' + theme.textDim + '" letter-spacing="1.2">' +
-    (showGrade ? 'CODEFLOW · HEALTH REPORT' : 'CODEFLOW · CODEBASE OVERVIEW') + '</text>' +
+    (showGrade ? 'CODELYZER · HEALTH REPORT' : 'CODELYZER · CODEBASE OVERVIEW') + '</text>' +
     '<text x="' + PAD + '" y="56" font-size="20" font-weight="700" fill="' + theme.text + '">' + escapeXml(repo) + '</text>' +
     (sha ? '<text x="' + (W - PAD) + '" y="56" text-anchor="end" font-size="11" fill="' + theme.textFaint + '" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">@' + escapeXml(sha) + '</text>' : '');
 
@@ -658,9 +658,9 @@ function renderDetailed(opts) {
     '<g transform="translate(' + PAD + ',' + footerY + ')">' +
     '<text x="0" y="0" font-size="10" fill="' + theme.textFaint + '">updated ' + updated + '</text>' +
     (showPin
-      ? '<a href="' + CODEFLOW_URL + '" target="_blank">' +
+      ? '<a href="' + CODELYZER_URL + '" target="_blank">' +
         '<text x="' + innerW + '" y="0" text-anchor="end" font-size="10" fill="' + theme.textFaint + '">powered by ' +
-        '<tspan font-weight="600" fill="' + theme.accent + '">codeflow</tspan></text>' +
+        '<tspan font-weight="600" fill="' + theme.accent + '">codelyzer</tspan></text>' +
         '</a>'
       : '') +
     '</g>';

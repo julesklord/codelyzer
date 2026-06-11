@@ -1,15 +1,15 @@
-# CodeFlow Card
+# Codelyzer Card
 
-A GitHub Action that drops a slick auto-updating SVG card on your README — health grade, scale, fragility, hidden costs — recomputed every merge by [codeflow](https://github.com/braedonsaunders/codeflow).
+A GitHub Action that drops a slick auto-updating SVG card on your README — health grade, scale, fragility, hidden costs — recomputed every merge by [codelyzer](https://github.com/braedonsaunders/codelyzer).
 
-The card uses the **same analyzer** as the codeflow web app. There's no separate parser, no version drift — the Action reads codeflow's `index.html` and runs its analyzer in a Node `vm`.
+The card uses the **same analyzer** as the codelyzer web app. There's no separate parser, no version drift — the Action reads codelyzer's `index.html` and runs its analyzer in a Node `vm`.
 
 ## Quick start
 
-Drop this file in `.github/workflows/codeflow-card.yml`:
+Drop this file in `.github/workflows/codelyzer-card.yml`:
 
 ```yaml
-name: CodeFlow Card
+name: Codelyzer Card
 on:
   push:
     branches: [main]
@@ -25,7 +25,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: braedonsaunders/codeflow/card@v1
+      - uses: braedonsaunders/codelyzer/card@v1
         with:
           receipts: false  # set true to post merged-PR comments
 ```
@@ -33,17 +33,17 @@ jobs:
 Then add this to your README:
 
 ```markdown
-<img src=".github/codeflow-card.svg" alt="CodeFlow card" />
+<img src=".github/codelyzer-card.svg" alt="Codelyzer card" />
 ```
 
-The Action commits the rendered SVG to `.github/codeflow-card.svg` (overwriting it on every run) and a small history file at `.github/codeflow-card.json` that powers the sparklines and deltas.
+The Action commits the rendered SVG to `.github/codelyzer-card.svg` (overwriting it on every run) and a small history file at `.github/codelyzer-card.json` that powers the sparklines and deltas.
 
 ## Inputs
 
 | Input | Default | Description |
 |---|---|---|
-| `output` | `.github/codeflow-card.svg` | Path to write the card SVG. |
-| `state` | `.github/codeflow-card.json` | Path to the JSON history file (sparklines, deltas). |
+| `output` | `.github/codelyzer-card.svg` | Path to write the card SVG. |
+| `state` | `.github/codelyzer-card.json` | Path to the JSON history file (sparklines, deltas). |
 | `theme` | `auto` | `dark` \| `light` \| `auto`. `auto` emits a single SVG that adapts to the viewer's system theme via `prefers-color-scheme`, so one card looks native on both light and dark READMEs. |
 | `accent` | _(none)_ | Preset (`purple` / `teal` / `cyan` / `green` / `pink` / `blue` / `amber` / `red`) or any CSS color (e.g. `#ff6b6b`). |
 | `style` | `compact` | `compact` \| `row` \| `minimal` \| `hero` \| `detailed`. |
@@ -51,9 +51,9 @@ The Action commits the rendered SVG to `.github/codeflow-card.svg` (overwriting 
 | `show-grade` | `true` | Hide the letter grade everywhere on the card. Public READMEs often want `false`. |
 | `show-score` | `true` | Hide the `/100` score (keeps the letter unless `show-grade` is also off). |
 | `receipts` | `false` | Post a thermal-receipt-style sticky comment on each merged PR. |
-| `pin` | `true` | Show the "Powered by codeflow" footer. |
+| `pin` | `true` | Show the "Powered by codelyzer" footer. |
 | `sparkline-window` | `30` | Recent runs to keep in state for sparklines. |
-| `commit-message` | `chore: update codeflow card [skip ci]` | Commit message used by the Action. |
+| `commit-message` | `chore: update codelyzer card [skip ci]` | Commit message used by the Action. |
 | `github-token` | `${{ github.token }}` | Token for committing and posting receipts. |
 
 ## What's on the card
@@ -68,7 +68,7 @@ The Action commits the rendered SVG to `.github/codeflow-card.svg` (overwriting 
 When `receipts: true`, every merged PR gets a sticky comment with a thermal-receipt-style summary of what the merge changed:
 
 ```
---- CODEFLOW RECEIPT ---
+--- CODELYZER RECEIPT ---
 PR #482  @yourhandle
 --------------------------
 LOC           +312
@@ -81,11 +81,11 @@ health        B+ → A- ▲
    thank you for your merge
 ```
 
-The comment is sticky (updates in place via `<!-- codeflow-card:receipt -->` marker) so re-runs don't spam the PR.
+The comment is sticky (updates in place via `<!-- codelyzer-card:receipt -->` marker) so re-runs don't spam the PR.
 
 ## Notes
 
 - **First run**: with no history yet, sparklines and deltas don't render — the panels degrade gracefully.
 - **Permissions**: the workflow needs `contents: write` to commit the SVG, and `pull-requests: write` if `receipts: true`.
 - **CI cost**: analysis runs in pure Node (no Docker, no external APIs); typical run is 10–30 seconds depending on repo size.
-- **Privacy**: nothing leaves the runner. Same guarantee as the codeflow web app.
+- **Privacy**: nothing leaves the runner. Same guarantee as the codelyzer web app.

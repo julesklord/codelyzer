@@ -4,7 +4,7 @@
 
 const https = require('https');
 
-const STICKY_MARKER = '<!-- codeflow-card:receipt -->';
+const STICKY_MARKER = '<!-- codelyzer-card:receipt -->';
 
 function ghRequest(opts) {
   const { token, method, path, body } = opts;
@@ -18,7 +18,7 @@ function ghRequest(opts) {
         headers: {
           'Authorization': 'Bearer ' + token,
           'Accept': 'application/vnd.github+json',
-          'User-Agent': 'codeflow-card-action',
+          'User-Agent': 'codelyzer-card-action',
           'X-GitHub-Api-Version': '2022-11-28',
           ...(data ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) } : {}),
         },
