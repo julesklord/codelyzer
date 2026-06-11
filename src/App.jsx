@@ -171,6 +171,10 @@ function App(){
     var localFilesRef=useRef(null);
     var pendingExcludePatternsRef=useRef(null);
     var confirmResolverRef=useRef(null);
+    var selectedRef=useRef(null);
+    var blastRadiusRef=useRef(null);
+    selectedRef.current=selected;
+    blastRadiusRef.current=blastRadius;
     var activeExcludePatterns=useMemo(function(){return compileExcludePatterns(excludePatternInput);},[excludePatternInput]);
     var customExcludeCount=activeExcludePatterns.length;
 
@@ -1788,10 +1792,12 @@ function App(){
 
         function getR(d){
             var base=Math.max(6,Math.min(20,4+d.fnCount*0.4));
-            if(selected){
-                if(d.id===selected.path)return base*2.0;
-                if(blastRadius&&blastRadius.affected.indexOf(d.id)>=0)return base*1.4;
-                if(blastRadius&&blastRadius.dependencies.indexOf(d.id)>=0)return base*1.4;
+            var sel=selectedRef.current;
+            var blast=blastRadiusRef.current;
+            if(sel){
+                if(d.id===sel.path)return base*2.0;
+                if(blast&&blast.affected.indexOf(d.id)>=0)return base*1.4;
+                if(blast&&blast.dependencies.indexOf(d.id)>=0)return base*1.4;
                 return base*0.6;
             }
             return base;
@@ -1799,10 +1805,12 @@ function App(){
 
         function getC(d){
             var baseColor=getBaseColor(d);
-            if(selected){
-                if(d.id===selected.path)return hexToRgba('var(--acc)',0.95);
-                if(blastRadius&&blastRadius.affected.indexOf(d.id)>=0)return hexToRgba('var(--purple)',0.95);
-                if(blastRadius&&blastRadius.dependencies.indexOf(d.id)>=0)return hexToRgba('var(--orange)',0.95);
+            var sel=selectedRef.current;
+            var blast=blastRadiusRef.current;
+            if(sel){
+                if(d.id===sel.path)return hexToRgba('var(--acc)',0.95);
+                if(blast&&blast.affected.indexOf(d.id)>=0)return hexToRgba('var(--purple)',0.95);
+                if(blast&&blast.dependencies.indexOf(d.id)>=0)return hexToRgba('var(--orange)',0.95);
                 return hexToRgba(baseColor,0.15);
             }
             return resolveHex(baseColor);
@@ -1839,9 +1847,10 @@ function App(){
             .linkColor(function(link){
                 var s=link.source.id||link.source;
                 var t=link.target.id||link.target;
-                if(selected){
-                    if(s===selected.path)return hexToRgba('var(--orange)',0.85);
-                    if(t===selected.path)return hexToRgba('var(--purple)',0.85);
+                var sel=selectedRef.current;
+                if(sel){
+                    if(s===sel.path)return hexToRgba('var(--orange)',0.85);
+                    if(t===sel.path)return hexToRgba('var(--purple)',0.85);
                     return theme==='light'?'rgba(220,220,220,0.08)':'rgba(40,40,48,0.08)';
                 }
                 return theme==='light'?'rgba(200,200,200,0.4)':'rgba(60,60,70,0.4)';
@@ -1850,39 +1859,44 @@ function App(){
                 var s=link.source.id||link.source;
                 var t=link.target.id||link.target;
                 var baseWidth=Math.max(0.8,Math.min(3,Math.sqrt(link.count)*0.4));
-                if(selected){
-                    if(s===selected.path||t===selected.path)return baseWidth*2.0;
+                var sel=selectedRef.current;
+                if(sel){
+                    if(s===sel.path||t===sel.path)return baseWidth*2.0;
                     return baseWidth*0.3;
                 }
                 return baseWidth;
             })
             .linkDirectionalArrowLength(function(link){
-                if(selected){
+                var sel=selectedRef.current;
+                if(sel){
                     var s=link.source.id||link.source;
                     var t=link.target.id||link.target;
-                    if(s===selected.path||t===selected.path)return 5.0;
+                    if(s===sel.path||t===sel.path)return 5.0;
                     return 0;
                 }
                 return 3.5;
             })
             .linkDirectionalArrowRelPos(1)
             .linkDirectionalParticles(function(link){
-                if(selected){
+                var sel=selectedRef.current;
+                if(sel){
                     var s=link.source.id||link.source;
                     var t=link.target.id||link.target;
-                    if(s===selected.path||t===selected.path)return 4;
+                    if(s===sel.path||t===sel.path)return 4;
                     return 0;
                 }
                 return 1;
             })
             .linkDirectionalParticleWidth(function(link){
-                if(selected){
+                var sel=selectedRef.current;
+                if(sel){
                     return 2.5;
                 }
                 return 1.2;
             })
             .linkDirectionalParticleSpeed(function(link){
-                if(selected){
+                var sel=selectedRef.current;
+                if(sel){
                     return 0.015;
                 }
                 return 0.004;
@@ -1890,9 +1904,10 @@ function App(){
             .linkDirectionalParticleColor(function(link){
                 var s=link.source.id||link.source;
                 var t=link.target.id||link.target;
-                if(selected){
-                    if(s===selected.path)return resolveHex('var(--orange)');
-                    if(t===selected.path)return resolveHex('var(--purple)');
+                var sel=selectedRef.current;
+                if(sel){
+                    if(s===sel.path)return resolveHex('var(--orange)');
+                    if(t===sel.path)return resolveHex('var(--purple)');
                 }
                 return resolveHex('var(--acc)');
             })
@@ -2072,7 +2087,14 @@ function App(){
                 graph3dInstanceRef.current=null;
             }
         };
-    },[data,colorMap,colorMode,theme,folderFilter,graphConfig.vizType,selected,blastRadius,graphConfig.linkDist,graphConfig.spacing,graphConfig.showLabels,graphConfig.curvedLinks,graphConfig.autoRotate]);
+    },[data,colorMap,colorMode,theme,folderFilter,graphConfig.vizType,graphConfig.linkDist,graphConfig.spacing,graphConfig.showLabels,graphConfig.curvedLinks,graphConfig.autoRotate]);
+
+    // 3D Graph dynamic highlight update
+    useEffect(function(){
+        if(graph3dInstanceRef.current && graphConfig.vizType==='graph3d'){
+            graph3dInstanceRef.current.refresh();
+        }
+    },[selected,blastRadius,graphConfig.vizType]);
 
     // Treemap visualization - Interactive with zoom, pan, selection, blast radius
     useEffect(function(){
