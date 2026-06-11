@@ -1319,6 +1319,9 @@ function App(){
         }
     },[data,repoInfo,localSourceKind,isMobile]);
     selectFileRef.current=selectFile;
+    function getR(d){
+        return Math.max(8,Math.min(24,5+(d.fnCount||0)*0.8));
+    }
 
     function updateGraphHighlight(path,blast){
         if(!nodesRef.current||!linksRef.current)return;
@@ -2089,10 +2092,12 @@ function App(){
         };
     },[data,colorMap,colorMode,theme,folderFilter,graphConfig.vizType,graphConfig.linkDist,graphConfig.spacing,graphConfig.showLabels,graphConfig.curvedLinks,graphConfig.autoRotate]);
 
-    // 3D Graph dynamic highlight update
+    // Graph dynamic highlight update (2D and 3D)
     useEffect(function(){
-        if(graph3dInstanceRef.current && graphConfig.vizType==='graph3d'){
+        if(graphConfig.vizType==='graph3d' && graph3dInstanceRef.current){
             graph3dInstanceRef.current.refresh();
+        }else if(graphConfig.vizType==='graph'){
+            updateGraphHighlight(selected ? selected.path : null, blastRadius);
         }
     },[selected,blastRadius,graphConfig.vizType]);
 
