@@ -124,11 +124,19 @@ function shouldExcludeFile(path,name,compiledPatterns){
 }
 
 function getArchiveRootPrefix(paths){
-    var splitPaths=(paths||[]).map(function(path){return normalizeExcludePath(path).split('/').filter(Boolean);}).filter(function(parts){return parts.length>0;});
-    if(!splitPaths.length)return'';
-    var firstSegment=splitPaths[0][0];
-    var hasSingleRoot=splitPaths.every(function(parts){return parts.length>1&&parts[0]===firstSegment;});
-    return hasSingleRoot?firstSegment+'/':'';
+    if(!paths||!paths.length)return '';
+    var firstPath=normalizeExcludePath(paths[0]);
+    var firstSlash=firstPath.indexOf('/');
+    if(firstSlash<=0)return '';
+    var firstSegment=firstPath.slice(0,firstSlash);
+    var prefix=firstSegment+'/';
+    for(var i=1;i<paths.length;i++){
+        var p=normalizeExcludePath(paths[i]);
+        if(p.indexOf(prefix)!==0){
+            return '';
+        }
+    }
+    return prefix;
 }
 
 function shouldSkipArchivePath(path,compiledPatterns,dirCache){

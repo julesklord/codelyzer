@@ -975,11 +975,10 @@ function App(){
         }
     }
 
-    function handleFolderSelected(e){
+    async function handleFolderSelected(e){
         var fileList=e.target.files;
         if(!fileList||fileList.length===0)return;
-        var files=Array.from(fileList);
-        localFilesRef.current=files;
+        
         resetAnalysisState();
         setRepoInfo(null);
         setLocalDirHandle(null);
@@ -987,7 +986,19 @@ function App(){
         zipArchiveRef.current=null;
         zipFileRef.current=null;
         setLoading(true);
-        setProgress('Reading local folder...');
+        setProgress('Preparing files...');
+        await yieldToBrowser();
+        
+        var files=[];
+        for(var i=0;i<fileList.length;i++){
+            if(i>0 && i%1000===0){
+                setProgress('Preparing files... '+i+'/'+fileList.length);
+                await yieldToBrowser();
+            }
+            files.push(fileList[i]);
+        }
+        
+        localFilesRef.current=files;
         readLocalFolderFromFiles(files,pendingExcludePatternsRef.current||activeExcludePatterns);
     }
 
@@ -1119,22 +1130,34 @@ function App(){
         var SOFT_LIMIT=ANALYSIS_LIMITS.localSoft;
         try{
             setProgress('Scanning local folder...');
-            var rawPaths=fileObjs.map(function(f){return f.path||f.webkitRelativePath||f.name;});
+            var rawPaths=[];
+            for(var i=0;i<fileObjs.length;i++){
+                if(i>0 && i%500===0){
+                    setProgress('Scanning files... '+i+'/'+fileObjs.length+' mapped');
+                    await yieldToBrowser();
+                }
+                rawPaths.push(fileObjs[i].path||fileObjs[i].webkitRelativePath||fileObjs[i].name);
+            }
             var rootPrefix=getArchiveRootPrefix(rawPaths);
             var files=[];
             var fileCount=0;
             var dirCache=new Map();
 
-            fileObjs.forEach(function(fileObj){
+            for(var i=0;i<fileObjs.length;i++){
+                if(i>0 && i%250===0){
+                    setProgress('Scanning files... '+fileCount+' found');
+                    await yieldToBrowser();
+                }
+                var fileObj=fileObjs[i];
                 var rawPath=normalizeExcludePath(fileObj.path||fileObj.webkitRelativePath||fileObj.name);
                 var actualFile=fileObj.file||fileObj;
-                if(!rawPath||rawPath.endsWith('/'))return;
+                if(!rawPath||rawPath.endsWith('/'))continue;
                 var entryPath=rootPrefix&&rawPath.indexOf(rootPrefix)===0?rawPath.slice(rootPrefix.length):rawPath;
                 entryPath=normalizeExcludePath(entryPath);
-                if(!entryPath||shouldSkipArchivePath(entryPath,patterns,dirCache))return;
+                if(!entryPath||shouldSkipArchivePath(entryPath,patterns,dirCache))continue;
                 var parts=entryPath.split('/').filter(Boolean);
                 var name=parts[parts.length-1]||'';
-                if(!name||name==='.DS_Store'||shouldExcludeFile(entryPath,name,patterns))return;
+                if(!name||name==='.DS_Store'||shouldExcludeFile(entryPath,name,patterns))continue;
                 var folder=parts.length>1?parts.slice(0,-1).join('/'):'root';
                 fileCount++;
                 if(fileCount>10000){
@@ -1147,10 +1170,7 @@ function App(){
                     size:actualFile.size||0,
                     file:actualFile
                 });
-                if(fileCount%50===0){
-                    setProgress('Scanning files... '+fileCount+' found');
-                }
-            });
+            }
 
             if(fileCount===0){
                 setError(patterns&&patterns.length?'No code files found in the selected folder after applying exclude patterns':'No code files found in the selected folder');
