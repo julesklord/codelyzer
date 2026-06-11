@@ -72,7 +72,7 @@ body{font-family:'JetBrains Mono',monospace;background:var(--bg0);color:var(--t0
 .tree-file:hover{background:var(--hover);color:var(--t0)}
 .tree-file.active{background:var(--accbg);color:var(--acc);border-left:2px solid var(--acc);font-weight:600}
 .canvas-area{flex:1;position:relative;background:var(--bg0);overflow:hidden;min-width:0}
-.canvas-area svg{width:100%;height:100%;display:block}
+.canvas-area svg{width:100%;height:100%;display:block;will-change:transform;transform:translate3d(0,0,0)}
 .canvas-toolbar{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:50}
 .canvas-info{position:absolute;bottom:12px;left:12px;display:flex;gap:8px;z-index:50}
 .info-chip{padding:6px 10px;background:var(--bg1);border:var(--border-width) solid var(--border);border-radius:0px;font-size:10px;color:var(--t1);box-shadow:var(--shadow-active)}

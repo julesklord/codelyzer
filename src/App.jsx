@@ -1718,6 +1718,16 @@ function App(){
             return;
         }
         var w=graph3dRef.current.clientWidth||800,h=graph3dRef.current.clientHeight||600;
+        var THREE=window.THREE;
+        var sharedSphereGeo=THREE?new THREE.SphereGeometry(1,16,16):null;
+        var materialCache={};
+        function getSharedMaterial(col){
+            if(!THREE)return null;
+            if(!materialCache[col]){
+                materialCache[col]=new THREE.MeshPhongMaterial({color:col,shininess:80});
+            }
+            return materialCache[col];
+        }
         var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
         var fileIds=new Set(filteredFiles.map(function(f){return f.path;}));
 
@@ -1833,7 +1843,7 @@ function App(){
             .backgroundColor(theme==='light'?'#ffffff':'#0a0a0c')
             .showNavInfo(false)
             .graphData({nodes:nodes,links:links})
-            .nodeResolution(24)
+            .nodeResolution(16)
             .nodeVal(getR)
             .nodeColor(getC)
             .nodeLabel(function(node){
@@ -1886,9 +1896,8 @@ function App(){
                     var s=link.source.id||link.source;
                     var t=link.target.id||link.target;
                     if(s===sel.path||t===sel.path)return 4;
-                    return 0;
                 }
-                return 1;
+                return 0;
             })
             .linkDirectionalParticleWidth(function(link){
                 var sel=selectedRef.current;
@@ -1938,12 +1947,9 @@ function App(){
                 var group=new THREE.Group();
                 
                 // Sphere mesh
-                var sphereGeo=new THREE.SphereGeometry(r,24,24);
-                var sphereMat=new THREE.MeshPhongMaterial({
-                    color:color,
-                    shininess:80
-                });
-                var sphereMesh=new THREE.Mesh(sphereGeo,sphereMat);
+                var sphereMat=getSharedMaterial(color);
+                var sphereMesh=new THREE.Mesh(sharedSphereGeo,sphereMat);
+                sphereMesh.scale.set(r,r,r);
                 group.add(sphereMesh);
                 
                 // Text canvas label
