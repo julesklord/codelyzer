@@ -1,5 +1,5 @@
 {
-  "name": "codeflow-card",
+  "name": "codelyzer-card",
   "version": "1.0.0",
   "private": true,
   "description": "GitHub Action: auto-updating SVG card of your repo health, fragility, and structure.",

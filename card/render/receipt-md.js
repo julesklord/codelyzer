@@ -87,7 +87,7 @@ function renderReceiptMarkdown(opts) {
   lines.push('   thank you for your merge');
   lines.push('```');
   lines.push('');
-  lines.push('_powered by [codelyzer](https://github.com/braedonsaunders/codelyzer)_');
+  lines.push('_powered by [codelyzer](https://github.com/julesklord/codelyzer)_');
   return lines.join('\n');
 }
 

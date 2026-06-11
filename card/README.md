@@ -1,6 +1,9 @@
 # Codelyzer Card
 
-A GitHub Action that drops a slick auto-updating SVG card on your README — health grade, scale, fragility, hidden costs — recomputed every merge by [codelyzer](https://github.com/braedonsaunders/codelyzer).
+A GitHub Action that drops a slick auto-updating SVG card on your README — health grade, scale, fragility, hidden costs — recomputed every merge by [codelyzer](https://github.com/julesklord/codelyzer).
+
+> [!NOTE]
+> This is a fork of the original project by [braedonsaunders](https://github.com/braedonsaunders/codelyzer).
 
 The card uses the **same analyzer** as the codelyzer web app. There's no separate parser, no version drift — the Action reads codelyzer's `index.html` and runs its analyzer in a Node `vm`.
 
@@ -25,7 +28,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: braedonsaunders/codelyzer/card@v1
+      - uses: julesklord/codelyzer/card@v1
         with:
           receipts: false  # set true to post merged-PR comments
 ```

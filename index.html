@@ -5738,7 +5738,7 @@ function App(){
                     message:
                         'This GitHub repository has '+files.length+' analyzable files.\n\n'+
                         'The browser cannot read GitHub zipball archives directly because GitHub redirects archive downloads to a CORS-restricted host.\n\n'+
-                        'For full analysis: download the repository ZIP from GitHub, then use Open ZIP in CodeFlow.\n\n'+
+                        'For full analysis: download the repository ZIP from GitHub, then use Open ZIP in Codelyzer.\n\n'+
                         'Continue now with a '+HARD_LIMIT+'-file API sample?',
                     confirmLabel:'Analyze sample'
                 }).then(function(proceed){
@@ -5894,7 +5894,7 @@ function App(){
                 title:'Analyze '+fileCount+' files?',
                 message:
                     'This folder has '+fileCount+' analyzable files.\n\n'+
-                    'CodeFlow will analyze every eligible file. Large folders can take minutes and use significant browser memory.\n\n'+
+                    'Codelyzer will analyze every eligible file. Large folders can take minutes and use significant browser memory.\n\n'+
                     'Continue with all '+fileCount+' files?',
                 confirmLabel:'Analyze all files'
             });
@@ -6010,7 +6010,7 @@ function App(){
                     title:'Analyze '+fileCount+' files?',
                     message:
                         'This folder has '+fileCount+' analyzable files.\n\n'+
-                        'CodeFlow will analyze every eligible file. Large folders can take minutes and use significant browser memory.\n\n'+
+                        'Codelyzer will analyze every eligible file. Large folders can take minutes and use significant browser memory.\n\n'+
                         'Continue with all '+fileCount+' files?',
                     confirmLabel:'Analyze all files'
                 });
@@ -6104,7 +6104,7 @@ function App(){
                     title:'Analyze '+fileCount+' files?',
                     message:
                         'This ZIP archive has '+fileCount+' analyzable files.\n\n'+
-                        'CodeFlow will analyze every eligible file. Large archives can take minutes and use significant browser memory.\n\n'+
+                        'Codelyzer will analyze every eligible file. Large archives can take minutes and use significant browser memory.\n\n'+
                         'Continue with all '+fileCount+' files?',
                     confirmLabel:'Analyze all files'
                 });

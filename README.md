@@ -9,9 +9,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-[**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/braedonsaunders/codelyzer/issues) · [Request Feature](https://github.com/braedonsaunders/codelyzer/issues)
+[**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/julesklord/codelyzer/issues) · [Request Feature](https://github.com/julesklord/codelyzer/issues)
 
 <img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
+
+> [!NOTE]
+> This project is a fork of the original [braedonsaunders/codelyzer](https://github.com/braedonsaunders/codelyzer).
 
 </div>
 
@@ -122,7 +125,7 @@ Just visit [Codelyzer](https://codelyzer-five.vercel.app/) and paste any GitHub 
 ### Option 2: Self-Host
 ```bash
 # Clone the repo
-git clone https://github.com/braedonsaunders/codelyzer.git
+git clone https://github.com/julesklord/codelyzer.git
 
 # That's it! Just open index.html in your browser
 open index.html

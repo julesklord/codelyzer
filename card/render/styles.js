@@ -89,7 +89,7 @@ function svgWrap(width, height, theme, body, opts) {
   );
 }
 
-const CODELYZER_URL = 'https://github.com/braedonsaunders/codelyzer';
+const CODELYZER_URL = 'https://github.com/julesklord/codelyzer';
 
 function pinFooter(theme, x, y, showPin) {
   if (!showPin) return '';
