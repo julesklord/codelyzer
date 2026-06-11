@@ -1,4 +1,4 @@
-// Extract the codelyzer analyzer block from index.html and run it in a Node vm
+// Extract the codelyzer analyzer block from src/lib/parser.js and run it in a Node vm
 // context. Mirrors what tests/codelyzer-golden.test.mjs does — the analyzer is
 // the single source of truth, lives in one file, never drifts.
 
@@ -8,32 +8,39 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const START_MARKER = '// ===== CODELYZER_ANALYZER_START =====';
-const END_MARKER = '// ===== CODELYZER_ANALYZER_END =====';
-const METRICS_START = '// ===== CODELYZER_METRICS_START =====';
-const METRICS_END = '// ===== CODELYZER_METRICS_END =====';
-
-function sliceBlock(html, startMarker, endMarker, label) {
-  const start = html.indexOf(startMarker);
-  const end = html.indexOf(endMarker, start);
-  if (start < 0 || end < 0) {
-    throw new Error(
-      'Could not locate ' + label + ' block. Expected ' + startMarker + ' / ' + endMarker + '.'
-    );
-  }
-  return html.slice(start, end);
-}
-
 function loadAnalyzer(htmlPath) {
-  const html = fs.readFileSync(htmlPath, 'utf8');
-  const analyzerSource = sliceBlock(html, START_MARKER, END_MARKER, 'analyzer');
-  const metricsSource = sliceBlock(html, METRICS_START, METRICS_END, 'metrics');
+  // htmlPath points to adjacent index.html, so we locate src/lib/parser.js relative to it
+  const projectRoot = path.dirname(htmlPath);
+  const parserPath = path.join(projectRoot, 'src', 'lib', 'parser.js');
+  
+  if (!fs.existsSync(parserPath)) {
+    throw new Error('Could not locate analyzer source at ' + parserPath);
+  }
+
+  let parserSource = fs.readFileSync(parserPath, 'utf8');
+
+  // Strip ES Module imports and exports so that it can run in vm.Script
+  parserSource = parserSource
+    .replace(/^import\s+.*?;?\s*$/gm, '') // Remove all import statements
+    .replace(/^export\s+function\s+/gm, 'function ') // Convert "export function name(" to "function name("
+    .replace(/^export\s+class\s+/gm, 'class ') // Convert "export class name " to "class name "
+    .replace(/^export\s+\{([^]*?)\};?\s*$/gm, '') // Remove the main export block at the bottom
+    .replace(/\bimport\.meta\.env\b/g, '{}')
+    .replace(/\bimport\.meta\b/g, 'undefined');
+
+  // Require acorn dynamically if available to allow full AST parsing in VM
+  let acornVal;
+  try {
+    acornVal = require('acorn');
+  } catch (e) {
+    acornVal = undefined;
+  }
 
   const context = {
     console,
     TreeSitter: undefined,
     Babel: undefined,
-    acorn: undefined,
+    acorn: acornVal,
     getSecurityScanContent(file) {
       return file && file.content ? file.content : '';
     },
@@ -52,7 +59,7 @@ function loadAnalyzer(htmlPath) {
     '\nthis.buildAnalysisData = buildAnalysisData;' +
     '\nthis.calcBlast = calcBlast;' +
     '\nthis.calcHealth = calcHealth;';
-  const script = new vm.Script(analyzerSource + '\n' + metricsSource + exposeExports, {
+  const script = new vm.Script(parserSource + exposeExports, {
     filename: 'codelyzer-analyzer.js',
   });
   script.runInContext(context, { timeout: 1000 });
@@ -74,4 +81,4 @@ function locateIndexHtml(actionDir) {
   );
 }
 
-module.exports = { loadAnalyzer, locateIndexHtml, START_MARKER, END_MARKER };
+module.exports = { loadAnalyzer, locateIndexHtml };

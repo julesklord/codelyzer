@@ -1,34 +1,12 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const vm = require('node:vm');
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Parser } from '../src/lib/parser.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const htmlSource = fs.readFileSync(path.join(repoRoot, 'index.html'), 'utf8');
-const parserStart = htmlSource.indexOf('const Parser={');
-const parserEnd = htmlSource.indexOf('\nvar GitHub={', parserStart);
-
-if (parserStart === -1 || parserEnd === -1) {
-  throw new Error('Could not locate Parser source in index.html');
-}
-
-const context = {
-  console,
-  TreeSitter: undefined,
-  Babel: undefined,
-  acorn: undefined,
-  getSecurityScanContent() {
-    return '';
-  },
-  isSanitizedPreviewRenderer() {
-    return false;
-  }
-};
-
-vm.createContext(context);
-vm.runInContext(`${htmlSource.slice(parserStart, parserEnd)}\nthis.Parser = Parser;`, context);
-
-const Parser = context.Parser;
+const appSource = fs.readFileSync(path.join(repoRoot, 'src', 'App.jsx'), 'utf8');
 
 assert(Parser, 'Parser should be available');
 
@@ -123,6 +101,6 @@ assert.deepEqual(
   'Multi-script container files should analyze every executable script block'
 );
 
-assert(Parser.extract(htmlSource, 'index.html').length > 20, 'The repo index.html should now surface inline functions');
+assert(Parser.extract(appSource, 'App.jsx').length > 20, 'The repo App.jsx should surface functions');
 
 console.log('HTML inline script analysis smoke tests passed');

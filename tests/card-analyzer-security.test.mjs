@@ -9,10 +9,19 @@ import test from 'node:test';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, '..');
 const require = createRequire(import.meta.url);
-const { locateIndexHtml } = require('../card/lib/analyzer.js');
+const { locateIndexHtml, loadAnalyzer } = require('../card/lib/analyzer.js');
 
 test('card action loads analyzer from its own package', () => {
   assert.equal(locateIndexHtml(join(repoRoot, 'card')), join(repoRoot, 'index.html'));
+});
+
+test('card action loads and initializes analyzer successfully', () => {
+  const indexHtmlPath = locateIndexHtml(join(repoRoot, 'card'));
+  const analyzer = loadAnalyzer(indexHtmlPath);
+  assert.ok(analyzer.Parser, 'Parser should be loaded');
+  assert.ok(analyzer.buildAnalysisData, 'buildAnalysisData should be loaded');
+  assert.ok(analyzer.calcBlast, 'calcBlast should be loaded');
+  assert.ok(analyzer.calcHealth, 'calcHealth should be loaded');
 });
 
 test('card action does not fall back to the repository being analyzed', async () => {

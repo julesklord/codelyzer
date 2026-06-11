@@ -3,37 +3,9 @@ import { readdir, readFile } from 'node:fs/promises';
 import { basename, dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import vm from 'node:vm';
+import { Parser, buildAnalysisData } from '../src/lib/parser.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(__dirname, '..');
-const htmlSource = await readFile(join(repoRoot, 'index.html'), 'utf8');
-const startMarker = '// ===== CODELYZER_ANALYZER_START =====';
-const endMarker = '// ===== CODELYZER_ANALYZER_END =====';
-const parserStart = htmlSource.indexOf(startMarker);
-const parserEnd = htmlSource.indexOf(endMarker, parserStart);
-
-if (parserStart < 0 || parserEnd < 0) {
-  throw new Error('Could not locate analyzer source in index.html');
-}
-
-const context = {
-  console,
-  TreeSitter: undefined,
-  Babel: undefined,
-  acorn: undefined,
-  getSecurityScanContent(file) {
-    return file && file.content ? file.content : '';
-  },
-  isSanitizedPreviewRenderer() {
-    return false;
-  },
-};
-
-vm.createContext(context);
-vm.runInContext(`${htmlSource.slice(parserStart, parserEnd)}\nthis.Parser = Parser; this.buildAnalysisData = buildAnalysisData;`, context);
-
-const { Parser, buildAnalysisData } = context;
 
 async function collectFixtureFiles(root) {
   const files = [];
@@ -124,6 +96,7 @@ test('golden mixed-language fixture stays stable', async () => {
   assert(connectionPairs.includes('src/service.py->src/main.py:hydrate'));
 
   const parserModes = Object.fromEntries(data.stats.parserModes.map((mode) => [mode.mode, mode.files]));
-  assert.equal(parserModes['heuristic-regex'], 4);
+  assert.equal(parserModes['heuristic-regex'], 2);
+  assert.equal(parserModes['acorn-babel'], 2);
   assert.equal(parserModes['markdown-link-parser'], 2);
 });
