@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --test tests/architecture-diagram.test.mjs tests/card-analyzer-security.test.mjs tests/codelyzer-golden.test.mjs tests/graph3d-config.test.mjs tests/md-extractors.test.mjs tests/numeric-fn-name.test.mjs tests/sync-with-html.test.mjs tests/verify-brain-vault.mjs"
+    "test": "node --test tests/architecture-diagram.test.mjs tests/backend-analysis-flows.test.mjs tests/card-analyzer-security.test.mjs tests/codelyzer-golden.test.mjs tests/graph3d-config.test.mjs tests/md-extractors.test.mjs tests/numeric-fn-name.test.mjs tests/sync-with-html.test.mjs tests/verify-brain-vault.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",
