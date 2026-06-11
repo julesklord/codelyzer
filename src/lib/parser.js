@@ -24,8 +24,16 @@ const CYBER_LIGHT_COLORS = ['#7f00ff', '#0066cc', '#d97706', '#00b853', '#ea580c
 const CYBER_DARK_LAYER_COLORS = {ui:'#00ffff',components:'#ff007f',services:'#ffe600',utils:'#00ff66',data:'#d300ff',config:'#ffffff',test:'#ff003c',modules:'#ff5e00',forms:'#ff007f',classes:'#ffe600',note:'#00ffcc'};
 const CYBER_LIGHT_LAYER_COLORS = {ui:'#7f00ff',components:'#0066cc',services:'#d97706',utils:'#00b853',data:'#db2777',config:'#24004d',test:'#dc2626',modules:'#ea580c',forms:'#7f00ff',classes:'#d97706',note:'#4f7c0f'};
 
-const IGNORE=new Set(['node_modules','.git','vendor','dist','build','target','__pycache__','.next','coverage','.venv','venv','env','.env','.tox','.mypy_cache','.pytest_cache','.ruff_cache','__pypackages__','.eggs','__macosx','.codegraph','.agents','.claude','.gemini','.skills']);
-const DEFAULT_EXCLUDE_CHIPS=['.git','node_modules','dist','build','target','coverage','__pycache__','.next','.venv','venv','.tox','.codegraph','.agents','.claude','.gemini','.skills'];
+const IGNORE=new Set([
+    'node_modules','.git','vendor','dist','build','target','snap','snapd','.snap','lost+found','.local','.cache','.config',
+    '__pycache__','.next','.nuxt','.output','.svelte-kit','.docusaurus','out','coverage','.yarn','.gradle','.metadata','bin','obj',
+    '.docker','.terraform','.vagrant','.serverless','.idea','.vscode','.settings','.codegraph','.agents','.claude','.gemini','.skills',
+    '__macosx','.ipynb_checkpoints','.tox','.mypy_cache','.pytest_cache','.ruff_cache','__pypackages__','.eggs'
+]);
+const DEFAULT_EXCLUDE_CHIPS=[
+    '.git','node_modules','dist','build','target','snap','snapd','coverage','__pycache__','.next','.venv','venv','.tox',
+    '.codegraph','.agents','.claude','.gemini','.skills','.idea','.vscode','.terraform','.gradle'
+];
 const ANALYSIS_LIMITS={repoSoft:300,repoMax:750,localSoft:500};
 
 // ---------------------------------------------------------------------------

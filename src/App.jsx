@@ -1041,6 +1041,9 @@ function App(){
                     if(shouldExcludeFile(entryPath,name,compiledPatterns))continue;
                     var folder=currentPath||'root';
                     fileCount++;
+                    if(fileCount>10000){
+                        throw new Error('Scanning aborted: Too many files detected (>10,000). Please ensure you are not scanning a system directory, a root drive, or a massive build directory like target.');
+                    }
                     files.push({path:entryPath,name:name,folder:folder,handle:entry});
                     if(fileCount%50===0){
                         setProgress('Scanning files... '+fileCount+' found');
@@ -1134,6 +1137,9 @@ function App(){
                 if(!name||name==='.DS_Store'||shouldExcludeFile(entryPath,name,patterns))return;
                 var folder=parts.length>1?parts.slice(0,-1).join('/'):'root';
                 fileCount++;
+                if(fileCount>10000){
+                    throw new Error('Scanning aborted: Too many files detected (>10,000). Please ensure you are not scanning a system directory, a root drive, or a massive build directory like target.');
+                }
                 files.push({
                     path:entryPath,
                     name:name,
@@ -1214,6 +1220,9 @@ function App(){
                 if(!name||name==='.DS_Store'||shouldExcludeFile(entryPath,name,patterns))return;
                 var folder=parts.length>1?parts.slice(0,-1).join('/'):'root';
                 fileCount++;
+                if(fileCount>10000){
+                    throw new Error('Scanning aborted: Too many files detected (>10,000). Please ensure you are not scanning a system directory, a root drive, or a massive build directory like target.');
+                }
                 files.push({path:entryPath,name:name,folder:folder,size:entry._data&&entry._data.uncompressedSize?entry._data.uncompressedSize:0,isCode:Parser.isCode(name),entry:entry});
                 entriesByPath[entryPath]=entry;
             });
