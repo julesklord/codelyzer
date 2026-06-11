@@ -296,6 +296,8 @@ For larger repositories or team usage, we recommend using GitHub App authenticat
 
 ## Architecture
 
+See [Wiki: Architecture](https://github.com/julesklord/codelyzer/wiki/Architecture) for detailed design decisions.
+
 ```
 ┌─────────────────────────────────────────────────┐
 │                   Codelyzer                     │
