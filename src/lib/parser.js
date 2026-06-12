@@ -190,6 +190,16 @@ function yieldToBrowser(){
     return new Promise(function(resolve){setTimeout(resolve,0);});
 }
 
+// Timeout wrapper for potentially long-running operations
+function withTimeout(promise, ms, timeoutError) {
+    return Promise.race([
+        promise,
+        new Promise(function(_, reject) {
+            setTimeout(function() { reject(timeoutError || new Error('Operation timed out after ' + ms + 'ms')); }, ms);
+        })
+    ]);
+}
+
 // ---------------------------------------------------------------------------
 // Parser And Static Analysis
 // ---------------------------------------------------------------------------
@@ -673,8 +683,11 @@ const Parser={
 
         // Find similar code blocks (improved algorithm)
         // Use structural hash that captures the essence of the code
+        // Limit to prevent O(n^2) blowup on large projects
+        var MAX_FNS_FOR_DUPLICATES=5000;
+        var fnsToCheck=allFns.slice(0,MAX_FNS_FOR_DUPLICATES);
         var codeGroups=Object.create(null);
-        allFns.forEach(function(fn){
+        fnsToCheck.forEach(function(fn){
             if(!fn.code||fn.code.length<80)return;  // Skip very short functions
 
             // Create a structural fingerprint
@@ -825,6 +838,8 @@ const Parser={
             if(!blocks.length)return{score:0,level:'low'};
             content=blocks.map(function(block){return block.content;}).join('\n');
         }
+        // Limit content size for complexity calculation to prevent hanging
+        if(content.length>100000){return{score:0,level:'low',skipped:true};}
         // Approximate cyclomatic complexity - supports JS, Python, and other languages
         var complexity=1;
         // JS/C-style patterns
@@ -1096,9 +1111,9 @@ const Parser={
                 parseContent=Parser.stripTypeScript(scriptContent);
             }
 
-            // Parse clean JS with acorn
+            // Parse clean JS with acorn - with timeout to prevent hanging
             try{
-                var ast=acorn.parse(parseContent,{
+                var parsePromise=acorn.parse(parseContent,{
                     ecmaVersion:2022,
                     sourceType:'module',
                     allowHashBang:true,
@@ -1107,6 +1122,8 @@ const Parser={
                     allowReturnOutsideFunction:true,
                     locations:true
                 });
+                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
+
                 parseSuccess=true;
 
                 // Walk the AST to find ALL function definitions
@@ -1537,6 +1554,8 @@ const Parser={
     // Extract functions from other languages
     extractOtherLanguages:function(content,filename,addFn,extractCode){
         var lines=content.split('\n');
+        // Skip very large files to prevent hanging
+        if(lines.length>20000){return;}
 
         lines.forEach(function(line,idx){
             var lineNum=idx+1;
@@ -1566,10 +1585,9 @@ const Parser={
             if((m=line.match(/(?:public|private|protected|static)?\s*function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/)))
                 addFn({name:m[1],file:filename,line:lineNum,code:extractCode(lineNum),isTopLevel:true,type:'function'});
 
-            // C/C++: type name( at start or with visibility
-            if((m=line.match(/^(?:static\s+)?(?:inline\s+)?(?:virtual\s+)?(?:\w+\s+)+([a-zA-Z_][a-zA-Z0-9_]*)\s*\([^;]*$/)))
-                if(!line.match(/^\s*(if|for|while|switch|return|sizeof|typeof)/))
-                    addFn({name:m[1],file:filename,line:lineNum,code:extractCode(lineNum),isTopLevel:true,type:'function'});
+            // C/C++: type name( at start or with visibility - simplified to avoid backtracking
+            if(!/^\s*(if|for|while|switch|return|sizeof|typeof|#include|#define|#ifdef|#ifndef)\b/.test(line)&&(m=line.match(/^(?:static|inline|virtual|const|volatile|restrict)?\s*(?:\w+\s+){1,3}([a-zA-Z_][a-zA-Z0-9_]*)\s*\([^;]*$/)))
+                addFn({name:m[1],file:filename,line:lineNum,code:extractCode(lineNum),isTopLevel:true,type:'function'});
 
             // Swift: func name
             if((m=line.match(/(?:public|private|internal|fileprivate|open)?\s*(?:static\s+)?(?:class\s+)?func\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*[<(]/)))
@@ -1619,7 +1637,7 @@ const Parser={
             }
 
             try{
-                var ast=acorn.parse(parseContent,{
+                var parsePromise=acorn.parse(parseContent,{
                     ecmaVersion:2022,
                     sourceType:'module',
                     allowHashBang:true,
@@ -1628,6 +1646,7 @@ const Parser={
                     allowReturnOutsideFunction:true,
                     locations:true
                 });
+                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
                 parseSuccess=true;
 
                 function walk(node,scope,parentIsExport){
@@ -1767,6 +1786,8 @@ const Parser={
         Parser.extractWithRegex(content,filename,offset,addFn,extractCode);
     },
     findJSCalls:function(content,fnNames,defLines,options){
+        // Skip very large files to prevent hanging
+        if(!content||content.length>500000){return {};}
         fnNames=Parser.candidateFunctionNames(content,fnNames);
         var calls={};
         var refs={};
@@ -1797,7 +1818,7 @@ const Parser={
                     jsContent=Parser.stripTypeScript(content);
                 }
 
-                var ast=acorn.parse(jsContent,{
+                var parsePromise=acorn.parse(jsContent,{
                     ecmaVersion:2022,
                     sourceType:sourceType,
                     allowHashBang:true,
@@ -1807,10 +1828,15 @@ const Parser={
                     locations:true,
                     tolerant:true
                 });
+                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
                 var fnSet=new Set(fnNames);
+                var walkNodeCount=0;
+                var MAX_WALK_NODES=50000;
 
                 function walk(node,inDeclaration){
                     if(!node||typeof node!=='object')return;
+                    walkNodeCount++;
+                    if(walkNodeCount>MAX_WALK_NODES)return;
                     var isDecl=node.type==='FunctionDeclaration'||node.type==='VariableDeclarator';
 
                     if(node.type==='CallExpression'){
@@ -1990,6 +2016,8 @@ const Parser={
 
     // AST-based call detection - finds actual function calls and references
     findCalls:function(content,fnNames,definingFile,fnDefs,fnIndex){
+        // Skip very large files to prevent hanging
+        if(!content||content.length>500000){return {};}
         fnNames=Parser.candidateFunctionNames(content,fnNames,fnIndex);
         var calls={};
         var refs={};  // Functions used as callbacks/references without ()
@@ -2066,7 +2094,12 @@ const Parser={
                     // and is NOT a definition is counted as a usage reference.
                     // tree-sitter naturally excludes identifiers inside strings/comments
                     // because those are parsed as string/comment nodes, not identifiers.
+                    var walkNodeCount=0;
+                    var MAX_WALK_NODES=50000;
                     function walkPy(node){
+                        if(!node)return;
+                        walkNodeCount++;
+                        if(walkNodeCount>MAX_WALK_NODES)return;
                         if(node.type==='identifier'&&fnSet.has(node.text)&&!isPyDefName(node)){
                             calls[node.text]++;
                         }
@@ -2092,6 +2125,19 @@ const Parser={
                 // Use Babel (real parser) to handle JSX and TypeScript
                 // Babel transforms JSX → React.createElement calls and strips TS types,
                 // so acorn can parse the result into a proper AST for accurate call detection
+                // Skip heavy parsing for very large files
+                if(content.length>200000){
+                    var cleanContent=content
+                        .replace(/:\s*[A-Za-z_$][\w$<>,\s|&\\[\]]*(?=\s*[=,\)\}\];])/g,'')
+                        .replace(/\bas\s+[A-Za-z_$][\w$<>,\s|&\\[\]]*(?=\s*[,\)\}\];])/g,'')
+                        .replace(/<[A-Za-z_$][\w$<>,\s|&\\[\]]*>(?=\s*\()/g,'')
+                        .replace(/^import\s+type\s+.*/gm,'')
+                        .replace(/^export\s+type\s+.*/gm,'')
+                        .replace(/^export\s+interface\s+.*/gm,'')
+                        .replace(/interface\s+[A-Za-z_$][\w$]*\s*\{[^}]*\}/g,'')
+                        .replace(/type\s+[A-Za-z_$][\w$]*\s*=\s*[^;]+;/g,'');
+                    return Parser.countCandidateCalls(cleanContent,fnNames,{isJS:true});
+                }
                 var jsContent=content;
                 if(typeof Babel!=='undefined'){
                     try{
@@ -2128,7 +2174,7 @@ const Parser={
                         .replace(/type\s+[A-Za-z_$][\w$]*\s*=\s*[^;]+;/g,'');
                 }
 
-                var ast=acorn.parse(jsContent,{
+                var parsePromise=acorn.parse(jsContent,{
                     ecmaVersion:2022,
                     sourceType:'module',
                     allowHashBang:true,
@@ -2137,11 +2183,16 @@ const Parser={
                     locations:true,
                     tolerant:true
                 });
+                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
 
                 var fnSet=new Set(fnNames);
+                var walkNodeCount=0;
+                var MAX_WALK_NODES=50000;
 
                 function walk(node,inDeclaration){
                     if(!node||typeof node!=='object')return;
+                    walkNodeCount++;
+                    if(walkNodeCount>MAX_WALK_NODES)return;
 
                     // Track if we're in a function declaration to skip counting the name
                     var isDecl=node.type==='FunctionDeclaration'||node.type==='VariableDeclarator';
