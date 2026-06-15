@@ -4588,5 +4588,6 @@ export {
   generateMermaidBlockDiagram,
   getVisibleArchitectureBlocks,
   getArchitectureGroupOrder,
-  runAnalysisData
+  runAnalysisData,
+  GitHub
 };
