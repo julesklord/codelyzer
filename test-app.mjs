@@ -63,8 +63,8 @@ async function runTest() {
     await page.keyboard.press('Enter');
     console.log('Pressed Enter on analyze button');
     
-    // Wait for analysis to complete (longer timeout)
-    await page.waitForTimeout(180000);
+    // Wait for analysis to start
+    await page.waitForTimeout(15000);
     
     // Check final state
     const buttonState = await page.evaluate(() => {

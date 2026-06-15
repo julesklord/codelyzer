@@ -58,6 +58,7 @@ import {
   generateMermaidBlockDiagram,
   getVisibleArchitectureBlocks,
   getArchitectureGroupOrder,
+  computeArchitectureStats,
   runAnalysisData,
   GitHub
 } from './lib/parser.js';

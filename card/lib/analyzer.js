@@ -24,6 +24,7 @@ function loadAnalyzer(htmlPath) {
     .replace(/^import\s+.*?;?\s*$/gm, '') // Remove all import statements
     .replace(/^export\s+function\s+/gm, 'function ') // Convert "export function name(" to "function name("
     .replace(/^export\s+class\s+/gm, 'class ') // Convert "export class name " to "class name "
+    .replace(/^export\s+const\s+/gm, 'const ') // Convert "export const name" to "const name"
     .replace(/^export\s+\{([^]*?)\};?\s*$/gm, '') // Remove the main export block at the bottom
     .replace(/\bimport\.meta\.env\b/g, '{}')
     .replace(/\bimport\.meta\b/g, 'undefined');
@@ -58,7 +59,8 @@ function loadAnalyzer(htmlPath) {
     '\nthis.Parser = Parser;' +
     '\nthis.buildAnalysisData = buildAnalysisData;' +
     '\nthis.calcBlast = calcBlast;' +
-    '\nthis.calcHealth = calcHealth;';
+    '\nthis.calcHealth = calcHealth;' +
+    '\nthis.DEFAULT_ANALYSIS_CONFIG = DEFAULT_ANALYSIS_CONFIG;';
   const script = new vm.Script(parserSource + exposeExports, {
     filename: 'codelyzer-analyzer.js',
   });
@@ -69,6 +71,7 @@ function loadAnalyzer(htmlPath) {
     buildAnalysisData: context.buildAnalysisData,
     calcBlast: context.calcBlast,
     calcHealth: context.calcHealth,
+    DEFAULT_ANALYSIS_CONFIG: context.DEFAULT_ANALYSIS_CONFIG,
   };
 }
 

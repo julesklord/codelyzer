@@ -34,7 +34,7 @@ const DEFAULT_EXCLUDE_CHIPS=[
     '.git','node_modules','dist','build','target','snap','snapd','coverage','__pycache__','.next','.venv','venv','.tox',
     '.codegraph','.agents','.claude','.gemini','.skills','.idea','.vscode','.terraform','.gradle'
 ];
-const ANALYSIS_LIMITS={repoSoft:300,repoMax:750,localSoft:500};
+const ANALYSIS_LIMITS={repoSoft:500,repoMax:5000,localSoft:2000,localMax:10000};
 
 // ---------------------------------------------------------------------------
 // Shared Helpers
@@ -3920,7 +3920,17 @@ async function buildAnalysisData(options){
     var excludePatterns=options.excludePatterns||[];
     var progress=typeof options.progress==='function'?options.progress:function(){};
     var yieldFn=options.yieldFn||yieldToBrowser;
-    var CALL_BATCH=30;
+    
+    // Configuration for large codebase processing
+    var config=options.config||{};
+    var CALL_BATCH=config.callBatch||30;
+    var MAX_FILES=config.maxFiles||ANALYSIS_LIMITS.repoMax;
+    var SKIP_TREESITTER=config.skipTreeSitter||false;
+    var SKIP_SECURITY=config.skipSecurity||false;
+    var SKIP_DUPLICATES=config.skipDuplicates||false;
+    var SKIP_COMPLEXITY=config.skipComplexity||false;
+    var ENABLE_STREAMING=config.enableStreaming||false;
+    var STREAM_CALLBACK=config.onProgress||null;
 
     if (options.zipFile || options.localFiles) {
         var compiledPatterns = excludePatterns;
@@ -4009,6 +4019,9 @@ async function buildAnalysisData(options){
                     });
                 }
             }
+            if (filesToProcess.length > MAX_FILES) {
+                progress('Warning: Processing limited to ' + MAX_FILES + ' files out of ' + filesToProcess.length + ' total');
+            }
         } else if (options.localFiles) {
             progress('Scanning local folder...');
             await yieldFn();
@@ -4041,11 +4054,12 @@ async function buildAnalysisData(options){
                 });
             });
             
-            var max = filesToProcess.length;
+            var max = Math.min(filesToProcess.length, MAX_FILES);
             for (var i = 0; i < max; i++) {
                 var f = filesToProcess[i];
-                if (i > 0 && i % 30 === 0) {
+                if (i > 0 && i % CALL_BATCH === 0) {
                     progress('Analyzing ' + (i + 1) + '/' + max + ': ' + f.name);
+                    if (STREAM_CALLBACK) STREAM_CALLBACK({stage: 'analyze', current: i, total: max, file: f.name});
                     await yieldFn();
                 }
                 
@@ -4097,7 +4111,9 @@ async function buildAnalysisData(options){
 
     progress('Building dependency graph (1/6)...');
     await yieldFn();
-    await Parser.prepareTreeSitter(analyzed);
+    if (!SKIP_TREESITTER) {
+        await Parser.prepareTreeSitter(analyzed);
+    }
     var fnNames=[...new Set(allFns.map(function(f){return f.name;}))];
     var fnNameIndex=Parser.buildFunctionNameIndex(fnNames);
     var fnDefLineIndex=Parser.buildFunctionDefLineIndex(allFns);
@@ -4127,6 +4143,7 @@ async function buildAnalysisData(options){
     for(var bi=0;bi<analyzed.length;bi+=CALL_BATCH){
         var batchEnd=Math.min(bi+CALL_BATCH,analyzed.length);
         progress('Analyzing dependencies (2/6)... '+batchEnd+'/'+analyzed.length+' files');
+        if (STREAM_CALLBACK) STREAM_CALLBACK({stage: 'dependencies', current: batchEnd, total: analyzed.length});
         for(var fi=bi;fi<batchEnd;fi++){
             var file=analyzed[fi];
             if(!file.content)continue;
@@ -4212,23 +4229,29 @@ async function buildAnalysisData(options){
     progress('Detecting patterns (3/6)...');
     await yieldFn();
     var patterns=Parser.detectPatterns(analyzed);
-    var securityIssues=Parser.detectSecurity(analyzed);
+    var securityIssues=SKIP_SECURITY ? [] : Parser.detectSecurity(analyzed);
+    if (STREAM_CALLBACK) STREAM_CALLBACK({stage: 'patterns', current: 1, total: 1});
 
     progress('Analyzing code quality (4/6)...');
     await yieldFn();
-    var duplicates=Parser.detectDuplicates(analyzed,allFns);
+    var duplicates=SKIP_DUPLICATES ? [] : Parser.detectDuplicates(analyzed,allFns);
     var layerViolations=Parser.detectLayerViolations(analyzed,conns);
-    for(var ci=0;ci<analyzed.length;ci+=CALL_BATCH){
-        var cEnd=Math.min(ci+CALL_BATCH,analyzed.length);
-        for(var cj=ci;cj<cEnd;cj++){
-            analyzed[cj].complexity=analyzed[cj].isCode!==false?Parser.calcComplexity(analyzed[cj].content,analyzed[cj].path):{score:0,level:'low'};
+    if (!SKIP_COMPLEXITY) {
+        for(var ci=0;ci<analyzed.length;ci+=CALL_BATCH){
+            var cEnd=Math.min(ci+CALL_BATCH,analyzed.length);
+            for(var cj=ci;cj<cEnd;cj++){
+                analyzed[cj].complexity=analyzed[cj].isCode!==false?Parser.calcComplexity(analyzed[cj].content,analyzed[cj].path):{score:0,level:'low'};
+            }
+            if(ci+CALL_BATCH<analyzed.length)await yieldFn();
         }
-        if(ci+CALL_BATCH<analyzed.length)await yieldFn();
+    } else {
+        analyzed.forEach(function(f){f.complexity={score:0,level:'low'};});
     }
 
     progress('Building architecture diagram (5/6)...');
     await yieldFn();
     var architectureDiagram=buildArchitectureDiagram(analyzed);
+    if (STREAM_CALLBACK) STREAM_CALLBACK({stage: 'architecture', current: 1, total: 1});
 
     progress('Finalizing (6/6)...');
     await yieldFn();
@@ -4588,6 +4611,18 @@ export {
   generateMermaidBlockDiagram,
   getVisibleArchitectureBlocks,
   getArchitectureGroupOrder,
+  computeArchitectureStats,
   runAnalysisData,
   GitHub
+};
+// Default config for large codebase processing
+export const DEFAULT_ANALYSIS_CONFIG = {
+  callBatch: 50,
+  maxFiles: ANALYSIS_LIMITS.repoMax,
+  skipTreeSitter: false,
+  skipSecurity: false,
+  skipDuplicates: false,
+  skipComplexity: false,
+  enableStreaming: false,
+  onProgress: null
 };
