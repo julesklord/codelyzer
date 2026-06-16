@@ -13,6 +13,9 @@
 
 <img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
 
+## Generated Preview
+<img src="./previews/codelyzer.png" alt="Generated Preview" width="100%"/>
+
 > [!NOTE]
 > This project is a fork of the original [braedonsaunders/codelyzer](https://github.com/braedonsaunders/codelyzer).
 
