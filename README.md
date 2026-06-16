@@ -11,9 +11,7 @@
 
 [**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/julesklord/codelyzer/issues) · [Request Feature](https://github.com/julesklord/codelyzer/issues)
 
-<img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
-
-## Generated Preview
+## Preview
 <img src="./previews/codelyzer.png" alt="Generated Preview" width="100%"/>
 
 > [!NOTE]
