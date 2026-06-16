@@ -5,6 +5,7 @@ import JSZip from 'jszip';
 import { jsPDF } from 'jspdf';
 import mermaid from 'mermaid';
 import ForceGraph3D from '3d-force-graph';
+import * as THREE from 'three';
 
 // Combine d3 core with d3-sankey plugins
 const d3 = Object.assign({}, d3Base, { sankey, sankeyLinkHorizontal });
@@ -15,6 +16,7 @@ window.jspdf = { jsPDF };
 window.mermaid = mermaid;
 window.ForceGraph3D = ForceGraph3D;
 window.d3 = d3;
+window.THREE = THREE;
 
 // Import parser utilities, constants, and logic
 import {

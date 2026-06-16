@@ -11,17 +11,12 @@
 
 [**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/julesklord/codelyzer/issues) · [Request Feature](https://github.com/julesklord/codelyzer/issues)
 
-## Preview
-<img src="./previews/codelyzer.png" alt="Generated Preview" width="100%"/>
+<img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
 
 > [!NOTE]
 > This project is a fork of the original [braedonsaunders/codelyzer](https://github.com/braedonsaunders/codelyzer).
 
 </div>
-
----
-
-## Why Codelyzer?
 
 Ever opened a new codebase and felt completely lost? **Codelyzer** turns any GitHub repository or local codebase into an interactive architecture map in seconds.
 

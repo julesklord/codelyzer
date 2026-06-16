@@ -1122,7 +1122,7 @@ const Parser={
                     allowReturnOutsideFunction:true,
                     locations:true
                 });
-                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
+                var ast=parsePromise;
 
                 parseSuccess=true;
 
@@ -1646,7 +1646,7 @@ const Parser={
                     allowReturnOutsideFunction:true,
                     locations:true
                 });
-                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
+                var ast=parsePromise;
                 parseSuccess=true;
 
                 function walk(node,scope,parentIsExport){
@@ -1828,7 +1828,7 @@ const Parser={
                     locations:true,
                     tolerant:true
                 });
-                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
+                var ast=parsePromise;
                 var fnSet=new Set(fnNames);
                 var walkNodeCount=0;
                 var MAX_WALK_NODES=50000;
@@ -2183,7 +2183,7 @@ const Parser={
                     locations:true,
                     tolerant:true
                 });
-                var ast=withTimeout(parsePromise,5000,new Error('acorn.parse timeout'));
+                var ast=parsePromise;
 
                 var fnSet=new Set(fnNames);
                 var walkNodeCount=0;
