@@ -14,7 +14,7 @@
 <img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
 
 > [!NOTE]
-> This project is a fork of the original [braedonsaunders/codelyzer](https://github.com/braedonsaunders/codelyzer).
+> This project is a fork of the original [braedonsaunders/codelyzer](https://github.com/braedonsaunders/codeflow).
 
 </div>
 
