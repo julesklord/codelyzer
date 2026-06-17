@@ -8,7 +8,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
-
 [**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/julesklord/codelyzer/issues) · [Request Feature](https://github.com/julesklord/codelyzer/issues)
 
 <img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
@@ -28,6 +27,9 @@ Ever opened a new codebase and felt completely lost? **Codelyzer** turns any Git
 ```
 Paste URL / Select Files -> See Architecture -> Make Better Decisions
 ```
+---
+
+<video src="./codelyzer-preview.webm" width="100%" controls autoplay loop muted></video>
 
 ---
 
