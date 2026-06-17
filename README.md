@@ -14,7 +14,7 @@
 <img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
 
 > [!NOTE]
-> This project is a fork of the original [braedonsaunders/codelyzer](https://github.com/braedonsaunders/codeflow).
+> This project is a fork of the original [braedonsaunders/codeflow](https://github.com/braedonsaunders/codeflow).
 
 </div>
 
@@ -123,11 +123,17 @@ Just visit [Codelyzer](https://codelyzer-five.vercel.app/) and paste any GitHub 
 # Clone the repo
 git clone https://github.com/julesklord/codelyzer.git
 
-# That's it! Just open index.html in your browser
-open index.html
+# Install dependencies
+npm install
+
+# Start the Vite development server
+npm run dev
+
+# Build the production bundle
+npm run build
 ```
 
-No build process. No npm install. It is a single `index.html` app that loads pinned browser dependencies from CDNs.
+**Vite build process. Local npm packages.** Built locally using npm, runs fully client-side in your browser.
 
 ### Option 3: Analyze Local Files
 You can now analyze code directly from your local machine without uploading to GitHub:
@@ -307,15 +313,15 @@ See [Wiki: Architecture](https://github.com/julesklord/codelyzer/wiki/Architectu
 │                       │                         │
 │              ┌────────▼────────┐                │
 │              │   React App     │                │
-│              │  (Single File)  │                │
+│              │  (Vite Bundled) │                │
 │              └─────────────────┘                │
 └─────────────────────────────────────────────────┘
 ```
 
-**Zero build dependencies to install.** Everything runs from pinned CDNs:
-- React 18
-- D3.js 7
-- Babel (for JSX)
+**Vite build system and local npm packages.** Dependencies are installed locally:
+- React 18 & D3.js 7
+- 3d-force-graph (WebGL rendering)
+- Acorn & Babel (for AST parsing)
 
 ---
 
@@ -324,8 +330,8 @@ See [Wiki: Architecture](https://github.com/julesklord/codelyzer/wiki/Architectu
 We love contributions! Here's how:
 
 1. Fork the repo
-2. Make your changes to `index.html`
-3. Test locally (just open in browser)
+2. Make your changes to files under `src/` (e.g. `src/App.jsx` or `src/lib/parser.js`)
+3. Test locally using the development server (`npm run dev`) and make sure the tests pass (`npm test`)
 4. Submit a PR
 
 If you're editing the markdown / wiki-link parser, Node.js unit tests live under `tests/` and run with no dependencies:
@@ -351,7 +357,7 @@ node --test tests/
 > Codelyzer runs entirely in your browser. It calls the GitHub API directly from your browser and processes everything client-side.
 
 **Q: Is my code safe?**
-> Yes. Your code is fetched directly from GitHub to your browser. Nothing is sent to any server we control. Check the source — it's one file!
+> Yes. Your code is fetched directly from GitHub to your browser. Nothing is sent to any server we control. Check the source — it runs fully client-side!
 
 **Q: Can I use it offline?**
 > Yes. With the local file analysis feature, you can analyze code from your computer without any internet connection. Click the "Open Folder" button and select your files. All processing happens entirely in your browser.

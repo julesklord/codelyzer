@@ -3,9 +3,9 @@
 A GitHub Action that drops a slick auto-updating SVG card on your README — health grade, scale, fragility, hidden costs — recomputed every merge by [codelyzer](https://github.com/julesklord/codelyzer).
 
 > [!NOTE]
-> This is a fork of the original project by [braedonsaunders](https://github.com/braedonsaunders/codelyzer).
+> This is a fork of the original project by [braedonsaunders](https://github.com/braedonsaunders/codeflow).
 
-The card uses the **same analyzer** as the codelyzer web app. There's no separate parser, no version drift — the Action reads codelyzer's `index.html` and runs its analyzer in a Node `vm`.
+The card uses the **same analyzer** as the codelyzer web app. There's no separate parser, no version drift — the Action reads codelyzer's `src/lib/parser.js` and runs its analyzer in a Node `vm`.
 
 ## Quick start
 

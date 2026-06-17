@@ -2,10 +2,10 @@
 
 ## The Project's Soul
 
-[Describe here the "romantic" vision or the deep purpose of the project. E.g.: "We seek to democratize access to music through elegant and efficient code."]
+We believe that no developer should feel lost in a new codebase. We seek to make software architectures visual, intuitive, and instantly navigable, helping developers understand code structure, identify critical patterns, evaluate dependencies, and estimate change impacts in seconds, completely client-side.
 
 ## Guiding Principles
 
-1. **Radical Simplicity**: If it's complex, it's not finished. Simple as that.
-2. **Functional Aesthetics**: Beautiful code is usually correct code. Don't make it ugly.
-3. **User Empathy**: We design for humans, not for machines. (But machines do the heavy lifting.)
+1. **Radical Simplicity**: If it's complex, it's not finished.
+2. **Functional Aesthetics**: Beautiful interfaces and clean visualization maps lead to faster understanding.
+3. **Privacy First**: Your code is yours alone; all scanning and processing must happen client-side in the browser.

@@ -1,10 +1,10 @@
 # Gemini CLI Rules
 
-Specific instructions for the **Gemini CLI** agent. Pay attention, machine.
+Specific instructions for the **Gemini CLI** agent.
 
 ## Working Context
 
-- This project follows the [Your Organization] standard. (Don't deviate.)
+- This project is Codelyzer, an open-source static code analysis and visualization web application.
 - Prioritize using `grep_search` to navigate the code.
 - Always check `git status` before every commit. Basic hygiene.
 
