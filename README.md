@@ -29,7 +29,10 @@ Paste URL / Select Files -> See Architecture -> Make Better Decisions
 ```
 ---
 
-<video src="./codelyzer-preview.webm" width="100%" controls autoplay loop muted></video>
+<video width="100%" controls autoplay loop muted>
+  <source src="./codelyzer-preview.mp4" type="video/mp4">
+  <source src="./codelyzer-preview.webm" type="video/webm">
+</video>
 
 ---
 
