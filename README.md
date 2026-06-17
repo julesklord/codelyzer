@@ -4,7 +4,7 @@
 
 ### Visualize Your Codebase Architecture in Seconds
 
-**Zero setup. No installation. Just paste a GitHub URL.**
+**Check your codebase, friendly**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
@@ -354,19 +354,25 @@ node --test tests/
 ## FAQ
 
 **Q: How does it work without a backend?**
-> Codelyzer runs entirely in your browser. It calls the GitHub API directly from your browser and processes everything client-side.
+> Codelyzer runs entirely in your browser. It calls the GitHub API directly from your browser and processes everything client-side using JavaScript and Web Workers.
 
 **Q: Is my code safe?**
-> Yes. Your code is fetched directly from GitHub to your browser. Nothing is sent to any server we control. Check the source — it runs fully client-side!
+> Yes. Your code is fetched directly from GitHub (or read from your local files) to your browser's memory. Nothing is ever sent to any server we control. The analysis runs 100% client-side.
 
 **Q: Can I use it offline?**
-> Yes. With the local file analysis feature, you can analyze code from your computer without any internet connection. Click the "Open Folder" button and select your files. All processing happens entirely in your browser.
+> Yes. With the local file analysis feature, you can analyze code from your computer without any internet connection. Click the "Open Folder" button and select your files. You can also run the development server or serve the build output offline.
+
+**Q: Why is the source code structured with folders instead of a single file?**
+> The project has been restructured as a modular React + Vite application to improve maintainability, write proper unit tests, and easily add new features. However, the build output is compiled into optimized static assets that still run entirely in your browser.
+
+**Q: How do I build and self-host the application?**
+> Run `npm install` and then `npm run build`. This generates a `dist/` folder containing static HTML, JS, and CSS files, which you can host on any static hosting service like GitHub Pages, Vercel, Netlify, or your own web server.
 
 **Q: Why is analysis slow?**
-> We make individual API calls for each file to get content. With a token, you get higher rate limits and faster analysis.
+> We make individual API calls to GitHub for each file to get its content. Using a Personal Access Token or GitHub App token gives you higher rate limits (5,000 requests/hour) and faster analysis.
 
 **Q: How accurate is the dependency analysis?**
-> It's based on function name matching, so it may miss some dynamic imports or renamed imports. It's designed for a quick overview, not 100% accuracy.
+> It is based on AST-based function name mapping and regex heuristics. It is designed to provide a quick, high-level overview of coupling, architecture, and blast radius, rather than 100% compiler-level accuracy.
 
 ---
 
