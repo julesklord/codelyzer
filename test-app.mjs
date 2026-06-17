@@ -20,17 +20,27 @@ async function runTest() {
   });
   
   page.on('request', request => {
-    if (request.url().includes('api.github.com')) {
-      console.log(`[REQUEST] ${request.method()} ${request.url()}`);
+    try {
+      const url = new URL(request.url());
+      if (url.hostname === 'api.github.com') {
+        console.log(`[REQUEST] ${request.method()} ${request.url()}`);
+      }
+    } catch {
+      // Ignore malformed URLs in logging filter
     }
   });
   
   page.on('response', response => {
-    if (response.url().includes('api.github.com')) {
-      const status = response.status();
-      if (status !== 200) {
-        console.log(`[RESPONSE] ${status} ${response.url()}`);
+    try {
+      const url = new URL(response.url());
+      if (url.hostname === 'api.github.com') {
+        const status = response.status();
+        if (status !== 200) {
+          console.log(`[RESPONSE] ${status} ${response.url()}`);
+        }
       }
+    } catch {
+      // Ignore malformed URLs in logging filter
     }
   });
   
