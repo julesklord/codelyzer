@@ -26,11 +26,16 @@ async function runTest() {
   });
   
   page.on('response', response => {
-    if (response.url().includes('api.github.com')) {
-      const status = response.status();
-      if (status !== 200) {
-        console.log(`[RESPONSE] ${status} ${response.url()}`);
+    try {
+      const responseUrl = new URL(response.url());
+      if (responseUrl.hostname === 'api.github.com') {
+        const status = response.status();
+        if (status !== 200) {
+          console.log(`[RESPONSE] ${status} ${response.url()}`);
+        }
       }
+    } catch {
+      // Ignore malformed URLs from non-standard responses.
     }
   });
   
