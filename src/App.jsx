@@ -6,6 +6,7 @@ import { jsPDF } from 'jspdf';
 import mermaid from 'mermaid';
 import ForceGraph3D from '3d-force-graph';
 import * as THREE from 'three';
+import DOMPurify from 'dompurify';
 
 // Combine d3 core with d3-sankey plugins
 const d3 = Object.assign({}, d3Base, { sankey, sankeyLinkHorizontal });
@@ -4356,7 +4357,7 @@ function App(){
                             var isHighlighted=filePreview.line&&lineNum===filePreview.line;
                             return React.createElement('div',{key:i,className:'file-preview-line'+(isHighlighted?' highlighted':'')},
                                 React.createElement('span',{className:'file-preview-linenum'},lineNum),
-                                React.createElement('span',{className:'file-preview-text',dangerouslySetInnerHTML:{__html:lineHtml||' '}})
+                                React.createElement('span',{className:'file-preview-text',dangerouslySetInnerHTML:{__html:DOMPurify.sanitize(lineHtml||' ')}})
                             );
                         })
                     ):null
