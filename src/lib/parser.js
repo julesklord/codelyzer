@@ -2993,8 +2993,16 @@ function stripArchitectureExt(path){
 }
 
 function architectureFileBaseName(path){
-    var base=stripArchitectureExt(path).split('/').pop()||'Block';
-    return base==='index'?(stripArchitectureExt(path).split('/').slice(-2,-1)[0]||base):base;
+    var str = stripArchitectureExt(path);
+    var idx = str.lastIndexOf('/');
+    var base = idx === -1 ? str : str.substring(idx + 1);
+    if (!base) base = 'Block';
+    if (base === 'index' && idx > 0) {
+        var prevIdx = str.lastIndexOf('/', idx - 1);
+        var dirName = prevIdx === -1 ? str.substring(0, idx) : str.substring(prevIdx + 1, idx);
+        return dirName || base;
+    }
+    return base;
 }
 
 function normalizeArchitectureRoute(route){
