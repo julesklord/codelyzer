@@ -7,7 +7,14 @@ function countFiles(n){
     }, 0);
 }
 
-export function TreeNode(props){
+function areEqual(prevProps, nextProps) {
+    return prevProps.node === nextProps.node &&
+           prevProps.selected === nextProps.selected &&
+           prevProps.activeFilter === nextProps.activeFilter &&
+           prevProps.expanded.has(prevProps.node.path) === nextProps.expanded.has(nextProps.node.path);
+}
+
+export const TreeNode = React.memo(function TreeNodeInner(props){
     var node=props.node,selected=props.selected,onSelect=props.onSelect,expanded=props.expanded,toggle=props.toggle,filterFolder=props.filterFolder,activeFilter=props.activeFilter;
     var isOpen=expanded.has(node.path);
     var isFiltered=activeFilter===node.path;
@@ -24,4 +31,4 @@ export function TreeNode(props){
             node.files.map(function(f){return React.createElement('div',{key:f.path,className:'tree-file'+(selected&&selected.path===f.path?' active':''),onClick:function(){onSelect(f.path);}},React.createElement(Icon,{name:'file',size:'s',className:'tree-entry-icon'}),React.createElement('span',{className:'tree-name'},f.name));})
         )
     );
-}
+}, areEqual);
