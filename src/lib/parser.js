@@ -4613,9 +4613,17 @@ function calcPRRisk(prData, repoData) {
 function findSuggestedReviewers(prData, repoData) {
     if (!prData || !repoData) return [];
     var changedPaths = (prData.files || []).map(function(f) { return f.filename; });
+    var changedFolders = new Set();
+    changedPaths.forEach(function(p) {
+        var parts = p.split('/');
+        for (var i = 1; i < parts.length; i++) {
+            changedFolders.add(parts.slice(0, i).join('/'));
+        }
+    });
+
     var authorCounts = {};
     repoData.files.forEach(function(f) {
-        if (changedPaths.some(function(p) { return f.folder && p.startsWith(f.folder); })) {
+        if (f.folder && changedFolders.has(f.folder)) {
             var layer = f.layer || 'other';
             if (!authorCounts[layer]) authorCounts[layer] = { count: 0, files: [] };
             authorCounts[layer].count++;
