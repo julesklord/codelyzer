@@ -128,6 +128,7 @@ function App(){
     var _v=useState(null),toast=_v[0],setToast=_v[1];
     var _w=useState(false),ownerLoading=_w[0],setOwnerLoading=_w[1];
     var _x=useState(null),folderFilter=_x[0],setFolderFilter=_x[1];
+    var _gm=useState('file'),viewGroupMode=_gm[0],setViewGroupMode=_gm[1];
     var _isDragging=useState(false),isDragging=_isDragging[0],setIsDragging=_isDragging[1];
     var _y=useState(new Set()),expandedFns=_y[0],setExpandedFns=_y[1];
     var _z=useState(false),showUnused=_z[0],setShowUnused=_z[1];
@@ -182,6 +183,14 @@ function App(){
     blastRadiusRef.current=blastRadius;
     var activeExcludePatterns=useMemo(function(){return compileExcludePatterns(excludePatternInput);},[excludePatternInput]);
     var customExcludeCount=activeExcludePatterns.length;
+
+    useEffect(function(){
+        if(data && data.files && data.files.length > 400){
+            setViewGroupMode('folder');
+        } else {
+            setViewGroupMode('file');
+        }
+    },[data]);
 
     // Walkthrough State
     var _wtStep = useState(-1);
@@ -1590,25 +1599,67 @@ function App(){
         var w=svgRef.current.clientWidth;
         var h=svgRef.current.clientHeight;
         var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
-        var fileIds=new Set(filteredFiles.map(function(f){return f.path;}));
-        var nodes=filteredFiles.map(function(f){return{id:f.path,name:f.name,folder:f.folder,fnCount:f.functions.length,layer:f.layer,churn:f.churn||0};});
-        var linkMap=new Map();
-        data.connections.forEach(function(c){
-            if(!fileIds.has(c.source)||!fileIds.has(c.target))return;
-            if(c.source===c.target)return;// Skip self-links
-            var k=c.source+'|'+c.target;
-            if(!linkMap.has(k))linkMap.set(k,{source:c.source,target:c.target,count:0});
-            linkMap.get(k).count+=c.count;
-        });
-        var links=Array.from(linkMap.values());
-        function getR(d){return Math.max(8,Math.min(24,5+d.fnCount*0.8));}
+        var nodes, links;
+        if (viewGroupMode === 'folder' && !folderFilter) {
+            var folderMap = {};
+            filteredFiles.forEach(function(f){
+                var folderName = f.folder || 'root';
+                if (!folderMap[folderName]) {
+                    folderMap[folderName] = {
+                        id: folderName,
+                        name: folderName,
+                        folder: folderName,
+                        fnCount: 0,
+                        fileCount: 0,
+                        layer: f.layer || 'utils',
+                        churn: 0
+                    };
+                }
+                folderMap[folderName].fnCount += f.functions.length;
+                folderMap[folderName].fileCount += 1;
+                folderMap[folderName].churn += f.churn || 0;
+            });
+            nodes = Object.values(folderMap);
+            var linkMap = new Map();
+            var filePathToFolder = {};
+            data.files.forEach(function(f){
+                filePathToFolder[f.path] = f.folder || 'root';
+            });
+            data.connections.forEach(function(c){
+                var srcFolder = filePathToFolder[c.source];
+                var tgtFolder = filePathToFolder[c.target];
+                if (!srcFolder || !tgtFolder || srcFolder === tgtFolder) return;
+                var k = srcFolder + '|' + tgtFolder;
+                if (!linkMap.has(k)) linkMap.set(k, {source: srcFolder, target: tgtFolder, count: 0});
+                linkMap.get(k).count += c.count;
+            });
+            links = Array.from(linkMap.values());
+        } else {
+            var fileIds=new Set(filteredFiles.map(function(f){return f.path;}));
+            nodes=filteredFiles.map(function(f){return{id:f.path,name:f.name,folder:f.folder,fnCount:f.functions.length,layer:f.layer,churn:f.churn||0};});
+            var linkMap=new Map();
+            data.connections.forEach(function(c){
+                if(!fileIds.has(c.source)||!fileIds.has(c.target))return;
+                if(c.source===c.target)return;
+                var k=c.source+'|'+c.target;
+                if(!linkMap.has(k))linkMap.set(k,{source:c.source,target:c.target,count:0});
+                linkMap.get(k).count+=c.count;
+            });
+            links=Array.from(linkMap.values());
+        }
+        function getR(d){
+            if (viewGroupMode === 'folder' && !folderFilter) {
+                return Math.max(10,Math.min(28,6+(d.fileCount||1)*1.2));
+            }
+            return Math.max(8,Math.min(24,5+d.fnCount*0.8));
+        }
         function getC(d){
             if(colorMode==='folder')return colorMap[d.folder]||COLORS[0];
             if(colorMode==='layer')return LAYER_COLORS[d.layer]||LAYER_COLORS['utils'];
             if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
             return COLORS[0];
         }
-        var folders=[...new Set(nodes.map(function(n){return n.folder;}))];
+        var folders=viewGroupMode==='folder'&&!folderFilter?[]:[...new Set(nodes.map(function(n){return n.folder;}))];
         var cols=Math.max(2,Math.ceil(Math.sqrt(folders.length)));
         var cw=w/(cols+1);
         var ch=h/(Math.ceil(folders.length/cols)+1);
@@ -1695,19 +1746,45 @@ function App(){
         var node=nodeLayer.selectAll('g').data(nodes).join('g').style('cursor','pointer');
         nodesRef.current=node;
         node.call(d3.drag().on('start',function(e,d){if(!e.active)sim.alphaTarget(0.1).restart();d.fx=d.x;d.fy=d.y;}).on('drag',function(e,d){d.fx=e.x;d.fy=e.y;}).on('end',function(e,d){if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
-        node.on('click',function(e,d){e.stopPropagation();if(selectFileRef.current)selectFileRef.current(d.id);});
-        node.on('mouseenter',function(e,d){var r=svgRef.current.getBoundingClientRect();setTooltip({x:e.clientX-r.left+10,y:e.clientY-r.top,title:d.name,content:d.fnCount+' functions\n'+d.layer+' layer\n'+d.churn+' recent commits'});}).on('mouseleave',function(){setTooltip(null);});
+        node.on('click',function(e,d){
+            e.stopPropagation();
+            if (viewGroupMode === 'folder' && !folderFilter) {
+                setFolderFilter(d.id);
+            } else {
+                if(selectFileRef.current)selectFileRef.current(d.id);
+            }
+        });
+        node.on('mouseenter',function(e,d){
+            var r=svgRef.current.getBoundingClientRect();
+            var title = d.name;
+            var content = '';
+            if (viewGroupMode === 'folder' && !folderFilter) {
+                content = d.fileCount + ' files\n' + d.fnCount + ' functions\n' + d.churn + ' commits';
+            } else {
+                content = d.fnCount+' functions\n'+d.layer+' layer\n'+d.churn+' recent commits';
+            }
+            setTooltip({x:e.clientX-r.left+10,y:e.clientY-r.top,title:title,content:content});
+        }).on('mouseleave',function(){setTooltip(null);});
         svg.on('click',function(e){if(e.target===svgRef.current){setSelected(null);setBlastRadius(null);link.attr('stroke',theme==='light'?'#ccc':'#333').attr('stroke-opacity',0.4);node.selectAll('.nc').attr('opacity',1).attr('fill',getC);}});
         node.append('circle').attr('class','nc').attr('r',getR).attr('fill',getC).attr('stroke',function(d){var c=d3.color(getC(d));return c?c.brighter(0.3):'#fff';}).attr('stroke-width',1.5);
-        // Hide labels for large graphs to reduce DOM overhead
         if(!isLargeGraph||graphConfig.showLabels){
-            node.append('text').attr('text-anchor','middle').attr('dy',0).attr('fill',theme==='light'?'#333':'#eee').attr('font-size',function(d){return Math.max(6,Math.min(10,getR(d)*0.6))+'px';}).attr('font-family','JetBrains Mono').attr('font-weight','500').attr('pointer-events','none').text(function(d){var n=d.name.replace(/\.[^.]+$/,'');var maxLen=Math.max(4,Math.floor(getR(d)/2));return n.length>maxLen+1?n.slice(0,maxLen)+'…':n;});
+            node.append('text').attr('text-anchor','middle').attr('dy',0).attr('fill',theme==='light'?'#333':'#eee').attr('font-size',function(d){return Math.max(6,Math.min(10,getR(d)*0.6))+'px';}).attr('font-family','IBM Plex Mono').attr('font-weight','600').attr('pointer-events','none').text(function(d){
+                var n = d.name;
+                if (viewGroupMode === 'folder' && !folderFilter) {
+                    n = d.name.includes('/') ? d.name.split('/').pop() : d.name;
+                } else {
+                    n = n.replace(/\.[^.]+$/,'');
+                }
+                var maxLen=Math.max(4,Math.floor(getR(d)/2));
+                return n.length>maxLen+1?n.slice(0,maxLen)+'…':n;
+            });
         }
         // Pre-index nodes by folder for faster hull computation
         var nodesByFolder={};
         folders.forEach(function(f){nodesByFolder[f]=nodes.filter(function(n){return n.folder===f;});});
         function updateHulls(){
             hullLayer.selectAll('*').remove();
+            if (viewGroupMode === 'folder' && !folderFilter) return;
             folders.forEach(function(f){
                 var fn=nodesByFolder[f];
                 if(!fn||fn.length<1)return;
@@ -1739,7 +1816,7 @@ function App(){
         node.selectAll('text').attr('opacity',graphConfig.showLabels?1:0);
         }catch(e){console.error('Force graph error:',e);svg.selectAll('*').remove();svg.append('text').attr('x',20).attr('y',30).attr('fill','var(--t3)').text('Graph rendering error: '+e.message);}
         return function(){if(simRef.current)simRef.current.stop();};
-    },[data,colorMap,colorMode,theme,folderFilter,graphConfig]);
+    },[data,colorMap,colorMode,theme,folderFilter,graphConfig,viewGroupMode]);
 
     // 3D Force Graph Hook
     useEffect(function(){
@@ -1760,9 +1837,8 @@ function App(){
             return materialCache[col];
         }
         var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
-        var fileIds=new Set(filteredFiles.map(function(f){return f.path;}));
+        var nodes, links;
 
-        // To prevent node jumping/sim resets, preserve existing node coordinate/velocity references
         var existingNodesMap=new Map();
         if(graph3dInstanceRef.current){
             var currentData=graph3dInstanceRef.current.graphData();
@@ -1773,28 +1849,80 @@ function App(){
             }
         }
 
-        var nodes=filteredFiles.map(function(f){
-            var existing=existingNodesMap.get(f.path);
-            if(existing){
-                existing.name=f.name;
-                existing.folder=f.folder;
-                existing.fnCount=f.functions.length;
-                existing.layer=f.layer;
-                existing.churn=f.churn||0;
-                return existing;
-            }
-            return{id:f.path,name:f.name,folder:f.folder,fnCount:f.functions.length,layer:f.layer,churn:f.churn||0};
-        });
+        if (viewGroupMode === 'folder' && !folderFilter) {
+            var folderMap = {};
+            filteredFiles.forEach(function(f){
+                var folderName = f.folder || 'root';
+                if (!folderMap[folderName]) {
+                    folderMap[folderName] = {
+                        id: folderName,
+                        name: folderName,
+                        folder: folderName,
+                        fnCount: 0,
+                        fileCount: 0,
+                        layer: f.layer || 'utils',
+                        churn: 0
+                    };
+                }
+                folderMap[folderName].fnCount += f.functions.length;
+                folderMap[folderName].fileCount += 1;
+                folderMap[folderName].churn += f.churn || 0;
+            });
 
-        var linkMap=new Map();
-        data.connections.forEach(function(c){
-            if(!fileIds.has(c.source)||!fileIds.has(c.target))return;
-            if(c.source===c.target)return;
-            var k=c.source+'|'+c.target;
-            if(!linkMap.has(k))linkMap.set(k,{source:c.source,target:c.target,count:0});
-            linkMap.get(k).count+=c.count;
-        });
-        var links=Array.from(linkMap.values());
+            nodes = Object.values(folderMap).map(function(folderNode){
+                var existing = existingNodesMap.get(folderNode.id);
+                if (existing) {
+                    existing.name = folderNode.name;
+                    existing.folder = folderNode.folder;
+                    existing.fnCount = folderNode.fnCount;
+                    existing.fileCount = folderNode.fileCount;
+                    existing.layer = folderNode.layer;
+                    existing.churn = folderNode.churn;
+                    return existing;
+                }
+                return folderNode;
+            });
+
+            var linkMap = new Map();
+            var filePathToFolder = {};
+            data.files.forEach(function(f){
+                filePathToFolder[f.path] = f.folder || 'root';
+            });
+
+            data.connections.forEach(function(c){
+                var srcFolder = filePathToFolder[c.source];
+                var tgtFolder = filePathToFolder[c.target];
+                if (!srcFolder || !tgtFolder || srcFolder === tgtFolder) return;
+                var k = srcFolder + '|' + tgtFolder;
+                if (!linkMap.has(k)) linkMap.set(k, {source: srcFolder, target: tgtFolder, count: 0});
+                linkMap.get(k).count += c.count;
+            });
+            links = Array.from(linkMap.values());
+        } else {
+            var fileIds=new Set(filteredFiles.map(function(f){return f.path;}));
+            nodes=filteredFiles.map(function(f){
+                var existing=existingNodesMap.get(f.path);
+                if(existing){
+                    existing.name=f.name;
+                    existing.folder=f.folder;
+                    existing.fnCount=f.functions.length;
+                    existing.layer=f.layer;
+                    existing.churn=f.churn||0;
+                    return existing;
+                }
+                return{id:f.path,name:f.name,folder:f.folder,fnCount:f.functions.length,layer:f.layer,churn:f.churn||0};
+            });
+
+            var linkMap=new Map();
+            data.connections.forEach(function(c){
+                if(!fileIds.has(c.source)||!fileIds.has(c.target))return;
+                if(c.source===c.target)return;
+                var k=c.source+'|'+c.target;
+                if(!linkMap.has(k))linkMap.set(k,{source:c.source,target:c.target,count:0});
+                linkMap.get(k).count+=c.count;
+            });
+            links=Array.from(linkMap.values());
+        }
 
         // Color resolution helper for WebGL (which doesn't understand CSS var(--xxx) variables)
         function resolveHex(colorStr){
@@ -1835,7 +1963,12 @@ function App(){
         }
 
         function getR(d){
-            var base=Math.max(6,Math.min(20,4+d.fnCount*0.4));
+            var base=6;
+            if (viewGroupMode === 'folder' && !folderFilter) {
+                base = Math.max(8,Math.min(24,5+(d.fileCount||1)*0.8));
+            } else {
+                base = Math.max(6,Math.min(20,4+d.fnCount*0.4));
+            }
             var sel=selectedRef.current;
             var blast=blastRadiusRef.current;
             if(sel){
@@ -1882,10 +2015,15 @@ function App(){
                 var tooltipBg = isLight?'#f8f6f0':'#0c0d0f';
                 var tooltipColor = isLight?'#000000':'#ffffff';
                 var accentColor = isLight?'#00b853':'#00ff66';
-                return '<div style="font-family:JetBrains Mono,monospace;font-size:10px;padding:8px 12px;background:'+tooltipBg+';border:2px solid #000000;box-shadow:4px 4px 0px #000000;color:'+tooltipColor+';">'+
+                var details = '';
+                if (viewGroupMode === 'folder' && !folderFilter) {
+                    details = node.fileCount + ' files • ' + node.fnCount + ' functions • ' + node.churn + ' commits';
+                } else {
+                    details = node.fnCount+' functions • '+node.layer+' layer • '+node.churn+' commits';
+                }
+                return '<div style="font-family:IBM Plex Mono,monospace;font-size:10px;padding:8px 12px;background:'+tooltipBg+';border:2px solid #000000;box-shadow:4px 4px 0px #000000;color:'+tooltipColor+';">'+
                     '<strong style="color:'+accentColor+';">'+node.name+'</strong><br/>'+
-                    node.folder+'<br/>'+
-                    node.fnCount+' functions • '+node.layer+' layer • '+node.churn+' commits'+
+                    details+
                     '</div>';
             })
             .linkColor(function(link){
@@ -1963,7 +2101,11 @@ function App(){
                     ?{x:node.x*distRatio,y:node.y*distRatio,z:node.z*distRatio}
                     :{x:0,y:0,z:distance};
                 graph.cameraPosition(newPos,node,1200);
-                if(selectFileRef.current)selectFileRef.current(node.id);
+                if (viewGroupMode === 'folder' && !folderFilter) {
+                    setFolderFilter(node.id);
+                } else {
+                    if(selectFileRef.current)selectFileRef.current(node.id);
+                }
             })
             .onBackgroundClick(function(){
                 setSelected(null);
@@ -1985,7 +2127,7 @@ function App(){
                 group.add(sphereMesh);
                 
                 // Text canvas label
-                var labelText=node.name;
+                var labelText = (viewGroupMode === 'folder' && !folderFilter) ? (node.name.includes('/') ? node.name.split('/').pop() : node.name) : node.name;
                 var canvas=document.createElement('canvas');
                 var ctx=canvas.getContext('2d');
                 var scale=4;
@@ -2128,7 +2270,7 @@ function App(){
                 graph3dInstanceRef.current=null;
             }
         };
-    },[data,colorMap,colorMode,theme,folderFilter,graphConfig.vizType,graphConfig.linkDist,graphConfig.spacing,graphConfig.showLabels,graphConfig.curvedLinks,graphConfig.autoRotate]);
+    },[data,colorMap,colorMode,theme,folderFilter,graphConfig.vizType,graphConfig.linkDist,graphConfig.spacing,graphConfig.showLabels,graphConfig.curvedLinks,graphConfig.autoRotate,viewGroupMode]);
 
     // Graph dynamic highlight update (2D and 3D)
     useEffect(function(){
@@ -3586,6 +3728,7 @@ function App(){
                     graphConfig.vizType==='bundle'&&React.createElement('div',{ref:bundleRef,className:'bundle-container'}),
                     graphConfig.vizType==='architecture'&&renderArchitectureView(),
                     (graphConfig.vizType==='graph'||graphConfig.vizType==='graph3d')&&React.createElement('div',{className:'canvas-toolbar'},
+                        folderFilter&&React.createElement('button',{className:'top-btn primary',onClick:function(){setFolderFilter(null);},style:{height:32,padding:'0 10px',fontSize:10,fontWeight:700,marginRight:8}},'← BACK TO ROOT'),
                         React.createElement('button',{className:'tool-btn',onClick:zoomIn,'aria-label':'Zoom in'},'+'),
                         React.createElement('button',{className:'tool-btn',onClick:zoomOut,'aria-label':'Zoom out'},'−'),
                         React.createElement('button',{className:'tool-btn',onClick:resetZoom,'aria-label':'Reset zoom'},'⟲'),
@@ -3613,6 +3756,11 @@ function App(){
                             React.createElement('span',{className:'config-label'},'Links'),
                             React.createElement('input',{type:'range',className:'config-slider',min:'30',max:'200',value:graphConfig.linkDist,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{linkDist:parseInt(e.target.value)}));}}),
                             React.createElement('span',{className:'config-value'},graphConfig.linkDist)
+                        ),
+                        React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Grouping'),
+                        React.createElement('div',{className:'view-toggle',style:{marginBottom:8}},
+                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='file'?' active':''),onClick:function(){setViewGroupMode('file');}},'Files'),
+                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='folder'?' active':''),onClick:function(){setViewGroupMode('folder');}},'Folders')
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Display'),
                         React.createElement('label',{className:'config-check'},
