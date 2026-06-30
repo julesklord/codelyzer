@@ -3292,8 +3292,15 @@ function App(){
             isMobile&&React.createElement(React.Fragment,null,
                 React.createElement('div',{className:'mobile-brand-row'},
                     React.createElement('div',{className:'logo',onClick:function(){setShowPrivacy(true);}},
-                        React.createElement('div',{className:'logo-mark'},React.createElement(Icon,{name:'logo',size:'l'})),
-                        React.createElement('span',{className:'logo-text'},'CODELYZER')
+                        React.createElement('div',{className:'logo-mark'},
+                            React.createElement('svg',{viewBox:'0 0 24 24',fill:'none',xmlns:'http://www.w3.org/2000/svg'},
+                                React.createElement('path',{d:'M15 2 7 13h5.5l-2.5 9L20 11h-6L15 2z',fill:'rgba(0,255,102,0.15)',stroke:'#00ff66',strokeWidth:'1.6',strokeLinejoin:'round'})
+                            )
+                        ),
+                        React.createElement('span',{className:'logo-text'},
+                            'CODE',
+                            React.createElement('span',{className:'logo-accent'},'LYZER')
+                        )
                     ),
                     React.createElement('div',{className:'mobile-action-stack'},
                         data&&!localSourceKind&&React.createElement('button',{className:'top-btn mobile-icon-btn','aria-label':'Analyze Pull Request',title:'Pull Request',onClick:function(){setShowPR(true);},type:'button'},React.createElement(Icon,{name:'pull-request',size:'m'})),
@@ -3350,8 +3357,15 @@ function App(){
                 )
             ),
             React.createElement('div',{className:'logo',onClick:function(){setShowPrivacy(true);}},
-                React.createElement('div',{className:'logo-mark'},React.createElement(Icon,{name:'logo',size:'l'})),
-                React.createElement('span',{className:'logo-text'},'CODELYZER')
+                React.createElement('div',{className:'logo-mark'},
+                    React.createElement('svg',{viewBox:'0 0 24 24',fill:'none',xmlns:'http://www.w3.org/2000/svg'},
+                        React.createElement('path',{d:'M15 2 7 13h5.5l-2.5 9L20 11h-6L15 2z',fill:'rgba(0,255,102,0.15)',stroke:'#00ff66',strokeWidth:'1.6',strokeLinejoin:'round'})
+                    )
+                ),
+                React.createElement('span',{className:'logo-text'},
+                    'CODE',
+                    React.createElement('span',{className:'logo-accent'},'LYZER')
+                )
             ),
             React.createElement('div',{className:'repo-input-group'},
                 React.createElement('input',{className:'repo-input','aria-label':'Repository URL',placeholder:'owner/repo or GitHub URL',value:repoUrl,onChange:function(e){setRepoUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();}}),
