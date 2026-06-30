@@ -4462,7 +4462,6 @@ function runAnalysisData(options){
             });
         });
     }).catch(function(err){
-        console.error('Failed to run analysis in worker, falling back to main thread:', err);
         return buildAnalysisData(options);
     });
 }
