@@ -20,8 +20,13 @@ async function runTest() {
   });
   
   page.on('request', request => {
-    if (request.url().includes('api.github.com')) {
-      console.log(`[REQUEST] ${request.method()} ${request.url()}`);
+    try {
+      const url = new URL(request.url());
+      if (url.hostname === 'api.github.com') {
+        console.log(`[REQUEST] ${request.method()} ${request.url()}`);
+      }
+    } catch {
+      // Ignore malformed URLs in logging filter
     }
   });
   
