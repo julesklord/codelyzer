@@ -28,11 +28,17 @@ const IGNORE=new Set([
     'node_modules','.git','vendor','dist','build','target','snap','snapd','.snap','lost+found','.local','.cache','.config',
     '__pycache__','.next','.nuxt','.output','.svelte-kit','.docusaurus','out','coverage','.yarn','.gradle','.metadata','bin','obj',
     '.docker','.terraform','.vagrant','.serverless','.idea','.vscode','.settings','.codegraph','.agents','.claude','.gemini','.skills',
-    '__macosx','.ipynb_checkpoints','.tox','.mypy_cache','.pytest_cache','.ruff_cache','__pypackages__','.eggs'
+    '__macosx','.ipynb_checkpoints','.tox','.mypy_cache','.pytest_cache','.ruff_cache','__pypackages__','.eggs',
+    'venv','.venv','env','.env','.pnpm-store','.npm','jspm_packages','bower_components',
+    '.vs','x64','x86','Debug','Release','.parcel-cache','.cache-loader','.sass-cache',
+    '.eslintcache','.stylelintcache','.tsbuildinfo','htmlcov','.turbo','.dune','_opam',
+    '.aws-sam','.pulumi','_esy','.direnv','.serverless-nextjs','out-tsc','dist-tsc',
+    '.yarn-cache','.yarn-offline-mirror','.cargo','.rustup','.pub-cache','.dart_tool'
 ]);
 const DEFAULT_EXCLUDE_CHIPS=[
     '.git','node_modules','dist','build','target','snap','snapd','coverage','__pycache__','.next','.venv','venv','.tox',
-    '.codegraph','.agents','.claude','.gemini','.skills','.idea','.vscode','.terraform','.gradle'
+    '.codegraph','.agents','.claude','.gemini','.skills','.idea','.vscode','.terraform','.gradle',
+    'env','.env','.pnpm-store','bower_components','.vs','x64','Debug','Release','.turbo','.dart_tool'
 ];
 const ANALYSIS_LIMITS={repoSoft:500,repoMax:5000,localSoft:2000,localMax:10000};
 

@@ -9,7 +9,22 @@ export function Icon({ name = 'file', size = 'm', className: customClassName }){
     switch(name){
         case 'logo':
         case 'bolt':
-            paths = <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" {...common} />;
+            paths = (
+                <>
+                    <line x1="12" y1="12" x2="5" y2="6" {...common} strokeWidth={1.2} />
+                    <line x1="12" y1="12" x2="19" y2="6" {...common} strokeWidth={1.2} />
+                    <line x1="12" y1="12" x2="19" y2="18" {...common} strokeWidth={1.2} />
+                    <line x1="12" y1="12" x2="5" y2="18" {...common} strokeWidth={1.2} />
+                    <line x1="12" y1="12" x2="12" y2="3" {...common} strokeWidth={1.2} />
+                    <circle cx="5" cy="6" r="1.8" fill="currentColor" opacity="0.7" />
+                    <circle cx="19" cy="6" r="1.4" fill="currentColor" opacity="0.6" />
+                    <circle cx="19" cy="18" r="1.8" fill="currentColor" opacity="0.7" />
+                    <circle cx="5" cy="18" r="1.4" fill="currentColor" opacity="0.6" />
+                    <circle cx="12" cy="3" r="1.2" fill="currentColor" opacity="0.5" />
+                    <circle cx="12" cy="12" r="3" fill="currentColor" fillOpacity={0.15} {...common} strokeWidth={1.5} />
+                    <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+                </>
+            );
             break;
         case 'search':
             paths = (
