@@ -4564,13 +4564,24 @@ function calcHealth(data){
     var score=100;
     var deadPct=data.stats.functions>0?(data.stats.dead/data.stats.functions*100):0;
     score-=Math.min(20,deadPct);
-    var circular=data.issues.filter(function(i){return i.title.includes('Circular');}).length;
+    var circular=0, god=0;
+    if(data.issues){
+        for(var i=0;i<data.issues.length;i++){
+            var t=data.issues[i].title;
+            if(t.includes('Circular'))circular++;
+            if(t.includes('Large'))god++;
+        }
+    }
     score-=Math.min(20,circular*5);
-    var god=data.issues.filter(function(i){return i.title.includes('Large');}).length;
     score-=Math.min(15,god*3);
     var avgCoup=data.stats.files>0?(data.stats.connections/data.stats.files):0;
     score-=Math.min(15,Math.max(0,avgCoup-3)*2);
-    var sec=data.securityIssues?data.securityIssues.filter(function(i){return i.severity==='high';}).length:0;
+    var sec=0;
+    if(data.securityIssues){
+        for(var j=0;j<data.securityIssues.length;j++){
+            if(data.securityIssues[j].severity==='high')sec++;
+        }
+    }
     score-=Math.min(20,sec*5);
     score=Math.max(0,Math.round(score));
     var grade='F';
