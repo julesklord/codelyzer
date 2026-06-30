@@ -3294,7 +3294,18 @@ function App(){
                     React.createElement('div',{className:'logo',onClick:function(){setShowPrivacy(true);}},
                         React.createElement('div',{className:'logo-mark'},
                             React.createElement('svg',{viewBox:'0 0 24 24',fill:'none',xmlns:'http://www.w3.org/2000/svg'},
-                                React.createElement('path',{d:'M15 2 7 13h5.5l-2.5 9L20 11h-6L15 2z',fill:'rgba(0,255,102,0.15)',stroke:'#00ff66',strokeWidth:'1.6',strokeLinejoin:'round'})
+                                React.createElement('line',{x1:'12',y1:'12',x2:'5',y2:'6',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                                React.createElement('line',{x1:'12',y1:'12',x2:'19',y2:'6',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                                React.createElement('line',{x1:'12',y1:'12',x2:'19',y2:'18',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                                React.createElement('line',{x1:'12',y1:'12',x2:'5',y2:'18',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                                React.createElement('line',{x1:'12',y1:'12',x2:'12',y2:'3',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                                React.createElement('circle',{cx:'5',cy:'6',r:'1.8',fill:'#00ff66',opacity:'0.7'}),
+                                React.createElement('circle',{cx:'19',cy:'6',r:'1.4',fill:'#00ff66',opacity:'0.6'}),
+                                React.createElement('circle',{cx:'19',cy:'18',r:'1.8',fill:'#00ff66',opacity:'0.7'}),
+                                React.createElement('circle',{cx:'5',cy:'18',r:'1.4',fill:'#00ff66',opacity:'0.6'}),
+                                React.createElement('circle',{cx:'12',cy:'3',r:'1.2',fill:'#00ff66',opacity:'0.5'}),
+                                React.createElement('circle',{cx:'12',cy:'12',r:'3',fill:'rgba(0,255,102,0.2)',stroke:'#00ff66',strokeWidth:'1.5'}),
+                                React.createElement('circle',{cx:'12',cy:'12',r:'1.2',fill:'#00ff66'})
                             )
                         ),
                         React.createElement('span',{className:'logo-text'},
@@ -3359,7 +3370,18 @@ function App(){
             React.createElement('div',{className:'logo',onClick:function(){setShowPrivacy(true);}},
                 React.createElement('div',{className:'logo-mark'},
                     React.createElement('svg',{viewBox:'0 0 24 24',fill:'none',xmlns:'http://www.w3.org/2000/svg'},
-                        React.createElement('path',{d:'M15 2 7 13h5.5l-2.5 9L20 11h-6L15 2z',fill:'rgba(0,255,102,0.15)',stroke:'#00ff66',strokeWidth:'1.6',strokeLinejoin:'round'})
+                        React.createElement('line',{x1:'12',y1:'12',x2:'5',y2:'6',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                        React.createElement('line',{x1:'12',y1:'12',x2:'19',y2:'6',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                        React.createElement('line',{x1:'12',y1:'12',x2:'19',y2:'18',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                        React.createElement('line',{x1:'12',y1:'12',x2:'5',y2:'18',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                        React.createElement('line',{x1:'12',y1:'12',x2:'12',y2:'3',stroke:'#00ff66',strokeWidth:'1.2',strokeLinecap:'round'}),
+                        React.createElement('circle',{cx:'5',cy:'6',r:'1.8',fill:'#00ff66',opacity:'0.7'}),
+                        React.createElement('circle',{cx:'19',cy:'6',r:'1.4',fill:'#00ff66',opacity:'0.6'}),
+                        React.createElement('circle',{cx:'19',cy:'18',r:'1.8',fill:'#00ff66',opacity:'0.7'}),
+                        React.createElement('circle',{cx:'5',cy:'18',r:'1.4',fill:'#00ff66',opacity:'0.6'}),
+                        React.createElement('circle',{cx:'12',cy:'3',r:'1.2',fill:'#00ff66',opacity:'0.5'}),
+                        React.createElement('circle',{cx:'12',cy:'12',r:'3',fill:'rgba(0,255,102,0.2)',stroke:'#00ff66',strokeWidth:'1.5'}),
+                        React.createElement('circle',{cx:'12',cy:'12',r:'1.2',fill:'#00ff66'})
                     )
                 ),
                 React.createElement('span',{className:'logo-text'},
