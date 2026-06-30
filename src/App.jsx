@@ -1390,6 +1390,7 @@ function App(){
             nodesRef.current.selectAll('.nc').transition().duration(200)
                 .attr('opacity',function(n){if(n.id===path)return 1;if(affectedSet.has(n.id))return 1;return 0.2;})
                 .attr('fill',function(n){if(n.id===path)return'#ff5f5f';if(affectedSet.has(n.id))return'#ff9f43';return getNodeColor(n);})
+                .attr('filter',function(n){if(n.id===path||affectedSet.has(n.id))return 'url(#glow)'; return null;})
                 .transition()
                 .duration(150)
                 .attr('r', function(n){ 
@@ -1404,13 +1405,15 @@ function App(){
             nodesRef.current.selectAll('.nc').transition().duration(200)
                 .attr('opacity', 1)
                 .attr('fill', getNodeColor)
-                .attr('r', getR);
+                .attr('r', getR)
+                .attr('filter', null);
         }
 
         // 3. Highlight links and animate flow on connections
         linksRef.current.transition().duration(200)
             .attr('stroke-opacity',function(l){var src=l.source.id||l.source;var tgt=l.target.id||l.target;if(src===path||tgt===path)return 0.8;return path?0.05:0.4;})
-            .attr('stroke',function(l){var src=l.source.id||l.source;var tgt=l.target.id||l.target;if(src===path||tgt===path)return'var(--acc)';return theme==='light'?'#ccc':'#333';});
+            .attr('stroke',function(l){var src=l.source.id||l.source;var tgt=l.target.id||l.target;if(src===path||tgt===path)return'var(--acc)';return theme==='light'?'#ccc':'#333';})
+            .attr('filter',function(l){var src=l.source.id||l.source;var tgt=l.target.id||l.target;if(path&&(src===path||tgt===path))return 'url(#glow)'; return null;});
 
         linksRef.current.classed('link-flow', function(l){
             var src=l.source.id||l.source;
@@ -1616,6 +1619,11 @@ function App(){
         zoomRef.current=zoom;
         var container=svg.append('g');
         var defs=svg.append('defs');
+        var filter=defs.append('filter').attr('id','glow').attr('x','-30%').attr('y','-30%').attr('width','160%').attr('height','160%');
+        filter.append('feGaussianBlur').attr('stdDeviation','3.5').attr('result','coloredBlur');
+        var merge=filter.append('feMerge');
+        merge.append('feMergeNode').attr('in','coloredBlur');
+        merge.append('feMergeNode').attr('in','SourceGraphic');
         defs.append('marker').attr('id','arr').attr('viewBox','0 -5 10 10').attr('refX',14).attr('markerWidth',4).attr('markerHeight',4).attr('orient','auto').append('path').attr('d','M0,-4L10,0L0,4').attr('fill',theme==='light'?'#aaa':'#444');
         var hullLayer=container.append('g');
         var linkLayer=container.append('g');
@@ -1918,23 +1926,24 @@ function App(){
                 if(sel){
                     var s=link.source.id||link.source;
                     var t=link.target.id||link.target;
-                    if(s===sel.path||t===sel.path)return 4;
+                    if(s===sel.path||t===sel.path)return 5;
+                    return 0;
                 }
-                return 0;
+                return 1;
             })
             .linkDirectionalParticleWidth(function(link){
                 var sel=selectedRef.current;
                 if(sel){
                     return 2.5;
                 }
-                return 1.2;
+                return 0.8;
             })
             .linkDirectionalParticleSpeed(function(link){
                 var sel=selectedRef.current;
                 if(sel){
                     return 0.015;
                 }
-                return 0.004;
+                return 0.003;
             })
             .linkDirectionalParticleColor(function(link){
                 var s=link.source.id||link.source;
