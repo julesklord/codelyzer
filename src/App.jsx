@@ -728,6 +728,24 @@ function App(){
                     if(i>=max){finishAnalysis();return;}
                     var f=files[i];
                     setProgress('Analyzing '+(i+1)+'/'+max+': '+f.name);
+                    
+                    if (f.size > 500000) {
+                        var layer=Parser.detectLayer(f.path);
+                        analyzed.push({
+                            path:f.path,
+                            name:f.name,
+                            folder:f.folder,
+                            content:'// File too large to analyze directly (' + f.size + ' bytes)',
+                            functions:[],
+                            lines:0,
+                            layer:layer,
+                            churn:0,
+                            isCode:false
+                        });
+                        processFile(i+1);
+                        return;
+                    }
+                    
                     var isCodeFile=f.isCode!==false&&Parser.isCode(f.name);
                     if(isCodeFile){
                         Promise.all([

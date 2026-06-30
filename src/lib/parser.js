@@ -4083,7 +4083,12 @@ async function buildAnalysisData(options){
                     await yieldFn();
                 }
                 
-                var content = await f.entry.async('string');
+                var content = '';
+                if (f.size > 500000) {
+                    content = '// File too large to analyze directly (' + f.size + ' bytes)';
+                } else {
+                    content = await f.entry.async('string');
+                }
                 var layer = Parser.detectLayer(f.path);
                 var isCodeFile = f.isCode !== false && Parser.isCode(f.name);
                 
@@ -4165,12 +4170,15 @@ async function buildAnalysisData(options){
                 }
                 
                 var content = '';
-                try {
-                    content = await f.file.text();
-                } catch (readErr) {
-                    content = '';
+                if (f.size > 500000) {
+                    content = '// File too large to analyze directly (' + f.size + ' bytes)';
+                } else {
+                    try {
+                        content = await f.file.text();
+                    } catch (readErr) {
+                        content = '';
+                    }
                 }
-                
                 var layer = Parser.detectLayer(f.path);
                 var isCodeFile = f.isCode !== false && Parser.isCode(f.name);
                 
