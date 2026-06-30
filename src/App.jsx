@@ -4086,7 +4086,7 @@ function App(){
         ),
         showExport&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowExport(false);}},
             React.createElement('div',{className:'modal',onClick:function(e){e.stopPropagation();},style:{maxWidth:480}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('export','Export','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowExport(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('export','Export','m')),React.createElement('button',{className:'modal-close','aria-label':'Close export dialog',onClick:function(){setShowExport(false);}},'×')),
                 React.createElement('div',{className:'modal-body'},
                     data&&data.architectureDiagram&&React.createElement(React.Fragment,null,
                         React.createElement('div',{style:{fontSize:10,fontWeight:600,color:'var(--t3)',textTransform:'uppercase',marginBottom:8}},graphConfig.vizType==='architecture'?'Block Diagram (current view)':'Block Diagram'),
@@ -4124,7 +4124,7 @@ function App(){
                     React.createElement('div',{className:'modal-title'},iconLabel('ban','Exclude Patterns','m')),
                     React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12}},
                         React.createElement('div',{className:'exclude-count'},parseExcludePatterns(excludePatternDraft).length,' custom'),
-                        React.createElement('button',{className:'modal-close',onClick:closeExcludeModal},'×')
+                        React.createElement('button',{className:'modal-close','aria-label':'Close exclude patterns dialog',onClick:closeExcludeModal},'×')
                     )
                 ),
                 React.createElement('div',{className:'modal-body'},
@@ -4157,7 +4157,7 @@ function App(){
         ),
         showPR&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowPR(false);}},
             React.createElement('div',{className:'modal pr-modal',onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('chart','PR Impact Analyzer','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowPR(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('chart','PR Impact Analyzer','m')),React.createElement('button',{className:'modal-close','aria-label':'Close PR Impact Analyzer dialog',onClick:function(){setShowPR(false);}},'×')),
                 React.createElement('div',{className:'modal-body',style:{maxHeight:'75vh',overflowY:'auto'}},
                     React.createElement('div',{className:'form-group'},React.createElement('label',{className:'form-label'},'Pull Request URL'),React.createElement('input',{className:'form-input','aria-label':'Pull Request URL',placeholder:'https://github.com/owner/repo/pull/123',value:prUrl,onChange:function(e){setPrUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')analyzePR();}})),
                     React.createElement('button',{className:'top-btn primary','aria-label':'Analyze Pull Request',onClick:analyzePR,style:{marginBottom:16,width:'100%'}},iconLabel('search','Analyze PR Impact')),
@@ -4293,7 +4293,7 @@ function App(){
                         drillDown.type==='duplicate'?iconLabel(drillDown.data.type==='code'?'copy':'note',(drillDown.data.type==='code'?'Similar Code':'Duplicate Name')+': '+drillDown.data.name,'m'):
                         'Details'
                     ),
-                    React.createElement('button',{className:'modal-close',onClick:function(){setDrillDown(null);}},'×')
+                    React.createElement('button',{className:'modal-close','aria-label':'Close details dialog',onClick:function(){setDrillDown(null);}},'×')
                 ),
                 React.createElement('div',{className:'modal-body',style:{overflowY:'auto',flex:1}},
                     // Issue drill-down
@@ -4414,7 +4414,7 @@ function App(){
         ),
         showPrivacy&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowPrivacy(false);}},
             React.createElement('div',{className:'modal privacy-modal',onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('lock','Privacy & Security','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowPrivacy(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('lock','Privacy & Security','m')),React.createElement('button',{className:'modal-close','aria-label':'Close privacy dialog',onClick:function(){setShowPrivacy(false);}},'×')),
                 React.createElement('div',{className:'modal-body'},
                     React.createElement('div',{className:'privacy-item'},
                         React.createElement('div',{className:'privacy-icon'},React.createElement(Icon,{name:'globe',size:'l'})),
@@ -4446,7 +4446,7 @@ function App(){
         ),
         showKeyModal&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowKeyModal(false);}},
             React.createElement('div',{className:'modal key-modal',onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('key','GitHub App Private Key','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowKeyModal(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('key','GitHub App Private Key','m')),React.createElement('button',{className:'modal-close','aria-label':'Close private key dialog',onClick:function(){setShowKeyModal(false);}},'×')),
                 React.createElement('div',{className:'modal-body'},
                     React.createElement('div',{className:'key-info'},
                         'Paste the private key from your GitHub App. This key is stored only in memory and never leaves your browser.',
@@ -4470,7 +4470,7 @@ function App(){
         ),
         showUnused&&data&&data.deadFunctions&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowUnused(false);}},
             React.createElement('div',{className:'modal',style:{maxWidth:650,maxHeight:'85vh'},onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('warning','Unused Functions','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowUnused(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('warning','Unused Functions','m')),React.createElement('button',{className:'modal-close','aria-label':'Close unused functions dialog',onClick:function(){setShowUnused(false);}},'×')),
                 React.createElement('div',{className:'modal-body',style:{maxHeight:'70vh',overflowY:'auto'}},
                     React.createElement('div',{className:'unused-summary'},
                         React.createElement('div',{className:'unused-summary-item'},
@@ -4552,7 +4552,7 @@ function App(){
                     ),
                     React.createElement('div',{className:'file-preview-actions'},
                         filePreview.line&&React.createElement('span',{className:'file-preview-line-badge'},'Line ',filePreview.line),
-                        React.createElement('button',{className:'file-preview-close',onClick:function(){setFilePreview(null);}},'×')
+                        React.createElement('button',{className:'file-preview-close','aria-label':'Close file preview',onClick:function(){setFilePreview(null);}},'×')
                     )
                 ),
                 React.createElement('div',{className:'file-preview-content',ref:filePreviewRef},
@@ -4672,7 +4672,7 @@ function App(){
                 )
             )
         ),
-        error&&React.createElement('div',{style:{position:'fixed',bottom:20,right:20,background:'var(--red)',color:'white',padding:'12px 20px',border:'var(--border-width) solid var(--border)',borderRadius:0,boxShadow:'var(--shadow)',zIndex:1000,maxWidth:350},'role':'alert'},[error,React.createElement('button',{'aria-label':'Dismiss error','onClick':function(){setError(null);},style:{marginLeft:12,background:'none',border:'none',color:'white',cursor:'pointer',fontSize:16}},'×')])
+        error&&React.createElement('div',{style:{position:'fixed',bottom:20,right:20,background:'var(--red)',color:'white',padding:'12px 20px',border:'var(--border-width) solid var(--border)',borderRadius:0,boxShadow:'var(--shadow)',zIndex:1000,maxWidth:350},'role':'alert'},[error,React.createElement('button',{'aria-label':'Dismiss error',title:'Dismiss error','onClick':function(){setError(null);},style:{marginLeft:12,background:'none',border:'none',color:'white',cursor:'pointer',fontSize:16}},'×')])
     );
 }
 export default App;
