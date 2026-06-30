@@ -4632,12 +4632,15 @@ function findSuggestedReviewers(prData, repoData) {
 function findTestImpact(prData, repoData) {
     if (!prData || !repoData) return [];
     var changedFiles = (prData.files || []).map(function(f) { return f.filename; });
+    var changedBases = Array.from(new Set(changedFiles.map(function(cf) {
+        return cf.replace(/\.[^.]+$/, '').split('/').pop().toLowerCase();
+    })));
     var testFiles = repoData.files.filter(function(f) { return f.name.match(/\.test\.|\.spec\.|_test\.|test_/i); });
     var impacted = [];
     testFiles.forEach(function(tf) {
-        var shouldRun = changedFiles.some(function(cf) {
-            var cfBase = cf.replace(/\.[^.]+$/, '').split('/').pop();
-            return tf.name.toLowerCase().includes(cfBase.toLowerCase());
+        var tfNameLower = tf.name.toLowerCase();
+        var shouldRun = changedBases.some(function(cfBase) {
+            return tfNameLower.includes(cfBase);
         });
         if (shouldRun) impacted.push({ file: tf.name, path: tf.path });
     });
