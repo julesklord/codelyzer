@@ -3029,16 +3029,36 @@ function getArchitectureScanFiles(files){
     });
 }
 
-function detectArchitectureFramework(files){
-    var paths=getArchitectureScanFiles(files).map(function(f){return normalizeArchitecturePath(f.path||f.name).toLowerCase();});
-    var hasNextConfig=paths.some(function(p){return /(^|\/)next\.config\.(js|mjs|ts|cjs)$/.test(p);});
-    var hasAppRouter=paths.some(function(p){return /(^|\/)(src\/)?app\/.*(page|route)\.(js|jsx|ts|tsx)$/.test(p);});
-    var hasPagesRouter=paths.some(function(p){return /(^|\/)(src\/)?pages\/.*\.(js|jsx|ts|tsx)$/.test(p);});
-    if(hasNextConfig||hasAppRouter||hasPagesRouter)return'Next.js';
-    if(paths.some(function(p){return /\.(html?|xhtml)$/.test(p);}))return'Browser App';
-    if(paths.some(function(p){return /\.(jsx?|tsx?|mjs|cjs)$/.test(p);}))return'JavaScript/TypeScript';
-    if(paths.some(function(p){return /\.(py|pyw|pyi)$/.test(p);}))return'Python';
-    return'Generic';
+function detectArchitectureFramework(files) {
+    var scanFiles = getArchitectureScanFiles(files);
+    var hasBrowserApp = false;
+    var hasJsTs = false;
+    var hasPython = false;
+
+    var NEXT_CONFIG_RE = /(^|\/)next\.config\.(js|mjs|ts|cjs)$/;
+    var NEXT_APP_ROUTER_RE = /(^|\/)(src\/)?app\/.*(page|route)\.(js|jsx|ts|tsx)$/;
+    var NEXT_PAGES_ROUTER_RE = /(^|\/)(src\/)?pages\/.*\.(js|jsx|ts|tsx)$/;
+    var BROWSER_APP_RE = /\.(html?|xhtml)$/;
+    var JS_TS_RE = /\.(jsx?|tsx?|mjs|cjs)$/;
+    var PYTHON_RE = /\.(py|pyw|pyi)$/;
+
+    for (var i = 0; i < scanFiles.length; i++) {
+        var f = scanFiles[i];
+        var p = normalizeArchitecturePath(f.path || f.name).toLowerCase();
+
+        if (NEXT_CONFIG_RE.test(p) || NEXT_APP_ROUTER_RE.test(p) || NEXT_PAGES_ROUTER_RE.test(p)) {
+            return 'Next.js';
+        }
+
+        if (!hasBrowserApp && BROWSER_APP_RE.test(p)) hasBrowserApp = true;
+        if (!hasJsTs && JS_TS_RE.test(p)) hasJsTs = true;
+        if (!hasPython && PYTHON_RE.test(p)) hasPython = true;
+    }
+
+    if (hasBrowserApp) return 'Browser App';
+    if (hasJsTs) return 'JavaScript/TypeScript';
+    if (hasPython) return 'Python';
+    return 'Generic';
 }
 
 function convertNextRouteSegment(segment){
