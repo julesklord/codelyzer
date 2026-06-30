@@ -2323,6 +2323,68 @@ function decodeBase64Utf8(content){
     }
 }
 
+function pemToArrayBuffer(pem) {
+    var raw = pem
+        .replace(/-----BEGIN[A-Z\s]+PRIVATE KEY-----/, '')
+        .replace(/-----END[A-Z\s]+PRIVATE KEY-----/, '')
+        .replace(/\s+/g, '');
+    var binary = atob(raw);
+    var len = binary.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+function pkcs1ToPkcs8(pkcs1Buffer) {
+    var pkcs1Length = pkcs1Buffer.byteLength;
+    var octetStringHeader = encodeASN1Length(0x04, pkcs1Length);
+    var privateKeyInfoContentLength = 3 + 15 + octetStringHeader.length + pkcs1Length;
+    var privateKeyInfo = encodeASN1Length(0x30, privateKeyInfoContentLength);
+    
+    var result = new Uint8Array(privateKeyInfo.length + 3 + 15 + octetStringHeader.length + pkcs1Length);
+    var offset = 0;
+    result.set(privateKeyInfo, offset); offset += privateKeyInfo.length;
+    result.set([0x02, 0x01, 0x00], offset); offset += 3;
+    result.set([0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00], offset); offset += 15;
+    result.set(octetStringHeader, offset); offset += octetStringHeader.length;
+    result.set(new Uint8Array(pkcs1Buffer), offset);
+    return result.buffer;
+}
+
+function encodeASN1Length(tag, len) {
+    if (len < 128) {
+        return new Uint8Array([tag, len]);
+    } else if (len < 256) {
+        return new Uint8Array([tag, 0x81, len]);
+    } else if (len < 65536) {
+        return new Uint8Array([tag, 0x82, (len >> 8) & 0xff, len & 0xff]);
+    } else if (len < 16777216) {
+        return new Uint8Array([tag, 0x83, (len >> 16) & 0xff, (len >> 8) & 0xff, len & 0xff]);
+    } else {
+        return new Uint8Array([tag, 0x84, (len >> 24) & 0xff, (len >> 16) & 0xff, (len >> 8) & 0xff, len & 0xff]);
+    }
+}
+
+function base64url(arr) {
+    var bin = Array.from(new Uint8Array(arr), function(x){return String.fromCharCode(x);}).join('');
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function stringToBase64url(str) {
+    var bytes = new TextEncoder().encode(str);
+    return base64url(bytes);
+}
+
+async function getSubtleCrypto() {
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+        return crypto.subtle;
+    }
+    var nodeCrypto = await import('crypto');
+    return nodeCrypto.webcrypto.subtle;
+}
+
 var GitHub={
     token:'',
     appId:null,
@@ -2334,52 +2396,85 @@ var GitHub={
     
     // Generate JWT for GitHub App authentication
     generateJWT:function(){
-        if(!this.appId||!this.privateKey)return null;
-        try{
-            var now=Math.floor(Date.now()/1000);
-            var payload={
-                iat:now-60,// Issued at (60 seconds in past to account for clock drift)
-                exp:now+600,// Expires in 10 minutes (max allowed)
-                iss:this.appId
-            };
-            var header={alg:'RS256',typ:'JWT'};
-            var sHeader=JSON.stringify(header);
-            var sPayload=JSON.stringify(payload);
-            var jwt=KJUR.jws.JWS.sign('RS256',sHeader,sPayload,this.privateKey);
-            return jwt;
-        }catch(e){
-            console.error('JWT generation failed:',e);
-            return null;
-        }
+        if(!this.appId||!this.privateKey)return Promise.resolve(null);
+        var appId = this.appId;
+        var privateKeyPem = this.privateKey;
+        return (async function(){
+            try{
+                var now=Math.floor(Date.now()/1000);
+                var header={alg:'RS256',typ:'JWT'};
+                var payload={
+                    iat:now-60,// Issued at (60 seconds in past to account for clock drift)
+                    exp:now+600,// Expires in 10 minutes (max allowed)
+                    iss:appId
+                };
+                var headerB64=stringToBase64url(JSON.stringify(header));
+                var payloadB64=stringToBase64url(JSON.stringify(payload));
+                var dataToSign=new TextEncoder().encode(headerB64+'.'+payloadB64);
+                
+                var isPkcs1=privateKeyPem.includes('RSA PRIVATE KEY');
+                var keyBuffer=pemToArrayBuffer(privateKeyPem);
+                if(isPkcs1){
+                    keyBuffer=pkcs1ToPkcs8(keyBuffer);
+                }
+                
+                var subtle=await getSubtleCrypto();
+                var cryptoKey=await subtle.importKey(
+                    'pkcs8',
+                    keyBuffer,
+                    {
+                        name:'RSASSA-PKCS1-v1_5',
+                        hash:{name:'SHA-256'}
+                    },
+                    false,
+                    ['sign']
+                );
+                
+                var signature=await subtle.sign(
+                    'RSASSA-PKCS1-v1_5',
+                    cryptoKey,
+                    dataToSign
+                );
+                
+                var signatureB64=base64url(signature);
+                return headerB64+'.'+payloadB64+'.'+signatureB64;
+            }catch(e){
+                console.error('JWT generation failed:',e);
+                return null;
+            }
+        })();
     },
     
     getRepoInstallation:function(owner,repo){
-        var jwt=this.generateJWT();
-        if(!jwt)return Promise.reject(new Error('Failed to generate JWT'));
-        return this.request(buildGitHubApiUrl(['repos',owner,repo,'installation']),{
-            headers:{
-                'Accept':'application/vnd.github.v3+json',
-                'Authorization':'Bearer '+jwt
-            }
-        },{401:'Invalid App credentials',404:'This GitHub App is not installed on the selected repository'});
+        var self=this;
+        return this.generateJWT().then(function(jwt){
+            if(!jwt)return Promise.reject(new Error('Failed to generate JWT'));
+            return self.request(buildGitHubApiUrl(['repos',owner,repo,'installation']),{
+                headers:{
+                    'Accept':'application/vnd.github.v3+json',
+                    'Authorization':'Bearer '+jwt
+                }
+            },{401:'Invalid App credentials',404:'This GitHub App is not installed on the selected repository'});
+        });
     },
     
     // Get installation access token
     getInstallationToken:function(installationId){
         var self=this;
-        var jwt=this.generateJWT();
-        if(!jwt)return Promise.reject(new Error('Failed to generate JWT'));
-        return this.request(buildGitHubApiUrl(['app','installations',String(installationId),'access_tokens']),{
-            method:'POST',
-            headers:{
-                'Accept':'application/vnd.github.v3+json',
-                'Authorization':'Bearer '+jwt
-            }
-        },{401:'Invalid App credentials',404:'Installation not found'}).then(function(data){
-            self.installationToken=data.token;
-            self.installationTokenExpiry=new Date(data.expires_at).getTime();
-            self.token=data.token;// Use installation token for API calls
-            return data.token;
+        return this.generateJWT().then(function(jwt){
+            if(!jwt)return Promise.reject(new Error('Failed to generate JWT'));
+            return self.request(buildGitHubApiUrl(['app','installations',String(installationId),'access_tokens']),{
+                method:'POST',
+                headers:{
+                    'Accept':'application/vnd.github.v3+json',
+                    'Authorization':'Bearer '+jwt
+                }
+            },{401:'Invalid App credentials',404:'Installation not found'}).then(function(data){
+                self.installationToken=data.token;
+                self.installationTokenExpiry=new Date(data.expires_at).getTime();
+                self.token=data.token;// Use installation token for API calls
+                return data.token;
+            });
         });
     },
     

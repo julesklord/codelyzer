@@ -17,7 +17,6 @@
     "d3-sankey": "^0.12.3",
     "dompurify": "^3.4.11",
     "jspdf": "^2.5.1",
-    "jsrsasign": "^11.1.0",
     "jszip": "^3.10.1",
     "mermaid": "^10.9.1",
     "react": "^18.2.0",
