@@ -4586,9 +4586,12 @@ function calcPRRisk(prData, repoData) {
     var changedFiles = prData.files || [];
     var totalBlast = 0;
     var hotspots = [];
+    var repoFilePaths = new Set();
+    if (repoData.files) {
+        repoData.files.forEach(function(df) { repoFilePaths.add(df.path); });
+    }
     changedFiles.forEach(function(f) {
-        var existing = repoData.files.find(function(df) { return df.path === f.filename; });
-        if (existing) {
+        if (repoFilePaths.has(f.filename)) {
             var blast = calcBlast(f.filename, repoData.connections, repoData.files);
             totalBlast += blast.count;
             if (blast.count > 5) hotspots.push({ file: f.filename, blast: blast.count });
