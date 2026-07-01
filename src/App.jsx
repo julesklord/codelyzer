@@ -3841,7 +3841,7 @@ function App(){
                                         React.createElement('div',{className:'panel-title'},React.createElement(Icon,{name:'file',size:'m'}),' ',selected.name),
                                         React.createElement('div',{className:'panel-subtitle'},selected.folder||'root',' • ',selected.layer,' • ',selected.lines,' lines',selected.complexity&&selected.complexity.score>0?' • Complexity: '+selected.complexity.score:'')
                                     ),
-                                    React.createElement('button',{className:'view-file-btn',onClick:function(){openFilePreview(selected.path);}},iconLabel('eye','View Source'))
+                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(){openFilePreview(selected.path);}},iconLabel('eye','View Source'))
                                 )
                             ),
                             blastRadius&&React.createElement('div',{className:'card',style:{marginBottom:12}},
@@ -3972,7 +3972,7 @@ function App(){
                                             React.createElement('div',{className:'fn-header',onClick:function(){toggleFn(fn.name);}},
                                                 React.createElement('span',{className:'fn-name'},fn.name,'()'),
                                                 React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},
-                                                    React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(selected.path,fn.line);},title:'View source'},React.createElement(Icon,{name:'eye',size:'s'})),
+                                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(selected.path,fn.line);},title:'View source'},React.createElement(Icon,{name:'eye',size:'s'})),
                                                     React.createElement('span',{className:'fn-line'},'L',fn.line),
                                                     React.createElement('span',{className:'badge badge-default',title:'Internal calls (same file)'},intCalls,' int'),
                                                     React.createElement('span',{className:'badge '+(extCalls>10?'badge-danger':extCalls>0?'badge-warning':'badge-default'),title:'External calls (other files)'},extCalls,' ext')
@@ -4086,7 +4086,7 @@ function App(){
         ),
         showExport&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowExport(false);}},
             React.createElement('div',{className:'modal',onClick:function(e){e.stopPropagation();},style:{maxWidth:480}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('export','Export','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowExport(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('export','Export','m')),React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:function(){setShowExport(false);}},'×')),
                 React.createElement('div',{className:'modal-body'},
                     data&&data.architectureDiagram&&React.createElement(React.Fragment,null,
                         React.createElement('div',{style:{fontSize:10,fontWeight:600,color:'var(--t3)',textTransform:'uppercase',marginBottom:8}},graphConfig.vizType==='architecture'?'Block Diagram (current view)':'Block Diagram'),
@@ -4124,7 +4124,7 @@ function App(){
                     React.createElement('div',{className:'modal-title'},iconLabel('ban','Exclude Patterns','m')),
                     React.createElement('div',{style:{display:'flex',alignItems:'center',gap:12}},
                         React.createElement('div',{className:'exclude-count'},parseExcludePatterns(excludePatternDraft).length,' custom'),
-                        React.createElement('button',{className:'modal-close',onClick:closeExcludeModal},'×')
+                        React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:closeExcludeModal},'×')
                     )
                 ),
                 React.createElement('div',{className:'modal-body'},
@@ -4157,7 +4157,7 @@ function App(){
         ),
         showPR&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowPR(false);}},
             React.createElement('div',{className:'modal pr-modal',onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('chart','PR Impact Analyzer','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowPR(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('chart','PR Impact Analyzer','m')),React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:function(){setShowPR(false);}},'×')),
                 React.createElement('div',{className:'modal-body',style:{maxHeight:'75vh',overflowY:'auto'}},
                     React.createElement('div',{className:'form-group'},React.createElement('label',{className:'form-label'},'Pull Request URL'),React.createElement('input',{className:'form-input','aria-label':'Pull Request URL',placeholder:'https://github.com/owner/repo/pull/123',value:prUrl,onChange:function(e){setPrUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')analyzePR();}})),
                     React.createElement('button',{className:'top-btn primary','aria-label':'Analyze Pull Request',onClick:analyzePR,style:{marginBottom:16,width:'100%'}},iconLabel('search','Analyze PR Impact')),
@@ -4293,7 +4293,7 @@ function App(){
                         drillDown.type==='duplicate'?iconLabel(drillDown.data.type==='code'?'copy':'note',(drillDown.data.type==='code'?'Similar Code':'Duplicate Name')+': '+drillDown.data.name,'m'):
                         'Details'
                     ),
-                    React.createElement('button',{className:'modal-close',onClick:function(){setDrillDown(null);}},'×')
+                    React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:function(){setDrillDown(null);}},'×')
                 ),
                 React.createElement('div',{className:'modal-body',style:{overflowY:'auto',flex:1}},
                     // Issue drill-down
@@ -4306,7 +4306,7 @@ function App(){
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11}},item.name),
                                 item.file&&React.createElement('div',{style:{display:'flex',gap:6}},
-                                    React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(item.file,item.line);}},iconLabel('eye','View')),
+                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(item.file,item.line);}},iconLabel('eye','View')),
                                     React.createElement('button',{style:{fontSize:9,padding:'4px 8px',background:'var(--acc)',color:'var(--bg0)',border:'var(--border-width) solid var(--border)',borderRadius:0,cursor:'pointer',fontWeight:800,textTransform:'uppercase'},onClick:function(e){e.stopPropagation();selectFile(item.file);setDrillDown(null);}},'Go to file →')
                                 )
                             ),
@@ -4325,7 +4325,7 @@ function App(){
                                 item.files.map(function(f,k){return React.createElement('div',{key:k,style:{fontSize:9,color:'var(--t2)',padding:'4px 8px',background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:0,marginBottom:4,display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                     React.createElement('span',{style:{fontFamily:'monospace',cursor:'pointer',flex:1},onClick:function(){selectFile(f.file||f);setDrillDown(null);}},typeof f==='string'?f.split('/').pop():(f.file||'').split('/').pop(),f.line?' :'+f.line:''),
                                     React.createElement('div',{style:{display:'flex',gap:4}},
-                                        React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(f.file||f,f.line);}},React.createElement(Icon,{name:'eye',size:'s'})),
+                                        React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.file||f,f.line);}},React.createElement(Icon,{name:'eye',size:'s'})),
                                         React.createElement('span',{style:{color:'var(--acc)',cursor:'pointer'},onClick:function(){selectFile(f.file||f);setDrillDown(null);}},'→')
                                     )
                                 );})
@@ -4348,7 +4348,7 @@ function App(){
                         drillDown.data.files.map(function(f,j){return React.createElement('div',{key:j,style:getAccentBlockStyle('rgba(0,255,157,0.28)','rgba(0,255,157,0.08)',{padding:12,marginBottom:8})},
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11,cursor:'pointer'},onClick:function(){selectFile(f.path);setDrillDown(null);}},f.name),
-                                React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(f.path);}},iconLabel('eye','View'))
+                                React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.path);}},iconLabel('eye','View'))
                             ),
                             React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginTop:4,fontFamily:'monospace',cursor:'pointer'},onClick:function(){selectFile(f.path);setDrillDown(null);}},f.path),
                             f.fns&&React.createElement('div',{style:{fontSize:10,color:'var(--orange)',marginTop:4}},f.fns,' functions'),
@@ -4369,7 +4369,7 @@ function App(){
                         React.createElement('div',{style:{background:'var(--bg0)',padding:12,borderRadius:8,marginBottom:16}},
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11,cursor:'pointer'},onClick:function(){selectFile(drillDown.data.path);setDrillDown(null);}},drillDown.data.file),
-                                React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(drillDown.data.path,drillDown.data.line);}},iconLabel('eye','View'))
+                                React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(drillDown.data.path,drillDown.data.line);}},iconLabel('eye','View'))
                             ),
                             React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginTop:4,fontFamily:'monospace',cursor:'pointer'},onClick:function(){selectFile(drillDown.data.path);setDrillDown(null);}},drillDown.data.path),
                             drillDown.data.line&&React.createElement('div',{style:{fontSize:10,color:'var(--orange)',marginTop:4}},'Line ',drillDown.data.line)
@@ -4398,7 +4398,7 @@ function App(){
                             : getAccentBlockStyle('rgba(255,159,67,0.34)','rgba(255,159,67,0.08)',{padding:12,marginBottom:8})},
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11,cursor:'pointer'},onClick:function(){selectFile(f.file);setDrillDown(null);}},f.name||drillDown.data.name),
-                                React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(f.file,f.line);}},iconLabel('eye','View'))
+                                React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.file,f.line);}},iconLabel('eye','View'))
                             ),
                             React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginTop:4,fontFamily:'monospace',cursor:'pointer'},onClick:function(){selectFile(f.file);setDrillDown(null);}},f.file),
                             f.line&&React.createElement('div',{style:{fontSize:10,color:'var(--orange)',marginTop:4}},'Line ',f.line)
@@ -4414,7 +4414,7 @@ function App(){
         ),
         showPrivacy&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowPrivacy(false);}},
             React.createElement('div',{className:'modal privacy-modal',onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('lock','Privacy & Security','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowPrivacy(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('lock','Privacy & Security','m')),React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:function(){setShowPrivacy(false);}},'×')),
                 React.createElement('div',{className:'modal-body'},
                     React.createElement('div',{className:'privacy-item'},
                         React.createElement('div',{className:'privacy-icon'},React.createElement(Icon,{name:'globe',size:'l'})),
@@ -4446,7 +4446,7 @@ function App(){
         ),
         showKeyModal&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowKeyModal(false);}},
             React.createElement('div',{className:'modal key-modal',onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('key','GitHub App Private Key','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowKeyModal(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('key','GitHub App Private Key','m')),React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:function(){setShowKeyModal(false);}},'×')),
                 React.createElement('div',{className:'modal-body'},
                     React.createElement('div',{className:'key-info'},
                         'Paste the private key from your GitHub App. This key is stored only in memory and never leaves your browser.',
@@ -4470,7 +4470,7 @@ function App(){
         ),
         showUnused&&data&&data.deadFunctions&&React.createElement('div',{className:'modal-overlay',onClick:function(){setShowUnused(false);}},
             React.createElement('div',{className:'modal',style:{maxWidth:650,maxHeight:'85vh'},onClick:function(e){e.stopPropagation();}},
-                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('warning','Unused Functions','m')),React.createElement('button',{className:'modal-close',onClick:function(){setShowUnused(false);}},'×')),
+                React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('warning','Unused Functions','m')),React.createElement('button',{className:'modal-close','aria-label':'Close modal',onClick:function(){setShowUnused(false);}},'×')),
                 React.createElement('div',{className:'modal-body',style:{maxHeight:'70vh',overflowY:'auto'}},
                     React.createElement('div',{className:'unused-summary'},
                         React.createElement('div',{className:'unused-summary-item'},
@@ -4500,7 +4500,7 @@ function App(){
                                     )
                                 ),
                                 React.createElement('div',{className:'unused-fn-meta'},
-                                    React.createElement('button',{className:'view-file-btn',onClick:function(e){e.stopPropagation();openFilePreview(fn.file,fn.line);},title:'View source'},React.createElement(Icon,{name:'eye',size:'s'})),
+                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(fn.file,fn.line);},title:'View source'},React.createElement(Icon,{name:'eye',size:'s'})),
                                     React.createElement('span',{className:'unused-fn-lines'},fn.codeLines,' lines'),
                                     fn.line&&React.createElement('span',{className:'unused-fn-loc'},'L',fn.line),
                                     React.createElement('span',{style:{fontSize:10,color:'var(--t3)'}},isExpanded?'▼':'▶')
@@ -4552,7 +4552,7 @@ function App(){
                     ),
                     React.createElement('div',{className:'file-preview-actions'},
                         filePreview.line&&React.createElement('span',{className:'file-preview-line-badge'},'Line ',filePreview.line),
-                        React.createElement('button',{className:'file-preview-close',onClick:function(){setFilePreview(null);}},'×')
+                        React.createElement('button',{className:'file-preview-close','aria-label':'Close preview',onClick:function(){setFilePreview(null);}},'×')
                     )
                 ),
                 React.createElement('div',{className:'file-preview-content',ref:filePreviewRef},
