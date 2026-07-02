@@ -2482,12 +2482,14 @@ function App(){
         var folderIdx={};folders.forEach(function(f,i){folderIdx[f]=i;});
         var filteredPaths=new Set(filteredFiles.map(function(f){return f.path;}));
         var flowMap={};
+        var fileByPath={};
+        data.files.forEach(function(f){fileByPath[f.path]=f;});
         data.connections.forEach(function(c){
             var src=typeof c.source==='object'?c.source.id:c.source;
             var tgt=typeof c.target==='object'?c.target.id:c.target;
             if(!filteredPaths.has(src)&&!filteredPaths.has(tgt))return;
-            var srcFile=data.files.find(function(f){return f.path===src;});
-            var tgtFile=data.files.find(function(f){return f.path===tgt;});
+            var srcFile=fileByPath[src];
+            var tgtFile=fileByPath[tgt];
             if(srcFile&&tgtFile&&srcFile.folder!==tgtFile.folder){
                 var key=srcFile.folder+'|'+tgtFile.folder;
                 flowMap[key]=(flowMap[key]||0)+(c.count||1);
