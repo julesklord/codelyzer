@@ -1575,6 +1575,15 @@ function App(){
         }
     },[filePreview]);
 
+        var filteredFilesMemo = useMemo(function() {
+        if (!data || !data.files) return [];
+        return folderFilter
+            ? data.files.filter(function(f) {
+                return f.folder === folderFilter || f.folder.startsWith(folderFilter + '/');
+            })
+            : data.files;
+    }, [data, folderFilter]);
+
     var colorMap=useMemo(function(){
         if(!data)return{};
         var m={};
@@ -1598,7 +1607,7 @@ function App(){
         try{
         var w=svgRef.current.clientWidth;
         var h=svgRef.current.clientHeight;
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var nodes, links;
         if (viewGroupMode === 'folder' && !folderFilter) {
             var folderMap = {};
@@ -1836,7 +1845,7 @@ function App(){
             }
             return materialCache[col];
         }
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var nodes, links;
 
         var existingNodesMap=new Map();
@@ -2293,7 +2302,7 @@ function App(){
         svg.call(zoom);
         var hier={name:'root',children:[]};
         var folderMap={};
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         filteredFiles.forEach(function(f){
             var folder=f.folder||'root';
             if(!folderMap[folder])folderMap[folder]={name:folder,children:[]};
@@ -2363,7 +2372,7 @@ function App(){
         var g=svg.append('g').attr('transform','translate(100,80)');
         var zoom=d3.zoom().scaleExtent([0.5,3]).on('zoom',function(e){g.attr('transform','translate('+(100+e.transform.x)+','+(80+e.transform.y)+') scale('+e.transform.k+')');});
         svg.call(zoom);
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var files=filteredFiles.slice(0,40);
         var n=files.length;
         var cellSize=Math.min(18,Math.max(10,(Math.min(w-120,h-100))/n));
@@ -2422,7 +2431,7 @@ function App(){
         var g=svg.append('g').attr('transform','translate(80,20)');
         var zoom=d3.zoom().scaleExtent([0.3,3]).on('zoom',function(e){g.attr('transform','translate('+(80+e.transform.x)+','+(20+e.transform.y)+') scale('+e.transform.k+')');});
         svg.call(zoom);
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var hier={name:'root',children:[]};
         var folderMap={};
         filteredFiles.slice(0,80).forEach(function(f){
@@ -2477,7 +2486,7 @@ function App(){
         var g=svg.append('g').attr('transform','translate(20,20)');
         var zoom=d3.zoom().scaleExtent([0.5,2]).on('zoom',function(e){g.attr('transform','translate('+(20+e.transform.x)+','+(20+e.transform.y)+') scale('+e.transform.k+')');});
         svg.call(zoom);
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var folders=[...new Set(filteredFiles.map(function(f){return f.folder||'root';}))].slice(0,15);
         var folderIdx={};folders.forEach(function(f,i){folderIdx[f]=i;});
         var filteredPaths=new Set(filteredFiles.map(function(f){return f.path;}));
@@ -2565,7 +2574,7 @@ function App(){
         var g=svg.append('g');
         var zoom=d3.zoom().scaleExtent([0.2,4]).on('zoom',function(e){g.attr('transform',e.transform);});
         svg.call(zoom);
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var files=filteredFiles.slice(0,100);
         var fileIdx={};files.forEach(function(f,i){fileIdx[f.path]=i;});
         var folders=[...new Set(files.map(function(f){return f.folder||'root';}))];
@@ -2636,7 +2645,7 @@ function App(){
         var zoom=d3.zoom().scaleExtent([0.4,3]).on('zoom',function(e){mainG.attr('transform','translate('+(w/2+e.transform.x)+','+(h/2+e.transform.y)+') scale('+e.transform.k+')');});
         svg.call(zoom);
         var radius=Math.min(w,h)/2-100;
-        var filteredFiles=folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}):data.files;
+        var filteredFiles = filteredFilesMemo;
         var files=filteredFiles.slice(0,70);
         var fileIdx={};files.forEach(function(f,i){fileIdx[f.path]=i;});
         var folderGroups={};files.forEach(function(f){var folder=f.folder||'root';if(!folderGroups[folder])folderGroups[folder]=[];folderGroups[folder].push(f);});
@@ -3779,7 +3788,7 @@ function App(){
                         )
                     ),
                     graphConfig.vizType!=='architecture'&&React.createElement('div',{className:'canvas-info'},
-                        React.createElement('div',{className:'info-chip'},React.createElement('strong',null,folderFilter?data.files.filter(function(f){return f.folder===folderFilter||f.folder.startsWith(folderFilter+'/');}).length:data.files.length),' files'),
+                        React.createElement('div',{className:'info-chip'},React.createElement('strong',null,filteredFilesMemo.length),' files'),
                         React.createElement('div',{className:'info-chip'},React.createElement('strong',null,data.connections.length),' links'),
                         data.excludePatterns&&data.excludePatterns.length>0&&React.createElement('div',{className:'info-chip'},
                             React.createElement(Icon,{name:'ban',size:'s'}),
