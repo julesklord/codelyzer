@@ -4169,6 +4169,10 @@ function App(){
                         var testImpact = findTestImpact(prData, data);
                         var chains = findDependencyChains(prData, data);
                         var riskColor = risk.level === 'critical' ? 'var(--red)' : risk.level === 'high' ? 'var(--orange)' : risk.level === 'medium' ? 'var(--blue)' : 'var(--green)';
+                        var dataFilesByPath = new Map();
+                        if (data && data.files) {
+                            for (var i = 0; i < data.files.length; i++) dataFilesByPath.set(data.files[i].path, data.files[i]);
+                        }
                         return React.createElement(React.Fragment, null,
                             React.createElement('div',{className:'pr-header',style:{marginBottom:16}},
                                 React.createElement('div',{className:'pr-title',style:{fontSize:14}},prData.title),
@@ -4247,7 +4251,7 @@ function App(){
                                 React.createElement('div',{className:'pr-impact-card-title'},iconLabel('folder','Changed Files')),
                                 React.createElement('div',{className:'pr-files-list'},
                                     prData.files&&prData.files.slice(0,20).map(function(f,i){
-                                        var existing=data&&data.files.find(function(df){return df.path===f.filename;});
+                                        var existing=dataFilesByPath.get(f.filename);
                                         var blast=existing?calcBlast(f.filename,data.connections,data.files):null;
                                         var statusColor = f.status === 'added' ? 'var(--green)' : f.status === 'removed' ? 'var(--red)' : 'var(--blue)';
                                         return React.createElement('div',{key:i,className:'pr-file-row'},
