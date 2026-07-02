@@ -4568,7 +4568,7 @@ function App(){
                             var isHighlighted=filePreview.line&&lineNum===filePreview.line;
                             return React.createElement('div',{key:i,className:'file-preview-line'+(isHighlighted?' highlighted':'')},
                                 React.createElement('span',{className:'file-preview-linenum'},lineNum),
-                                React.createElement('span',{className:'file-preview-text',dangerouslySetInnerHTML:{__html:DOMPurify.sanitize(lineHtml||' ')}})
+                                React.createElement('span',{className:'file-preview-text',dangerouslySetInnerHTML:{__html:DOMPurify.sanitize(lineHtml||' ', { ALLOWED_TAGS: ['span'], ALLOWED_ATTR: ['class', 'style'] })}})
                             );
                         })
                     ):null

@@ -175,7 +175,7 @@ function getSecurityScanContent(file){
 function isSanitizedPreviewRenderer(content){
     return content.includes("function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}") &&
            content.includes("var escaped=esc(line);") &&
-           (content.includes("dangerouslySetInnerHTML:{__html:lineHtml||' '}") || content.includes("dangerouslySetInnerHTML:{__html:DOMPurify.sanitize(lineHtml||' ')}"));
+           (content.includes("dangerouslySetInnerHTML:{__html:lineHtml||' '}") || content.includes("dangerouslySetInnerHTML:{__html:DOMPurify.sanitize(lineHtml||' ', { ALLOWED_TAGS: ['span'], ALLOWED_ATTR: ['class', 'style'] })}"));
 }
 
 function yieldToBrowser(){
