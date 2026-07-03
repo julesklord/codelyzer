@@ -761,26 +761,24 @@ const Parser={
     // Longest common subsequence length (optimized for similarity)
     lcsLength:function(s1,s2){
         // Use simplified approach for performance
-        if(s1.length>500||s2.length>500){
-            // For long strings, use sampling
-            s1=s1.substring(0,500);
-            s2=s2.substring(0,500);
-        }
+        if(s1.length>500) s1=s1.substring(0,500);
+        if(s2.length>500) s2=s2.substring(0,500);
 
         var m=s1.length,n=s2.length;
-        var prev=new Array(n+1).fill(0);
-        var curr=new Array(n+1).fill(0);
+        var prev=new Uint16Array(n+1);
+        var curr=new Uint16Array(n+1);
 
         for(var i=1;i<=m;i++){
+            var c1=s1.charCodeAt(i-1);
             for(var j=1;j<=n;j++){
-                if(s1[i-1]===s2[j-1]){
+                if(c1===s2.charCodeAt(j-1)){
                     curr[j]=prev[j-1]+1;
                 }else{
-                    curr[j]=Math.max(prev[j],curr[j-1]);
+                    var p=prev[j],c=curr[j-1];
+                    curr[j]=p>c?p:c;
                 }
             }
             var tmp=prev;prev=curr;curr=tmp;
-            curr.fill(0);
         }
         return prev[n];
     },
