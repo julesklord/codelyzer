@@ -3435,6 +3435,27 @@ function App(){
         );
     }
     var health=useMemo(function(){return calcHealth(data);},[data]);
+    var selectedConnections = useMemo(function() {
+        var outgoing = [], incoming = [];
+        if (!data || !selected) return { outgoing, incoming };
+        var connByFile = { out: {}, in: {} };
+        data.connections.forEach(function(c) {
+            var src = typeof c.source === 'object' ? c.source.id : c.source;
+            var tgt = typeof c.target === 'object' ? c.target.id : c.target;
+            if (src === selected.path) {
+                if (!connByFile.out[tgt]) connByFile.out[tgt] = { file: tgt, fns: [] };
+                connByFile.out[tgt].fns.push({ name: c.fn, count: c.count });
+            }
+            if (tgt === selected.path) {
+                if (!connByFile.in[src]) connByFile.in[src] = { file: src, fns: [] };
+                connByFile.in[src].fns.push({ name: c.fn, count: c.count });
+            }
+        });
+        outgoing = Object.values(connByFile.out).sort(function(a, b) { return b.fns.length - a.fns.length; });
+        incoming = Object.values(connByFile.in).sort(function(a, b) { return b.fns.length - a.fns.length; });
+        return { outgoing, incoming };
+    }, [data, selected]);
+
     return React.createElement('div',{
         className:'app',
         style:{'--topbar-height':topbarHeight+'px'},
@@ -3894,22 +3915,8 @@ function App(){
                                 )
                             ),
                             (function(){
-                                var outgoing=[],incoming=[];
-                                var connByFile={out:{},in:{}};
-                                data.connections.forEach(function(c){
-                                    var src=typeof c.source==='object'?c.source.id:c.source;
-                                    var tgt=typeof c.target==='object'?c.target.id:c.target;
-                                    if(src===selected.path){
-                                        if(!connByFile.out[tgt])connByFile.out[tgt]={file:tgt,fns:[]};
-                                        connByFile.out[tgt].fns.push({name:c.fn,count:c.count});
-                                    }
-                                    if(tgt===selected.path){
-                                        if(!connByFile.in[src])connByFile.in[src]={file:src,fns:[]};
-                                        connByFile.in[src].fns.push({name:c.fn,count:c.count});
-                                    }
-                                });
-                                outgoing=Object.values(connByFile.out).sort(function(a,b){return b.fns.length-a.fns.length;});
-                                incoming=Object.values(connByFile.in).sort(function(a,b){return b.fns.length-a.fns.length;});
+                                var outgoing = selectedConnections.outgoing;
+                                var incoming = selectedConnections.incoming;
                                 var totalConns=outgoing.length+incoming.length;
                                 return totalConns>0&&React.createElement('div',{className:'card',style:{marginBottom:12}},
                                     React.createElement('div',{className:'card-header',onClick:function(){toggleCard('conns');}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('conns')?' open':'')},'▶'),React.createElement(Icon,{name:'link',size:'s'}),' Connections'),React.createElement('span',{className:'badge badge-default'},totalConns)),
