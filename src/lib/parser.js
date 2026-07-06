@@ -4498,27 +4498,35 @@ function runAnalysisData(options){
 // ---------------------------------------------------------------------------
 
 // ===== CODELYZER_METRICS_START =====
+var _blastGraphCache = new WeakMap();
+
 function calcBlast(fileId,conns,files){
     // Comprehensive impact analysis for a file
     // Connection format: {source: fileDefiningFn, target: fileCallingFn, fn: fnName, count: callCount}
 
-    // Build adjacency lists for fast lookups
-    var exportedTo={};// fileId -> Set of files that import from it
-    var importedFrom={};// fileId -> Set of files it imports from
-    var exportedFns={};// fileId -> Map of fn -> count of external calls
+    // Use WeakMap cache to memoize graph adjacency lists for the connections array
+    var graph = _blastGraphCache.get(conns);
+    if (!graph) {
+        graph = { exportedTo: {}, importedFrom: {}, exportedFns: {} };
+        conns.forEach(function(c){
+            var src=typeof c.source==='object'?c.source.id:c.source;
+            var tgt=typeof c.target==='object'?c.target.id:c.target;
+            // src exports, tgt imports
+            if(!graph.exportedTo[src])graph.exportedTo[src]=new Set();
+            graph.exportedTo[src].add(tgt);
+            if(!graph.importedFrom[tgt])graph.importedFrom[tgt]=new Set();
+            graph.importedFrom[tgt].add(src);
+            if(!graph.exportedFns[src])graph.exportedFns[src]=new Map();
+            var fnMap=graph.exportedFns[src];
+            fnMap.set(c.fn,(fnMap.get(c.fn)||0)+(c.count||1));
+        });
+        _blastGraphCache.set(conns, graph);
+    }
 
-    conns.forEach(function(c){
-        var src=typeof c.source==='object'?c.source.id:c.source;
-        var tgt=typeof c.target==='object'?c.target.id:c.target;
-        // src exports, tgt imports
-        if(!exportedTo[src])exportedTo[src]=new Set();
-        exportedTo[src].add(tgt);
-        if(!importedFrom[tgt])importedFrom[tgt]=new Set();
-        importedFrom[tgt].add(src);
-        if(!exportedFns[src])exportedFns[src]=new Map();
-        var fnMap=exportedFns[src];
-        fnMap.set(c.fn,(fnMap.get(c.fn)||0)+(c.count||1));
-    });
+    // Build adjacency lists for fast lookups
+    var exportedTo=graph.exportedTo;
+    var importedFrom=graph.importedFrom;
+    var exportedFns=graph.exportedFns;
 
     // 1. Direct dependents (files that directly import from this file)
     var directDeps=exportedTo[fileId]?Array.from(exportedTo[fileId]):[];
