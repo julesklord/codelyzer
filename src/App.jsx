@@ -3761,11 +3761,11 @@ function App(){
                     graphConfig.vizType==='architecture'&&renderArchitectureView(),
                     (graphConfig.vizType==='graph'||graphConfig.vizType==='graph3d')&&React.createElement('div',{className:'canvas-toolbar'},
                         folderFilter&&React.createElement('button',{className:'top-btn primary',onClick:function(){setFolderFilter(null);},style:{height:32,padding:'0 10px',fontSize:10,fontWeight:700,marginRight:8}},'← BACK TO ROOT'),
-                        React.createElement('button',{className:'tool-btn',onClick:zoomIn,'aria-label':'Zoom in'},'+'),
-                        React.createElement('button',{className:'tool-btn',onClick:zoomOut,'aria-label':'Zoom out'},'−'),
-                        React.createElement('button',{className:'tool-btn',onClick:resetZoom,'aria-label':'Reset zoom'},'⟲'),
-                        React.createElement('button',{className:'tool-btn',onClick:fitView,'aria-label':'Fit view'},'⊡'),
-                        React.createElement('button',{className:'tool-btn'+(showGraphConfig?' active':''),onClick:function(){setShowGraphConfig(!showGraphConfig);},'aria-label':'Graph settings',style:showGraphConfig?{background:'var(--accbg)',borderColor:'var(--acc)'}:{}},
+                        React.createElement('button',{className:'tool-btn',onClick:zoomIn,'aria-label':'Zoom in',title:'Zoom in'},'+'),
+                        React.createElement('button',{className:'tool-btn',onClick:zoomOut,'aria-label':'Zoom out',title:'Zoom out'},'−'),
+                        React.createElement('button',{className:'tool-btn',onClick:resetZoom,'aria-label':'Reset zoom',title:'Reset zoom'},'⟲'),
+                        React.createElement('button',{className:'tool-btn',onClick:fitView,'aria-label':'Fit view',title:'Fit view'},'⊡'),
+                        React.createElement('button',{className:'tool-btn'+(showGraphConfig?' active':''),onClick:function(){setShowGraphConfig(!showGraphConfig);},'aria-label':'Graph settings',title:'Graph settings',style:showGraphConfig?{background:'var(--accbg)',borderColor:'var(--acc)'}:{}},
                             React.createElement(Icon,{name:'settings',size:'m'})
                         )
                     ),
