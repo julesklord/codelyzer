@@ -6,3 +6,7 @@
 **Vulnerability:** XSS vulnerability in `App.jsx` where `DOMPurify.sanitize` was used without an explicit configuration alongside `dangerouslySetInnerHTML`.
 **Learning:** Although DOMPurify strips dangerous tags by default, relying on the default configuration may be less secure or flag strict security checks. It is safer to use an explicit configuration whitelist, allowing only exactly the tags and attributes needed by the code.
 **Prevention:** Use an explicit configuration with `ALLOWED_TAGS` and `ALLOWED_ATTR` when using `DOMPurify.sanitize` with `dangerouslySetInnerHTML`.
+## $(date +%Y-%m-%d) - [XSS Fix] ForceGraph3D .nodeLabel Tooltips
+**Vulnerability:** Found an XSS vulnerability in `ForceGraph3D` where `node.name` was being unsafely concatenated into raw HTML string within the `.nodeLabel` tooltip rendering.
+**Learning:** Third-party graph rendering libraries that accept raw HTML strings for labels are prime targets for XSS if they accept user-controlled data. Here, repository file paths/names were passed directly.
+**Prevention:** Always manually escape strings (`escapeHtml`) or use `DOMPurify` before injecting dynamic variables into HTML strings passed to external visualization libraries.
