@@ -1590,7 +1590,13 @@ function App(){
         if(colorMode==='folder'){data.folders.forEach(function(f,i){m[f]=COLORS[i%COLORS.length];});m['root']=COLORS[0];}
         else if(colorMode==='layer')data.files.forEach(function(f){m[f.path]=LAYER_COLORS[f.layer]||COLORS[0];});
         else if(colorMode==='churn'){
-            var maxC=Math.max.apply(null,data.files.map(function(f){return f.churn||0;}))||1;
+            // ⚡ Bolt: Replaced Math.max.apply(null, map) with a single-pass O(N) loop
+            // to avoid maximum call stack size limits on large repos and reduce GC pressure.
+            var maxC=1;
+            for(var i=0;i<data.files.length;i++){
+                var ch=data.files[i].churn||0;
+                if(ch>maxC)maxC=ch;
+            }
             var isLight=(theme==='light');
             var red=isLight?'#cc0000':'#ff3b30';
             var orange=isLight?'#d97706':'#ffb300';
@@ -2826,8 +2832,16 @@ function App(){
         if(!zoomRef.current||!svgRef.current||!simRef.current)return null;
         var nodes=simRef.current.nodes();
         if(!nodes.length)return null;
-        var xs=nodes.map(function(n){return n.x;}),ys=nodes.map(function(n){return n.y;});
-        var minX=Math.min.apply(null,xs),maxX=Math.max.apply(null,xs),minY=Math.min.apply(null,ys),maxY=Math.max.apply(null,ys);
+        // ⚡ Bolt: Single-pass loop replaces multiple intermediate .map() arrays
+        // and prevents call stack overflow from Math.max.apply on >65k node arrays
+        var minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+        for(var i=0;i<nodes.length;i++){
+            var n=nodes[i];
+            if(n.x<minX)minX=n.x;
+            if(n.x>maxX)maxX=n.x;
+            if(n.y<minY)minY=n.y;
+            if(n.y>maxY)maxY=n.y;
+        }
         var w=svgRef.current.clientWidth,h=svgRef.current.clientHeight;
         if(w<1||h<1)return null;
         var scale=0.8/Math.max((maxX-minX+paddingSlack)/w,(maxY-minY+paddingSlack)/h);
@@ -4252,16 +4266,24 @@ function App(){
                             risk.hotspots.length > 0 && React.createElement('div',{className:'pr-impact-card',style:{marginTop:16}},
                                 React.createElement('div',{className:'pr-impact-card-title'},iconLabel('activity','Hotspots')),
                                 React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginBottom:12}},'Files with highest blast radius'),
-                                risk.hotspots.map(function(h,i) {
-                                    var maxBlast = Math.max.apply(null, risk.hotspots.map(function(x){return x.blast;})) || 1;
-                                    return React.createElement('div',{key:i,className:'pr-hotspot'},
+                                (function(){
+                                    // ⚡ Bolt: Hoisted maxBlast calculation outside the map loop
+                                    // changing an O(N²) operation into two O(N) passes.
+                                    var maxBlast = 1;
+                                    for(var k=0;k<risk.hotspots.length;k++){
+                                        var b=risk.hotspots[k].blast;
+                                        if(b>maxBlast)maxBlast=b;
+                                    }
+                                    return risk.hotspots.map(function(h,i) {
+                                        return React.createElement('div',{key:i,className:'pr-hotspot'},
                                         React.createElement('span',{style:{fontSize:10,color:'var(--t1)',minWidth:120,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},h.file.split('/').pop()),
                                         React.createElement('div',{className:'pr-hotspot-bar'},
                                             React.createElement('div',{className:'pr-hotspot-fill',style:{width:(h.blast/maxBlast*100)+'%',background:'linear-gradient(90deg, var(--orange), var(--red))'}})
                                         ),
-                                        React.createElement('span',{style:{fontSize:9,color:'var(--t3)',minWidth:50,textAlign:'right'}},h.blast,' files')
-                                    );
-                                })
+                                            React.createElement('span',{style:{fontSize:9,color:'var(--t3)',minWidth:50,textAlign:'right'}},h.blast,' files')
+                                        );
+                                    });
+                                })()
                             ),
                             React.createElement('div',{className:'pr-impact-card',style:{marginTop:16}},
                                 React.createElement('div',{className:'pr-impact-card-title'},iconLabel('folder','Changed Files')),
