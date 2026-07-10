@@ -2030,8 +2030,9 @@ function App(){
                 } else {
                     details = node.fnCount+' functions • '+node.layer+' layer • '+node.churn+' commits';
                 }
+                var safeName = String(node.name || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                 return '<div style="font-family:IBM Plex Mono,monospace;font-size:10px;padding:8px 12px;background:'+tooltipBg+';border:2px solid #000000;box-shadow:4px 4px 0px #000000;color:'+tooltipColor+';">'+
-                    '<strong style="color:'+accentColor+';">'+node.name+'</strong><br/>'+
+                    '<strong style="color:'+accentColor+';">'+safeName+'</strong><br/>'+
                     details+
                     '</div>';
             })
