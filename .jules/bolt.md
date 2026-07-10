@@ -1,11 +1,3 @@
-## 2024-07-01 - Optimizing React rendering with useMemo
-**Learning:** Found an O(n) array sorting operation and deep recursive countFiles inside the body of a React Function Component (`TreeNode`) which is called many times for deeply nested trees. React components that are pure should memoize their expensive operations instead of doing them synchronously during each render pass.
-**Action:** Always wrap `children` sorting and recursive tree traversal computations in `React.useMemo` to prevent deep performance degradation during re-renders.
-
-## 2024-05-19 - Fast LCS Calculation in JavaScript
-**Learning:** For dynamic programming algorithms like calculating Longest Common Subsequence (LCS) that allocate large multi-dimensional matrices, using standard arrays via `new Array(n).fill(0)` and `Math.max` calls per cell creates significant overhead. Using `Uint16Array` for flat integer sequences avoids hidden v8 array optimization deopts and reduces memory allocations. Furthermore, in tight nested loops over strings, `String.prototype.charCodeAt(i)` caches far better and avoids single-character string allocations compared to `str[i] === str2[j]`. Finally, avoiding `Math.max` using inline conditionals `a > b ? a : b` significantly reduces overhead.
-**Action:** Always favor typed arrays (`Uint16Array`, `Uint8Array`, etc.) over `Array.prototype.fill(0)` when running matrix-based DP in hot loops, and inline min/max evaluations. For string parsing, use `.charCodeAt()` over char extraction where equality is being checked.
-
-## 2024-05-19 - Precomputing Adjacency Lists with WeakMap in calcBlast
-**Learning:** Found an O(C) graph building operation inside `calcBlast` (where C is the number of connections). Because `calcBlast` is called repeatedly for different files (e.g. during PR risk analysis, rendering issue details, or map highlighting), rebuilding the graph adjacencies `exportedTo`, `importedFrom`, and `exportedFns` every time results in an O(N * C) bottleneck.
-**Action:** Use a module-scoped `WeakMap` with the `conns` array as the key to memoize the computed graph structures. This avoids rebuilding the entire dependency graph on each call while remaining memory-safe, reducing the PR Risk calculation time by ~10x on large simulated data.
+## 2024-07-09 - Math.max.apply on Large Data Structures
+**Learning:** Using `Math.max.apply(null, array.map(...))` on large datasets (like graph nodes) creates two major performance/stability issues: it allocates intermediate arrays (increasing GC pressure) and runs the risk of throwing a "Maximum call stack size exceeded" error if the array length exceeds ~65k items.
+**Action:** Always replace `Math.max.apply` or `Math.min.apply` with a simple `for` loop to find extrema in a single pass with O(1) memory. Avoid using them inside React `.map()` renders to prevent O(N²) scaling.
