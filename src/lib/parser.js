@@ -4576,6 +4576,15 @@ function calcBlast(fileId,conns,files){
     else if(directDeps.length>=4||fnsUsed>=3)level='high';
     else if(directDeps.length>=2||fnsUsed>=1)level='medium';
 
+    // ⚡ Bolt: Replace Math.max.apply(null, map) with a single-pass O(N) loop
+    // to prevent "Maximum call stack size exceeded" on large datasets and reduce GC pressure
+    var maxDepth=0;
+    if(transitive.size>0){
+        transitive.forEach(function(depth){
+            if(depth>maxDepth)maxDepth=depth;
+        });
+    }
+
     return{
         affected:directDeps,
         transitive:Array.from(transitive.keys()),
@@ -4583,7 +4592,7 @@ function calcBlast(fileId,conns,files){
         transitiveCount:transitive.size,
         percent:relativePct,
         level:level,
-        depth:transitive.size>0?Math.max.apply(null,Array.from(transitive.values())):0,
+        depth:maxDepth,
         fnsUsed:fnsUsed,
         totalCalls:totalCalls,
         dependencies:dependencies,
