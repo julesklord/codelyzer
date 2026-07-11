@@ -1399,7 +1399,7 @@ function App(){
             // 2. Animate nodes: fade non-affected, highlight + bounce affected
             nodesRef.current.selectAll('.nc').transition().duration(200)
                 .attr('opacity',function(n){if(n.id===path)return 1;if(affectedSet.has(n.id))return 1;return 0.2;})
-                .attr('fill',function(n){if(n.id===path)return'#ff5f5f';if(affectedSet.has(n.id))return'#ff9f43';return getNodeColor(n);})
+                .attr('fill',getNodeColor)
                 .attr('filter',function(n){if(n.id===path||affectedSet.has(n.id))return 'url(#glow)'; return null;})
                 .transition()
                 .duration(150)
@@ -1415,8 +1415,10 @@ function App(){
             nodesRef.current.selectAll('.nc').transition().duration(200)
                 .attr('opacity', 1)
                 .attr('fill', getNodeColor)
-                .attr('r', getR)
-                .attr('filter', null);
+                .attr('filter', null)
+                .transition()
+                .duration(150)
+                .attr('r', getR);
         }
 
         // 3. Highlight links and animate flow on connections

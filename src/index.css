@@ -1252,6 +1252,8 @@ body{
 /* ==========================================================================
    ARCHITECTURE VIEW
    ========================================================================== */
+.architecture-view{width:100%;height:100%;display:flex;flex-direction:column;position:relative}
+.architecture-shell{flex:1;width:100%;min-height:0;position:relative;display:flex}
 .architecture-summary-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .architecture-chip{
   padding:6px 10px;
@@ -1263,7 +1265,7 @@ body{
 }
 .architecture-chip:hover{transform:translate(-1px,-1px)}
 .architecture-chip strong{color:var(--acc)}
-.mermaid-render{flex:1;width:100%;min-height:0;position:relative;overflow:hidden;background:var(--bg0);cursor:grab;touch-action:none}
+.mermaid-render{flex:1;width:100%;height:100%;min-height:0;position:relative;overflow:hidden;background:var(--bg0);cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center}
 .mermaid-render.dragging{cursor:grabbing}
 .architecture-pan{position:absolute;left:0;top:0;display:block;transform-origin:0 0;will-change:transform}
 .architecture-pan svg{display:block;max-width:none;overflow:visible}
