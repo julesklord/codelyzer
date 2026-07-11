@@ -4789,6 +4789,7 @@ export {
   getArchitectureGroupOrder,
   computeArchitectureStats,
   runAnalysisData,
+  escapeHtml,
   GitHub
 };
 // Default config for large codebase processing
