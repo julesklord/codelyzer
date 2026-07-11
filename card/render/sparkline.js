@@ -13,8 +13,13 @@ function sparkline(values, opts) {
   }
   const data = values.map((v) => (typeof v === 'number' && Number.isFinite(v) ? v : 0));
   if (data.length === 1) data.unshift(data[0]);
-  let min = Math.min.apply(null, data);
-  let max = Math.max.apply(null, data);
+  let min = data[0];
+  let max = data[0];
+  for (let i = 1; i < data.length; i++) {
+    const v = data[i];
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
   if (min === max) {
     min -= 1;
     max += 1;

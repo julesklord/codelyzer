@@ -96,7 +96,12 @@ function snapshotFromAnalysis(data, helpers, ctx) {
   const avgFnLines = fnLines.length
     ? Math.round((fnLines.reduce((a, b) => a + b, 0) / fnLines.length) * 10) / 10
     : 0;
-  const longestFn = fnLines.length ? Math.max.apply(null, fnLines) : 0;
+  let longestFn = 0;
+  for (let i = 0; i < fnLines.length; i++) {
+    if (fnLines[i] > longestFn) {
+      longestFn = fnLines[i];
+    }
+  }
 
   // Test ratio (heuristic)
   let testFiles = 0;
