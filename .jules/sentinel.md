@@ -10,3 +10,7 @@
 **Vulnerability:** Found an XSS vulnerability in `ForceGraph3D` where `node.name` was being unsafely concatenated into raw HTML string within the `.nodeLabel` tooltip rendering.
 **Learning:** Third-party graph rendering libraries that accept raw HTML strings for labels are prime targets for XSS if they accept user-controlled data. Here, repository file paths/names were passed directly.
 **Prevention:** Always manually escape strings (`escapeHtml`) or use `DOMPurify` before injecting dynamic variables into HTML strings passed to external visualization libraries.
+## 2024-05-18 - [XSS in 3D Force Graph Tooltips]
+**Vulnerability:** Found an XSS vulnerability where node details were concatenated into an HTML string and rendered using `ForceGraph3D` tooltips without sanitization.
+**Learning:** Even though `node.name` was being correctly sanitized using `escapeHtml`, the `details` variable (which was constructed dynamically with potentially unchecked data) was concatenated into an HTML string returned by `.nodeLabel()`. These dynamically constructed strings can lead to XSS if they include unfiltered properties.
+**Prevention:** Any HTML strings rendered dynamically inside components like `ForceGraph3D` must always be passed through a trusted sanitization library like `DOMPurify.sanitize()` before being returned, regardless of localized escaping.
