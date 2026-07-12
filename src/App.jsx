@@ -3454,26 +3454,34 @@ function App(){
         );
     }
     var health=useMemo(function(){return calcHealth(data);},[data]);
-    var selectedConnections = useMemo(function() {
-        var outgoing = [], incoming = [];
-        if (!data || !selected) return { outgoing, incoming };
-        var connByFile = { out: {}, in: {} };
+
+    // ⚡ Bolt: Global map to prevent O(N) connections array iteration on every file selection
+    var globalConnectionsMap = useMemo(function() {
+        var map = {};
+        if (!data) return map;
         data.connections.forEach(function(c) {
             var src = typeof c.source === 'object' ? c.source.id : c.source;
             var tgt = typeof c.target === 'object' ? c.target.id : c.target;
-            if (src === selected.path) {
-                if (!connByFile.out[tgt]) connByFile.out[tgt] = { file: tgt, fns: [] };
-                connByFile.out[tgt].fns.push({ name: c.fn, count: c.count });
-            }
-            if (tgt === selected.path) {
-                if (!connByFile.in[src]) connByFile.in[src] = { file: src, fns: [] };
-                connByFile.in[src].fns.push({ name: c.fn, count: c.count });
-            }
+            if (!map[src]) map[src] = { out: {}, in: {} };
+            if (!map[tgt]) map[tgt] = { out: {}, in: {} };
+
+            if (!map[src].out[tgt]) map[src].out[tgt] = { file: tgt, fns: [] };
+            map[src].out[tgt].fns.push({ name: c.fn, count: c.count });
+
+            if (!map[tgt].in[src]) map[tgt].in[src] = { file: src, fns: [] };
+            map[tgt].in[src].fns.push({ name: c.fn, count: c.count });
         });
+        return map;
+    }, [data]);
+
+    var selectedConnections = useMemo(function() {
+        var outgoing = [], incoming = [];
+        if (!selected || !globalConnectionsMap[selected.path]) return { outgoing, incoming };
+        var connByFile = globalConnectionsMap[selected.path];
         outgoing = Object.values(connByFile.out).sort(function(a, b) { return b.fns.length - a.fns.length; });
         incoming = Object.values(connByFile.in).sort(function(a, b) { return b.fns.length - a.fns.length; });
         return { outgoing, incoming };
-    }, [data, selected]);
+    }, [selected, globalConnectionsMap]);
 
     return React.createElement('div',{
         className:'app',
