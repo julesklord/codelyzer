@@ -10,3 +10,7 @@
 ## 2026-07-11 - Adding native tooltips to remaining icon-only interactive elements
 **Learning:** Discovered that many icon-only buttons throughout the application (such as view source buttons, modal close buttons, mobile navigation toggles, etc.) had `aria-label` attributes for screen readers but lacked `title` attributes. Adding native `title` tooltips to all these elements provides crucial visual feedback on hover for sighted mouse users, drastically improving discoverability of secondary actions.
 **Action:** Performed a comprehensive sweep through `App.jsx` to ensure that any interactive element equipped with an `aria-label` but lacking visible text now also has a corresponding `title` attribute.
+
+## 2026-07-13 - Form Controls Accessibility with `htmlFor` and `id`
+**Learning:** Found several explicit `<label>` elements in `App.jsx` (like "Pull Request URL" and "Custom Patterns") that lacked the `htmlFor` attribute. Consequently, the corresponding `<input>` and `<textarea>` elements lacked `id` attributes. This breaks the programmatic association required for screen readers and prevents users from clicking the label to focus the input.
+**Action:** Added `htmlFor` to the labels and matching `id` attributes to their respective form inputs/textareas to ensure proper form control accessibility. Ensure all explicit labels use `htmlFor` going forward.
