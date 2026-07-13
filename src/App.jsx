@@ -4188,8 +4188,8 @@ function App(){
                         )
                     ),
                     React.createElement('div',{className:'form-group'},
-                        React.createElement('label',{className:'form-label'},'Custom Patterns'),
-                        React.createElement('textarea',{className:'form-input exclude-textarea','aria-label':'Custom exclude patterns',placeholder:'attachments\nuploads/**\n**/cache/**\n*.png\n*.log',value:excludePatternDraft,onChange:function(e){setExcludePatternDraft(e.target.value);},rows:8}),
+                        React.createElement('label',{className:'form-label',htmlFor:'custom-exclude-patterns'},'Custom Patterns'),
+                        React.createElement('textarea',{id:'custom-exclude-patterns',className:'form-input exclude-textarea','aria-label':'Custom exclude patterns',placeholder:'attachments\nuploads/**\n**/cache/**\n*.png\n*.log',value:excludePatternDraft,onChange:function(e){setExcludePatternDraft(e.target.value);},rows:8}),
                         React.createElement('div',{className:'exclude-help'},'Use one pattern per line, or separate patterns with commas. Changes apply to the next analysis or refresh.')
                     )
                 ),
@@ -4204,7 +4204,7 @@ function App(){
             React.createElement('div',{className:'modal pr-modal',onClick:function(e){e.stopPropagation();}},
                 React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('chart','PR Impact Analyzer','m')),React.createElement('button',{className:'modal-close','aria-label':'Close PR Impact Analyzer dialog',title:'Close PR Impact Analyzer dialog',onClick:function(){setShowPR(false);}},'×')),
                 React.createElement('div',{className:'modal-body',style:{maxHeight:'75vh',overflowY:'auto'}},
-                    React.createElement('div',{className:'form-group'},React.createElement('label',{className:'form-label'},'Pull Request URL'),React.createElement('input',{className:'form-input','aria-label':'Pull Request URL',placeholder:'https://github.com/owner/repo/pull/123',value:prUrl,onChange:function(e){setPrUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')analyzePR();}})),
+                    React.createElement('div',{className:'form-group'},React.createElement('label',{className:'form-label',htmlFor:'pr-url-input'},'Pull Request URL'),React.createElement('input',{id:'pr-url-input',className:'form-input','aria-label':'Pull Request URL',placeholder:'https://github.com/owner/repo/pull/123',value:prUrl,onChange:function(e){setPrUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')analyzePR();}})),
                     React.createElement('button',{className:'top-btn primary','aria-label':'Analyze Pull Request',title:'Analyze Pull Request',onClick:analyzePR,style:{marginBottom:16,width:'100%'}},iconLabel('search','Analyze PR Impact')),
                     prData&&(function(){
                         var risk = calcPRRisk(prData, data);
@@ -4514,8 +4514,8 @@ function App(){
                         '3. Open the downloaded ',React.createElement('code',null,'.pem'),' file and paste its contents below'
                     ),
                     React.createElement('div',{className:'form-group'},
-                        React.createElement('label',{className:'form-label'},'Private Key (PEM format)'),
-                        React.createElement('textarea',{className:'form-input',placeholder:'-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----',value:privateKey,onChange:function(e){setPrivateKey(e.target.value);},rows:10})
+                        React.createElement('label',{className:'form-label',htmlFor:'private-key-input'},'Private Key (PEM format)'),
+                        React.createElement('textarea',{id:'private-key-input',className:'form-input',placeholder:'-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----',value:privateKey,onChange:function(e){setPrivateKey(e.target.value);},rows:10})
                     )
                 ),
                 React.createElement('div',{className:'modal-footer'},
