@@ -1734,16 +1734,35 @@ function App(){
                .force('y',d3.forceY(function(d){return d.targetY;}).strength(1));
         }else if(graphConfig.viewMode==='metro'){
             var metro={lines:[],stations:{}};
-            var roots=nodes.filter(function(n){return!links.some(function(l){return(l.target.id||l.target)===n.id;});});
+
+            // ⚡ Bolt: Pre-compute nodes and links to prevent O(N*L) loops in metro graph layout
+            var nodeById = {};
+            nodes.forEach(function(n) { nodeById[n.id] = n; });
+            var hasIncoming = new Set();
+            var outgoingById = {};
+            links.forEach(function(l) {
+                var s = l.source.id || l.source;
+                var t = l.target.id || l.target;
+                hasIncoming.add(t);
+                if (!outgoingById[s]) outgoingById[s] = [];
+                outgoingById[s].push(t);
+            });
+
+            var roots=nodes.filter(function(n){return !hasIncoming.has(n.id);});
             if(!roots.length)roots=[nodes[0]];
             var lineY=80,lineSpacing=Math.min(120,(h-160)/Math.max(1,roots.length));
             roots.forEach(function(root,li){
                 var visited=new Set(),queue=[root.id],line=[],x=80;
                 while(queue.length){
                     var id=queue.shift();if(visited.has(id))continue;visited.add(id);
-                    var node=nodes.find(function(n){return n.id===id;});
+                    var node=nodeById[id];
                     if(node){node.targetX=x;node.targetY=lineY+li*lineSpacing;node.metroLine=li;line.push(node);x+=graphConfig.spacing*0.8;}
-                    links.forEach(function(l){var s=l.source.id||l.source,t=l.target.id||l.target;if(s===id&&!visited.has(t))queue.push(t);});
+                    var outgoing = outgoingById[id];
+                    if (outgoing) {
+                        outgoing.forEach(function(t) {
+                            if (!visited.has(t)) queue.push(t);
+                        });
+                    }
                 }
                 metro.lines.push(line);
             });
