@@ -14,3 +14,7 @@
 **Vulnerability:** Found an XSS vulnerability where node details were concatenated into an HTML string and rendered using `ForceGraph3D` tooltips without sanitization.
 **Learning:** Even though `node.name` was being correctly sanitized using `escapeHtml`, the `details` variable (which was constructed dynamically with potentially unchecked data) was concatenated into an HTML string returned by `.nodeLabel()`. These dynamically constructed strings can lead to XSS if they include unfiltered properties.
 **Prevention:** Any HTML strings rendered dynamically inside components like `ForceGraph3D` must always be passed through a trusted sanitization library like `DOMPurify.sanitize()` before being returned, regardless of localized escaping.
+## 2026-07-16 - DOMPurify for D3 Tooltips
+**Vulnerability:** XSS vulnerability in `renderTooltipHtml` where dynamically constructed tooltip strings were returned as raw HTML to be consumed by D3's `.html()` method, even though constituent strings were manually escaped.
+**Learning:** Relying purely on localized `escapeHtml` for parts of a string is brittle. Tooltips rendered by D3 visualizations (which internally set `innerHTML`) are an XSS vector if raw HTML assembly is trusted.
+**Prevention:** Any HTML strings rendered dynamically inside components like D3 charts must always be passed through a trusted sanitization library like `DOMPurify.sanitize()` before being returned.

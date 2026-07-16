@@ -1,5 +1,6 @@
 import * as acorn from 'acorn';
 import JSZip from 'jszip';
+import DOMPurify from 'dompurify';
 
 const DARK_COLORS=['#00f0ff','#cc66ff','#ffe600','#00ff66','#ff9000','#ff007f','#ff3b30','#84cc16'];
 const LIGHT_COLORS=['#0066cc','#800080','#d97706','#009933','#c2410c','#cc0066','#cc0000','#4f7c0f'];
@@ -2279,9 +2280,10 @@ function escapeHtml(value){
 }
 
 function renderTooltipHtml(title,stats){
-    return '<div class="treemap-tooltip-title">'+escapeHtml(title)+'</div>'+stats.map(function(stat){
+    var rawHtml = '<div class="treemap-tooltip-title">'+escapeHtml(title)+'</div>'+stats.map(function(stat){
         return '<div class="treemap-tooltip-stat"><span>'+escapeHtml(stat.label)+':</span><span>'+escapeHtml(stat.value)+'</span></div>';
     }).join('');
+    return DOMPurify.sanitize(rawHtml, { ALLOWED_TAGS: ['div', 'span'], ALLOWED_ATTR: ['class'] });
 }
 
 // ---------------------------------------------------------------------------
