@@ -454,7 +454,7 @@ function App(){
             });
             window.mermaid.render(renderId,mermaidText).then(function(result){
                 if(cancelled||!architectureRenderRef.current)return;
-                architectureRenderRef.current.innerHTML='<div class="architecture-pan">'+result.svg+'</div>';
+                architectureRenderRef.current.innerHTML='<div class="architecture-pan">'+DOMPurify.sanitize(result.svg, { USE_PROFILES: { svg: true } })+'</div>';
                 var svg=architectureRenderRef.current.querySelector('.architecture-pan svg');
                 if(!svg){
                     architectureRenderRef.current.innerHTML='<div class="empty-state"><div class="empty-title">Mermaid render failed</div><div class="empty-desc">The renderer returned no SVG for this diagram.</div></div>';
