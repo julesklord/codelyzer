@@ -130,15 +130,16 @@ function shouldExcludeFile(path,name,compiledPatterns){
     return !Parser.isIncluded(name)||matchesExcludePattern(compiledPatterns,path,name);
 }
 
-function getArchiveRootPrefix(paths){
-    if(!paths||!paths.length)return '';
-    var firstPath=normalizeExcludePath(paths[0]);
+function getArchiveRootPrefix(items, getter){
+    if(!items||!items.length)return '';
+    var getPath = getter || function(x) { return x; };
+    var firstPath=normalizeExcludePath(getPath(items[0]));
     var firstSlash=firstPath.indexOf('/');
     if(firstSlash<=0)return '';
     var firstSegment=firstPath.slice(0,firstSlash);
     var prefix=firstSegment+'/';
-    for(var i=1;i<paths.length;i++){
-        var p=normalizeExcludePath(paths[i]);
+    for(var i=1;i<items.length;i++){
+        var p=normalizeExcludePath(getPath(items[i]));
         if(p.indexOf(prefix)!==0){
             return '';
         }
@@ -4077,9 +4078,9 @@ async function buildAnalysisData(options){
                 return entry && !entry.dir;
             });
             
-            var rootPrefix = getArchiveRootPrefix(rawEntries.map(function(entry) {
+            var rootPrefix = getArchiveRootPrefix(rawEntries, function(entry) {
                 return entry.name;
-            }));
+            });
             var filesToProcess = [];
             var dirCache = new Map();
             
@@ -4161,10 +4162,9 @@ async function buildAnalysisData(options){
             await yieldFn();
             var fileObjs = options.localFiles;
             
-            var rawPaths = fileObjs.map(function(f) {
+            var rootPrefix = getArchiveRootPrefix(fileObjs, function(f) {
                 return f.path || f.name;
             });
-            var rootPrefix = getArchiveRootPrefix(rawPaths);
             var filesToProcess = [];
             var dirCache = new Map();
             

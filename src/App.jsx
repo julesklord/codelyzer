@@ -1167,15 +1167,9 @@ function App(){
         var SOFT_LIMIT=ANALYSIS_LIMITS.localSoft;
         try{
             setProgress('Scanning local folder...');
-            var rawPaths=[];
-            for(var i=0;i<fileObjs.length;i++){
-                if(i>0 && i%500===0){
-                    setProgress('Scanning files... '+i+'/'+fileObjs.length+' mapped');
-                    await yieldToBrowser();
-                }
-                rawPaths.push(fileObjs[i].path||fileObjs[i].webkitRelativePath||fileObjs[i].name);
-            }
-            var rootPrefix=getArchiveRootPrefix(rawPaths);
+            var rootPrefix=getArchiveRootPrefix(fileObjs, function(f) {
+                return f.path||f.webkitRelativePath||f.name;
+            });
             var files=[];
             var fileCount=0;
             var dirCache=new Map();
@@ -1260,7 +1254,7 @@ function App(){
             setProgress('Reading ZIP archive...');
             var zip=await JSZip.loadAsync(zipFile);
             var rawEntries=Object.keys(zip.files).sort().map(function(name){return zip.files[name];}).filter(function(entry){return entry&&!entry.dir;});
-            var rootPrefix=getArchiveRootPrefix(rawEntries.map(function(entry){return entry.name;}));
+            var rootPrefix=getArchiveRootPrefix(rawEntries, function(entry){return entry.name;});
             var files=[];
             var entriesByPath=Object.create(null);
             var fileCount=0;
@@ -1527,8 +1521,9 @@ function App(){
             (async function(){
                 try{
                     var targetPath=normalizeExcludePath(path);
-                    var rawPaths=localFilesRef.current.map(function(f){return f.path||f.webkitRelativePath||f.name;});
-                    var rootPrefix=getArchiveRootPrefix(rawPaths);
+                    var rootPrefix=getArchiveRootPrefix(localFilesRef.current, function(f){
+                        return f.path||f.webkitRelativePath||f.name;
+                    });
                     var matched=localFilesRef.current.find(function(fileObj){
                         var rawPath=normalizeExcludePath(fileObj.path||fileObj.webkitRelativePath||fileObj.name);
                         var entryPath=rootPrefix&&rawPath.indexOf(rootPrefix)===0?rawPath.slice(rootPrefix.length):rawPath;
