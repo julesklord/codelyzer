@@ -35,9 +35,9 @@ self.onmessage = async function(event) {
         return acc;
       }, []);
       
-      var rootPrefix = getArchiveRootPrefix(rawEntries.map(function(entry) {
+      var rootPrefix = getArchiveRootPrefix(rawEntries, function(entry) {
         return entry.name;
-      }));
+      });
       var filesToProcess = [];
       var dirCache = new Map();
       
@@ -111,10 +111,9 @@ self.onmessage = async function(event) {
       self.postMessage({ type: 'progress', message: 'Scanning local folder...' });
       var fileObjs = payload.localFiles;
       
-      var rawPaths = fileObjs.map(function(f) {
+      var rootPrefix = getArchiveRootPrefix(fileObjs, function(f) {
         return f.path || f.name;
       });
-      var rootPrefix = getArchiveRootPrefix(rawPaths);
       var filesToProcess = [];
       var dirCache = new Map();
       
