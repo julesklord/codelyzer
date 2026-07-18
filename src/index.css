@@ -178,6 +178,20 @@ body{
 }
 .logo-text .logo-accent{color:var(--acc)}
 
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
 /* Repo Input Group */
 .repo-input-group{display:flex;gap:8px;flex:1;min-width:0}
 .repo-input-group>*{min-width:0}
