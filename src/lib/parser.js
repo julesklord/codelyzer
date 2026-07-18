@@ -197,16 +197,6 @@ function yieldToBrowser(){
     return new Promise(function(resolve){setTimeout(resolve,0);});
 }
 
-// Timeout wrapper for potentially long-running operations
-function withTimeout(promise, ms, timeoutError) {
-    return Promise.race([
-        promise,
-        new Promise(function(_, reject) {
-            setTimeout(function() { reject(timeoutError || new Error('Operation timed out after ' + ms + 'ms')); }, ms);
-        })
-    ]);
-}
-
 // ---------------------------------------------------------------------------
 // Parser And Static Analysis
 // ---------------------------------------------------------------------------
