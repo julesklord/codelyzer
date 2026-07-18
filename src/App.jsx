@@ -1135,15 +1135,22 @@ function App(){
 
             setProgress('Resolving file handles...');
             var localFiles = [];
-            for (var i = 0; i < files.length; i++) {
-                if (i > 0 && i % 100 === 0) await yieldToBrowser();
-                var fileObj = await files[i].handle.getFile();
-                localFiles.push({
-                    path: files[i].path,
-                    name: files[i].name,
-                    size: fileObj.size || 0,
-                    file: fileObj
-                });
+            var CHUNK_SIZE = 100;
+            for (var i = 0; i < files.length; i += CHUNK_SIZE) {
+                if (i > 0) await yieldToBrowser();
+                var chunk = files.slice(i, i + CHUNK_SIZE);
+                var resolved = await Promise.all(chunk.map(async function(f) {
+                    var fileObj = await f.handle.getFile();
+                    return {
+                        path: f.path,
+                        name: f.name,
+                        size: fileObj.size || 0,
+                        file: fileObj
+                    };
+                }));
+                for (var j = 0; j < resolved.length; j++) {
+                    localFiles.push(resolved[j]);
+                }
             }
 
             var dataObj=await runAnalysisData({
