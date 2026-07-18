@@ -1,6 +1,7 @@
-## 2024-07-09 - Math.max.apply on Large Data Structures
-**Learning:** Using `Math.max.apply(null, array.map(...))` on large datasets (like graph nodes) creates two major performance/stability issues: it allocates intermediate arrays (increasing GC pressure) and runs the risk of throwing a "Maximum call stack size exceeded" error if the array length exceeds ~65k items.
-**Action:** Always replace `Math.max.apply` or `Math.min.apply` with a simple `for` loop to find extrema in a single pass with O(1) memory. Avoid using them inside React `.map()` renders to prevent O(N²) scaling.
+## Performance Optimization: Avoiding Array Mappings for Worker Serialization
+**Learning:** When passing data structures containing pre-compiled regular expressions to a Web Worker via `postMessage`, avoid unnecessarily stripping them down to string representations (e.g., mapping to `.raw`) if the worker is just going to immediately re-compile them.
+**Context:** `postMessage` supports structured cloning, which successfully serializes and deserializes `RegExp` objects natively without losing their prototype or matching capabilities.
+**Impact:** By removing the `.map(x => x.raw)` and passing the compiled pattern objects directly, we avoid $O(N)$ string mapping operations on the main thread and $O(N)$ regex re-compilation operations on the worker thread, reducing overhead from milliseconds down to microseconds for large exclusion pattern lists.
 
 ## 2026-07-12 - Memoizing Derived Graph Structures
 **Learning:** Computing relational graph statistics (like incoming/outgoing edges) by iterating over the entire `connections` list (O(N) operation) on every file selection blocks the main thread in large repositories.

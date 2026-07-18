@@ -793,7 +793,7 @@ function App(){
                         var dataObj=await runAnalysisData({
                             analyzed:analyzed,
                             allFns:allFns,
-                            excludePatterns:currentExcludePatterns.map(function(x){return x.raw;}),
+                            excludePatterns:currentExcludePatterns,
                             progress:setProgress,
                             yieldFn:yieldToBrowser
                         });
@@ -1155,7 +1155,7 @@ function App(){
 
             var dataObj=await runAnalysisData({
                 localFiles: localFiles,
-                excludePatterns:(compiledPatterns||[]).map(function(x){return x.raw;}),
+                excludePatterns:(compiledPatterns||[]),
                 progress:setProgress,
                 yieldFn:yieldToBrowser
             });
@@ -1245,7 +1245,7 @@ function App(){
                         file: f.file
                     };
                 }),
-                excludePatterns:(patterns||[]).map(function(x){return x.raw;}),
+                excludePatterns:(patterns||[]),
                 progress:setProgress,
                 yieldFn:yieldToBrowser
             });
@@ -1318,7 +1318,7 @@ function App(){
 
             var dataObj=await runAnalysisData({
                 zipFile: zipFile,
-                excludePatterns:(patterns||[]).map(function(x){return x.raw;}),
+                excludePatterns:(patterns||[]),
                 progress:setProgress,
                 yieldFn:yieldToBrowser
             });
