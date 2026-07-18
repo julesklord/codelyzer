@@ -1,10 +1,8 @@
-⚡ [performance] Flatten complexity calculation loop
+🎯 **What:**
+Fixed a Cross-Site Scripting (XSS) vulnerability in the Mermaid diagram rendering logic within `src/App.jsx`.
 
-💡 **What:**
-Flattened the nested `for` loop used for complexity calculation in `src/lib/parser.js` into a single loop, utilizing modulo arithmetic to determine when to yield execution `await yieldFn()`.
+⚠️ **Risk:**
+By directly injecting unsanitized SVG strings (which may be user-derived or manipulated repository data) via `innerHTML`, an attacker could potentially execute arbitrary JavaScript in the context of the user's session.
 
-🎯 **Why:**
-The nested looping structure over arrays created unnecessary variable overhead (`cEnd`, `cj`, inner loops). For very large collections (e.g., thousands of files in large repositories), simplifying the iteration logic slightly improves execution speed and provides clearer code organization without blocking the main UI thread.
-
-📊 **Measured Improvement:**
-In a benchmark using an array of 1,000 files with mocked CPU load, execution time dropped significantly from ~221ms to ~66ms. Without heavy CPU simulation, flattening the iteration loop reduced iteration overhead by a small margin (~1.4ms over 10,000 items), eliminating redundant variable initialization and `Math.min` calls.
+🛡️ **Solution:**
+Wrapped the `result.svg` output from the Mermaid renderer in a `DOMPurify.sanitize()` call before assignment to `innerHTML`. This ensures that malicious tags (like `<script>` or event handlers) are stripped out. Standard DOMPurify configuration is used so that the `<foreignObject>` HTML elements required by Mermaid.js for rendering layout and text are preserved without breaking diagram styles.
