@@ -27,11 +27,13 @@ self.onmessage = async function(event) {
       // MODE 1: ZIP FILE ANALYSIS
       self.postMessage({ type: 'progress', message: 'Reading ZIP archive...' });
       var zip = await JSZip.loadAsync(payload.zipFile);
-      var rawEntries = Object.keys(zip.files).sort().map(function(name) {
-        return zip.files[name];
-      }).filter(function(entry) {
-        return entry && !entry.dir;
-      });
+      var rawEntries = Object.keys(zip.files).sort().reduce(function(acc, name) {
+        var entry = zip.files[name];
+        if (entry && !entry.dir) {
+          acc.push(entry);
+        }
+        return acc;
+      }, []);
       
       var rootPrefix = getArchiveRootPrefix(rawEntries, function(entry) {
         return entry.name;

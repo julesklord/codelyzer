@@ -14,3 +14,7 @@
 ## 2026-07-13 - Form Controls Accessibility with `htmlFor` and `id`
 **Learning:** Found several explicit `<label>` elements in `App.jsx` (like "Pull Request URL" and "Custom Patterns") that lacked the `htmlFor` attribute. Consequently, the corresponding `<input>` and `<textarea>` elements lacked `id` attributes. This breaks the programmatic association required for screen readers and prevents users from clicking the label to focus the input.
 **Action:** Added `htmlFor` to the labels and matching `id` attributes to their respective form inputs/textareas to ensure proper form control accessibility. Ensure all explicit labels use `htmlFor` going forward.
+
+## 2024-07-18 - Fix form control accessibility and label attributes
+**Learning:** Adding explicit `htmlFor` properties to `<label>` elements and matching `id` properties to their respective `<input>` elements improves robust accessibility. Furthermore, `htmlFor` can only be applied when pointing to labelable form controls (e.g. `input`); using it to label a non-form block element (like a list of chips in a `div`) is invalid. Instead, that pattern requires an `id` on a generic label element and an `aria-labelledby` attribute on the container `div`.
+**Action:** Always verify that the targeted element of an `htmlFor` is a valid labelable element. When assigning labels to non-interactive containers, prefer ARIA labeling techniques.

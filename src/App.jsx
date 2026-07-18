@@ -454,7 +454,7 @@ function App(){
             });
             window.mermaid.render(renderId,mermaidText).then(function(result){
                 if(cancelled||!architectureRenderRef.current)return;
-                architectureRenderRef.current.innerHTML='<div class="architecture-pan">'+result.svg+'</div>';
+                architectureRenderRef.current.innerHTML='<div class="architecture-pan">'+DOMPurify.sanitize(result.svg, { USE_PROFILES: { svg: true } })+'</div>';
                 var svg=architectureRenderRef.current.querySelector('.architecture-pan svg');
                 if(!svg){
                     architectureRenderRef.current.innerHTML='<div class="empty-state"><div class="empty-title">Mermaid render failed</div><div class="empty-desc">The renderer returned no SVG for this diagram.</div></div>';
@@ -793,7 +793,7 @@ function App(){
                         var dataObj=await runAnalysisData({
                             analyzed:analyzed,
                             allFns:allFns,
-                            excludePatterns:currentExcludePatterns.map(function(x){return x.raw;}),
+                            excludePatterns:currentExcludePatterns,
                             progress:setProgress,
                             yieldFn:yieldToBrowser
                         });
@@ -1135,20 +1135,27 @@ function App(){
 
             setProgress('Resolving file handles...');
             var localFiles = [];
-            for (var i = 0; i < files.length; i++) {
-                if (i > 0 && i % 100 === 0) await yieldToBrowser();
-                var fileObj = await files[i].handle.getFile();
-                localFiles.push({
-                    path: files[i].path,
-                    name: files[i].name,
-                    size: fileObj.size || 0,
-                    file: fileObj
-                });
+            var CHUNK_SIZE = 100;
+            for (var i = 0; i < files.length; i += CHUNK_SIZE) {
+                if (i > 0) await yieldToBrowser();
+                var chunk = files.slice(i, i + CHUNK_SIZE);
+                var resolved = await Promise.all(chunk.map(async function(f) {
+                    var fileObj = await f.handle.getFile();
+                    return {
+                        path: f.path,
+                        name: f.name,
+                        size: fileObj.size || 0,
+                        file: fileObj
+                    };
+                }));
+                for (var j = 0; j < resolved.length; j++) {
+                    localFiles.push(resolved[j]);
+                }
             }
 
             var dataObj=await runAnalysisData({
                 localFiles: localFiles,
-                excludePatterns:(compiledPatterns||[]).map(function(x){return x.raw;}),
+                excludePatterns:(compiledPatterns||[]),
                 progress:setProgress,
                 yieldFn:yieldToBrowser
             });
@@ -1232,7 +1239,7 @@ function App(){
                         file: f.file
                     };
                 }),
-                excludePatterns:(patterns||[]).map(function(x){return x.raw;}),
+                excludePatterns:(patterns||[]),
                 progress:setProgress,
                 yieldFn:yieldToBrowser
             });
@@ -1305,7 +1312,7 @@ function App(){
 
             var dataObj=await runAnalysisData({
                 zipFile: zipFile,
-                excludePatterns:(patterns||[]).map(function(x){return x.raw;}),
+                excludePatterns:(patterns||[]),
                 progress:setProgress,
                 yieldFn:yieldToBrowser
             });
@@ -2981,9 +2988,6 @@ function App(){
             };
         });
     }
-    function resetArchitectureViewport(){
-        fitArchitectureViewport();
-    }
     function handleArchitecturePointerDown(e){
         if(e.button!==undefined&&e.button!==0)return;
         e.preventDefault();
@@ -3836,16 +3840,16 @@ function App(){
                             React.createElement('button',{className:'view-btn'+(viewGroupMode==='folder'?' active':''),onClick:function(){setViewGroupMode('folder');}},'Folders')
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Display'),
-                        React.createElement('label',{className:'config-check'},
-                            React.createElement('input',{type:'checkbox',checked:graphConfig.showLabels,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{showLabels:e.target.checked}));}}),
+                        React.createElement('label',{className:'config-check',htmlFor:'config-show-labels'},
+                            React.createElement('input',{id:'config-show-labels',type:'checkbox',checked:graphConfig.showLabels,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{showLabels:e.target.checked}));}}),
                             'Show labels'
                         ),
-                        React.createElement('label',{className:'config-check',style:{marginTop:6}},
-                            React.createElement('input',{type:'checkbox',checked:graphConfig.curvedLinks,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{curvedLinks:e.target.checked}));}}),
+                        React.createElement('label',{className:'config-check',htmlFor:'config-curved-links',style:{marginTop:6}},
+                            React.createElement('input',{id:'config-curved-links',type:'checkbox',checked:graphConfig.curvedLinks,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{curvedLinks:e.target.checked}));}}),
                             'Curved links'
                         ),
-                        graphConfig.vizType==='graph3d'&&React.createElement('label',{className:'config-check',style:{marginTop:6}},
-                            React.createElement('input',{type:'checkbox',checked:!!graphConfig.autoRotate,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{autoRotate:e.target.checked}));}}),
+                        graphConfig.vizType==='graph3d'&&React.createElement('label',{className:'config-check',htmlFor:'config-auto-rotate',style:{marginTop:6}},
+                            React.createElement('input',{id:'config-auto-rotate',type:'checkbox',checked:!!graphConfig.autoRotate,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{autoRotate:e.target.checked}));}}),
                             'Auto-rotate'
                         )
                     ),
@@ -4031,7 +4035,7 @@ function App(){
                                             React.createElement('div',{className:'fn-header',onClick:function(){toggleFn(fn.name);}},
                                                 React.createElement('span',{className:'fn-name'},fn.name,'()'),
                                                 React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},
-                                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(selected.path,fn.line);},title:'View source'},React.createElement(Icon,{name:'eye',size:'s'})),
+                                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(selected.path,fn.line);}},React.createElement(Icon,{name:'eye',size:'s'})),
                                                     React.createElement('span',{className:'fn-line'},'L',fn.line),
                                                     React.createElement('span',{className:'badge badge-default',title:'Internal calls (same file)'},intCalls,' int'),
                                                     React.createElement('span',{className:'badge '+(extCalls>10?'badge-danger':extCalls>0?'badge-warning':'badge-default'),title:'External calls (other files)'},extCalls,' ext')
@@ -4196,8 +4200,8 @@ function App(){
                         ', and path globs like ',React.createElement('code',null,'uploads/**'),' or ',React.createElement('code',null,'**/cache/**'),'.'
                     ),
                     React.createElement('div',{className:'form-group'},
-                        React.createElement('label',{className:'form-label'},'Always Excluded'),
-                        React.createElement('div',{className:'exclude-chip-list'},
+                        React.createElement('div',{className:'form-label',id:'always-excluded-label'},'Always Excluded'),
+                        React.createElement('div',{className:'exclude-chip-list',role:'list','aria-labelledby':'always-excluded-label'},
                             DEFAULT_EXCLUDE_CHIPS.map(function(pattern){return React.createElement('div',{key:pattern,className:'exclude-chip'},pattern);})
                         )
                     ),
@@ -4571,7 +4575,7 @@ function App(){
                                     )
                                 ),
                                 React.createElement('div',{className:'unused-fn-meta'},
-                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',onClick:function(e){e.stopPropagation();openFilePreview(fn.file,fn.line);},title:'View source'},React.createElement(Icon,{name:'eye',size:'s'})),
+                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(fn.file,fn.line);}},React.createElement(Icon,{name:'eye',size:'s'})),
                                     React.createElement('span',{className:'unused-fn-lines'},fn.codeLines,' lines'),
                                     fn.line&&React.createElement('span',{className:'unused-fn-loc'},'L',fn.line),
                                     React.createElement('span',{style:{fontSize:10,color:'var(--t3)'}},isExpanded?'▼':'▶')
