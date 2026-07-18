@@ -18,3 +18,7 @@
 ## 2024-07-24 - Chunked Promise.all for File Resolving
 **Learning:** Sequential resolution of `FileSystemFileHandle.getFile()` across thousands of files incurs significant performance bottlenecks because the runtime awaits every single file's I/O handle sequentially. Full parallel mapping with `Promise.all` improves this but may strain memory for enormous sets.
 **Action:** Use a chunked `Promise.all` pattern (e.g. `CHUNK_SIZE=100`) combined with `yieldToBrowser()` to parallelize I/O without blocking the main thread or overflowing memory, which resulted in significant execution time reduction in file resolution.
+
+## 2026-07-28 - O(N) Grouping for Graph Hulls
+**Learning:** Pre-indexing a large collection (e.g. `nodes`) by a property (e.g. `folder`) using nested iteration (a `.filter()` inside a `.forEach()`) results in $O(F*N)$ complexity. For large codebases (e.g., 5000 files in 200 folders), this leads to over 1,000,000 iterations inside `useEffect` during rendering, blocking the main thread significantly.
+**Action:** Replace $O(F*N)$ `.filter()` approaches inside a `.forEach()` loop with a single-pass $O(N)$ loop over the target array that groups items into pre-initialized arrays.
