@@ -1,11 +1,5 @@
-## 2024-07-09 - Math.max.apply on Large Data Structures
-**Learning:** Using `Math.max.apply(null, array.map(...))` on large datasets (like graph nodes) creates two major performance/stability issues: it allocates intermediate arrays (increasing GC pressure) and runs the risk of throwing a "Maximum call stack size exceeded" error if the array length exceeds ~65k items.
-**Action:** Always replace `Math.max.apply` or `Math.min.apply` with a simple `for` loop to find extrema in a single pass with O(1) memory. Avoid using them inside React `.map()` renders to prevent O(N²) scaling.
+## Performance Optimization: Avoiding Array Mappings for Worker Serialization
 
-## 2026-07-12 - Memoizing Derived Graph Structures
-**Learning:** Computing relational graph statistics (like incoming/outgoing edges) by iterating over the entire `connections` list (O(N) operation) on every file selection blocks the main thread in large repositories.
-**Action:** Pre-calculate and memoize a global O(1) lookup map (like `globalConnectionsMap`) based purely on `[data]`, so that rapidly changing state (like `[selected]`) only triggers an O(1) object lookup, preventing UI lag.
-
-## 2024-07-15 - Graph Traversal Performance Optimization
-**Learning:** Computing graph layout logic (e.g. Metro layout) by nesting operations like `.filter()`, `.find()`, and `.some()` over large Node and Link collections results in O(N*L) or O(N*(N+L)) performance and blocks the main thread.
-**Action:** When computing graph layout structures, always pre-compute fast-lookup objects (`nodeById`, `hasIncoming`, `outgoingById`) in O(N+L) time. Use these lookup maps during BFS/DFS graph traversals instead of repeatedly iterating the raw arrays.
+*   **Learning:** When passing data structures containing pre-compiled regular expressions to a Web Worker via `postMessage`, avoid unnecessarily stripping them down to string representations (e.g., mapping to `.raw`) if the worker is just going to immediately re-compile them.
+*   **Context:** `postMessage` supports structured cloning, which successfully serializes and deserializes `RegExp` objects natively without losing their prototype or matching capabilities.
+*   **Impact:** By removing the `.map(x => x.raw)` and passing the compiled pattern objects directly, we avoid $O(N)$ string mapping operations on the main thread and $O(N)$ regex re-compilation operations on the worker thread, reducing overhead from milliseconds down to microseconds for large exclusion pattern lists.
