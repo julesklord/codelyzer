@@ -2986,9 +2986,6 @@ function App(){
             };
         });
     }
-    function resetArchitectureViewport(){
-        fitArchitectureViewport();
-    }
     function handleArchitecturePointerDown(e){
         if(e.button!==undefined&&e.button!==0)return;
         e.preventDefault();
