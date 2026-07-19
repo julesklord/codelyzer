@@ -4661,7 +4661,7 @@ function calcPRRisk(prData, repoData) {
 }
 
 function findSuggestedReviewers(prData, repoData) {
-    if (!prData || !repoData) return [];
+    if (!prData || !repoData || !repoData.files) return [];
     var changedPaths = (prData.files || []).map(function(f) { return f.filename; });
     var changedFolders = new Set();
     changedPaths.forEach(function(p) {
@@ -4688,7 +4688,7 @@ function findSuggestedReviewers(prData, repoData) {
 }
 
 function findTestImpact(prData, repoData) {
-    if (!prData || !repoData) return [];
+    if (!prData || !repoData || !repoData.files) return [];
     var changedFiles = (prData.files || []).map(function(f) { return f.filename; });
     var changedBases = Array.from(new Set(changedFiles.map(function(cf) {
         return cf.replace(/\.[^.]+$/, '').split('/').pop().toLowerCase();
@@ -4709,7 +4709,7 @@ function findTestImpact(prData, repoData) {
 }
 
 function findDependencyChains(prData, repoData) {
-    if (!prData || !repoData) return [];
+    if (!prData || !repoData || !repoData.files) return [];
     var changedFiles = (prData.files || []).map(function(f) { return f.filename; });
     var chains = [];
     changedFiles.slice(0, 3).forEach(function(file) {
