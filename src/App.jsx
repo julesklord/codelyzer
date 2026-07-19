@@ -180,10 +180,17 @@ function App(){
     var confirmResolverRef=useRef(null);
     var selectedRef=useRef(null);
     var blastRadiusRef=useRef(null);
+    var localDirHandleCacheRef=useRef(new Map());
     selectedRef.current=selected;
     blastRadiusRef.current=blastRadius;
     var activeExcludePatterns=useMemo(function(){return compileExcludePatterns(excludePatternInput);},[excludePatternInput]);
     var customExcludeCount=activeExcludePatterns.length;
+
+    useEffect(function(){
+        if(localDirHandleCacheRef.current){
+            localDirHandleCacheRef.current.clear();
+        }
+    },[localDirHandle]);
 
     useEffect(function(){
         if(data && data.files && data.files.length > 400){
@@ -1513,8 +1520,16 @@ function App(){
                 try{
                     var parts=path.split('/');
                     var currentHandle=localDirHandle;
+                    var currentPath="";
                     for(var i=0;i<parts.length-1;i++){
-                        currentHandle=await currentHandle.getDirectoryHandle(parts[i]);
+                        var nextPath=currentPath?currentPath+'/'+parts[i]:parts[i];
+                        if(localDirHandleCacheRef.current.has(nextPath)){
+                            currentHandle=localDirHandleCacheRef.current.get(nextPath);
+                        }else{
+                            currentHandle=await currentHandle.getDirectoryHandle(parts[i]);
+                            localDirHandleCacheRef.current.set(nextPath,currentHandle);
+                        }
+                        currentPath=nextPath;
                     }
                     var fileHandle=await currentHandle.getFileHandle(parts[parts.length-1]);
                     var fileObj=await fileHandle.getFile();
