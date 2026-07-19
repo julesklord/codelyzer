@@ -22,3 +22,4 @@
 ## 2026-07-28 - O(N) Grouping for Graph Hulls
 **Learning:** Pre-indexing a large collection (e.g. `nodes`) by a property (e.g. `folder`) using nested iteration (a `.filter()` inside a `.forEach()`) results in $O(F*N)$ complexity. For large codebases (e.g., 5000 files in 200 folders), this leads to over 1,000,000 iterations inside `useEffect` during rendering, blocking the main thread significantly.
 **Action:** Replace $O(F*N)$ `.filter()` approaches inside a `.forEach()` loop with a single-pass $O(N)$ loop over the target array that groups items into pre-initialized arrays.
+When recursively resolving paths using the File System Access API, cache intermediate directory handles (e.g., using a `useRef` Map) to prevent redundant, sequential asynchronous `getDirectoryHandle` I/O calls for frequently accessed subdirectories.
