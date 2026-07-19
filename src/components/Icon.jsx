@@ -527,11 +527,11 @@ export function getSeverityColor(level){
 }
 
 export function getFilePreviewIconName(filename){
+    if(Parser.isCSS(filename)) return 'brush';
+    if(Parser.isJSON(filename)) return 'note';
     if(!Parser.isCode(filename)) return 'file';
     if(Parser.isVBA(filename)) return 'chart';
     if(Parser.isHTML(filename)) return 'globe';
-    if(Parser.isCSS(filename)) return 'brush';
-    if(Parser.isJSON(filename)) return 'note';
     return 'code';
 }
 
