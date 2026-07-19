@@ -4343,12 +4343,9 @@ async function buildAnalysisData(options){
     var duplicates=SKIP_DUPLICATES ? [] : Parser.detectDuplicates(analyzed,allFns);
     var layerViolations=Parser.detectLayerViolations(analyzed,conns);
     if (!SKIP_COMPLEXITY) {
-        for(var ci=0;ci<analyzed.length;ci+=CALL_BATCH){
-            var cEnd=Math.min(ci+CALL_BATCH,analyzed.length);
-            for(var cj=ci;cj<cEnd;cj++){
-                analyzed[cj].complexity=analyzed[cj].isCode!==false?Parser.calcComplexity(analyzed[cj].content,analyzed[cj].path):{score:0,level:'low'};
-            }
-            if(ci+CALL_BATCH<analyzed.length)await yieldFn();
+        for(var ci=0;ci<analyzed.length;ci++){
+            analyzed[ci].complexity=analyzed[ci].isCode!==false?Parser.calcComplexity(analyzed[ci].content,analyzed[ci].path):{score:0,level:'low'};
+            if((ci+1)%CALL_BATCH===0 && ci+1<analyzed.length)await yieldFn();
         }
     } else {
         analyzed.forEach(function(f){f.complexity={score:0,level:'low'};});
