@@ -887,6 +887,10 @@ const Parser={
                 if(line.match(/(?:password|passwd|pwd|secret|api_key|apikey|token|auth)\s*[=:]\s*['"][^'"]{4,}['"]/i)&&!line.includes('process.env')&&!line.includes('config.')){
                     issues.push({severity:'high',title:'Hardcoded Secret',file:f.name,path:f.path,line:idx+1,desc:'Credentials should never be hardcoded. Use environment variables or a secrets manager.',code:line.trim().substring(0,80)});
                 }
+                var todoMatch=line.match(/\b(TODO|FIXME|HACK|XXX)\b/);
+                if(todoMatch){
+                    issues.push({severity:'low',title:'Code Comment',file:f.name,path:f.path,line:idx+1,desc:todoMatch[1]+' comment found. Address before release.',code:line.trim().substring(0,80)});
+                }
             });
             if(scanContent.match(/query\s*\(\s*['"`][^'"`]*\s*\+/)||scanContent.match(/execute\s*\(\s*['"`][^'"`]*\$\{/)||scanContent.match(/\$\{.*\}.*(?:SELECT|INSERT|UPDATE|DELETE)/i)){
                 var m=scanContent.match(/.*(query|execute|SELECT|INSERT|UPDATE|DELETE).*(\+|\$\{).*/i);
@@ -932,10 +936,6 @@ const Parser={
                 if(errorResumeCount>2){
                     issues.push({severity:'medium',title:'Excessive Error Suppression',file:f.name,path:f.path,desc:errorResumeCount+' instances of "On Error Resume Next" found. This can hide bugs.',code:''});
                 }
-            }
-            if(scanContent.match(/TODO|FIXME|HACK|XXX/)){
-                var todoCount=(scanContent.match(/TODO|FIXME|HACK|XXX/g)||[]).length;
-                issues.push({severity:'low',title:'Code Comments',file:f.name,path:f.path,desc:todoCount+' TODO/FIXME comments found. Address before release.',code:''});
             }
             // Python-specific security checks
             var isPyFile=f.name.endsWith('.py')||f.name.endsWith('.pyw');
