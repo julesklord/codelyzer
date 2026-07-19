@@ -185,10 +185,17 @@ function App(){
     var confirmResolverRef=useRef(null);
     var selectedRef=useRef(null);
     var blastRadiusRef=useRef(null);
+    var localDirHandleCacheRef=useRef(new Map());
     selectedRef.current=selected;
     blastRadiusRef.current=blastRadius;
     var activeExcludePatterns=useMemo(function(){return compileExcludePatterns(excludePatternInput);},[excludePatternInput]);
     var customExcludeCount=activeExcludePatterns.length;
+
+    useEffect(function(){
+        if(localDirHandleCacheRef.current){
+            localDirHandleCacheRef.current.clear();
+        }
+    },[localDirHandle]);
 
     useEffect(function(){
         if(data && data.files && data.files.length > 400){
@@ -1519,6 +1526,7 @@ function App(){
                     var parts=path.split('/');
                     var currentPath = "";
                     var currentHandle=localDirHandle;
+                    var currentPath="";
                     for(var i=0;i<parts.length-1;i++){
                         currentPath = currentPath ? currentPath + "/" + parts[i] : parts[i];
                         if (dirCacheRef.current.has(currentPath)) {
