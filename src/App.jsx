@@ -1819,8 +1819,16 @@ function App(){
             });
         }
         // Pre-index nodes by folder for faster hull computation
+        // ⚡ Bolt: Single-pass O(N) grouping instead of O(F*N) nested iterations (.filter inside .forEach)
+        // to prevent main thread blocking during graph layout updates in large repositories.
         var nodesByFolder={};
-        folders.forEach(function(f){nodesByFolder[f]=nodes.filter(function(n){return n.folder===f;});});
+        folders.forEach(function(f){nodesByFolder[f]=[];});
+        for(var i=0;i<nodes.length;i++){
+            var n=nodes[i];
+            if(nodesByFolder[n.folder]){
+                nodesByFolder[n.folder].push(n);
+            }
+        }
         function updateHulls(){
             hullLayer.selectAll('*').remove();
             if (viewGroupMode === 'folder' && !folderFilter) return;
