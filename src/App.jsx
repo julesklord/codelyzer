@@ -180,6 +180,7 @@ function App(){
     var zipFileRef=useRef(null);
     var folderInputRef=useRef(null);
     var localFilesRef=useRef(null);
+    var dirCacheRef=useRef(new Map());
     var pendingExcludePatternsRef=useRef(null);
     var confirmResolverRef=useRef(null);
     var selectedRef=useRef(null);
@@ -655,7 +656,7 @@ function App(){
         }
         
         resetAnalysisState();
-        setLocalDirHandle(null);
+        dirCacheRef.current.clear();setLocalDirHandle(null);
         setLocalSourceKind(null);
         zipArchiveRef.current=null;
         zipFileRef.current=null;
@@ -870,7 +871,7 @@ function App(){
         window.showDirectoryPicker().then(function(dirHandle){
             resetAnalysisState();
             setRepoInfo(null);
-            setLocalDirHandle(dirHandle);
+            dirCacheRef.current.clear();setLocalDirHandle(dirHandle);
             setLocalSourceKind('folder');
             zipArchiveRef.current=null;
             zipFileRef.current=null;
@@ -904,7 +905,7 @@ function App(){
         if(!file)return;
         resetAnalysisState();
         setRepoInfo(null);
-        setLocalDirHandle(null);
+        dirCacheRef.current.clear();setLocalDirHandle(null);
         setLocalSourceKind('zip');
         zipArchiveRef.current=null;
         zipFileRef.current=file;
@@ -1002,7 +1003,7 @@ function App(){
             localFilesRef.current = files;
             resetAnalysisState();
             setRepoInfo(null);
-            setLocalDirHandle(null);
+            dirCacheRef.current.clear();setLocalDirHandle(null);
             setLocalSourceKind('folder');
             zipArchiveRef.current=null;
             zipFileRef.current=null;
@@ -1022,7 +1023,7 @@ function App(){
         
         resetAnalysisState();
         setRepoInfo(null);
-        setLocalDirHandle(null);
+        dirCacheRef.current.clear();setLocalDirHandle(null);
         setLocalSourceKind('folder');
         zipArchiveRef.current=null;
         zipFileRef.current=null;
@@ -1064,7 +1065,7 @@ function App(){
                 return;
             }
             resetAnalysisState();
-            setLocalDirHandle(null);
+            dirCacheRef.current.clear();setLocalDirHandle(null);
             setLocalSourceKind('zip');
             zipArchiveRef.current=null;
             setLoading(true);
@@ -1311,7 +1312,7 @@ function App(){
 
             zipArchiveRef.current={zip:zip,entriesByPath:entriesByPath,name:zipFile.name};
             zipFileRef.current=zipFile;
-            setLocalDirHandle(null);
+            dirCacheRef.current.clear();setLocalDirHandle(null);
             setLocalSourceKind('zip');
 
             var dataObj=await runAnalysisData({
@@ -1516,9 +1517,16 @@ function App(){
             (async function(){
                 try{
                     var parts=path.split('/');
+                    var currentPath = "";
                     var currentHandle=localDirHandle;
                     for(var i=0;i<parts.length-1;i++){
-                        currentHandle=await currentHandle.getDirectoryHandle(parts[i]);
+                        currentPath = currentPath ? currentPath + "/" + parts[i] : parts[i];
+                        if (dirCacheRef.current.has(currentPath)) {
+                            currentHandle = dirCacheRef.current.get(currentPath);
+                        } else {
+                            currentHandle = await currentHandle.getDirectoryHandle(parts[i]);
+                            dirCacheRef.current.set(currentPath, currentHandle);
+                        }
                     }
                     var fileHandle=await currentHandle.getFileHandle(parts[parts.length-1]);
                     var fileObj=await fileHandle.getFile();
@@ -3382,7 +3390,7 @@ function App(){
         navigator.clipboard.writeText(shareUrl).then(function(){showNotification('Link copied to clipboard!');}).catch(function(){showNotification('Failed to copy link','error');});
     }
     function analyzePR(){if(!prUrl||!repoInfo)return;var m=prUrl.match(/\/pull\/(\d+)/);if(!m){showNotification('Invalid PR URL','error');return;}GitHub.getPR(repoInfo.owner,repoInfo.repo,m[1]).then(function(pr){if(pr)setPrData(pr);else showNotification('Could not load PR','error');});}
-    function resetAnalysis(){setData(null);setSelected(null);setBlastRadius(null);setOwnership(null);setRepoInfo(null);setRepoUrl('');setPrData(null);setFolderFilter(null);setLocalDirHandle(null);setLocalSourceKind(null);setArchitectureIncludeTests(false);setArchitectureIncludeBuildOutput(false);zipArchiveRef.current=null;zipFileRef.current=null;window.history.replaceState({},'',window.location.pathname);}
+    function resetAnalysis(){setData(null);setSelected(null);setBlastRadius(null);setOwnership(null);setRepoInfo(null);setRepoUrl('');setPrData(null);setFolderFilter(null);dirCacheRef.current.clear();setLocalDirHandle(null);setLocalSourceKind(null);setArchitectureIncludeTests(false);setArchitectureIncludeBuildOutput(false);zipArchiveRef.current=null;zipFileRef.current=null;window.history.replaceState({},'',window.location.pathname);}
     function filterByFolder(path){setFolderFilter(function(prev){return prev===path?null:path;});}
     function getArchitectureViewStats(diagram,includeTests,includeBuildOutput){
         if(!diagram)return{blocks:0,dependencies:0,routes:0,apiRoutes:0,databaseTouchpoints:0,warnings:0};
