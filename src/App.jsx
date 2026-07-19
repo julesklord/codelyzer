@@ -33,6 +33,10 @@ import {
   CYBER_LIGHT_COLORS,
   CYBER_DARK_LAYER_COLORS,
   CYBER_LIGHT_LAYER_COLORS,
+  getColors,
+  getLayerColors,
+  setColors,
+  setLayerColors,
   IGNORE,
   DEFAULT_EXCLUDE_CHIPS,
   ANALYSIS_LIMITS,
@@ -83,8 +87,8 @@ import { TreeNode } from './components/TreeNode.jsx';
 import { HealthRing } from './components/HealthRing.jsx';
 
 // Declare module-scoped mutable variables for colors, exactly as in original index.html
-let COLORS = DARK_COLORS;
-let LAYER_COLORS = DARK_LAYER_COLORS;
+
+
 function App(){
     var _a=useState(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'),theme=_a[0],setTheme=_a[1];
     var _themeStyle = useState(localStorage.getItem('codelyzer_theme_style') || 'brutalist');
@@ -92,14 +96,14 @@ function App(){
     var setThemeStyle = _themeStyle[1];
 
     if (themeStyle === 'glass') {
-        COLORS = theme === 'light' ? GLASS_LIGHT_COLORS : GLASS_DARK_COLORS;
-        LAYER_COLORS = theme === 'light' ? GLASS_LIGHT_LAYER_COLORS : GLASS_DARK_LAYER_COLORS;
+        setColors(theme === 'light' ? GLASS_LIGHT_COLORS : GLASS_DARK_COLORS);
+        setLayerColors(theme === 'light' ? GLASS_LIGHT_LAYER_COLORS : GLASS_DARK_getLayerColors());
     } else if (themeStyle === 'cyber') {
-        COLORS = theme === 'light' ? CYBER_LIGHT_COLORS : CYBER_DARK_COLORS;
-        LAYER_COLORS = theme === 'light' ? CYBER_DARK_LAYER_COLORS : CYBER_DARK_LAYER_COLORS;
+        setColors(theme === 'light' ? CYBER_LIGHT_COLORS : CYBER_DARK_COLORS);
+        setLayerColors(theme === 'light' ? CYBER_DARK_LAYER_COLORS : CYBER_DARK_getLayerColors());
     } else {
-        COLORS = theme === 'light' ? LIGHT_COLORS : DARK_COLORS;
-        LAYER_COLORS = theme === 'light' ? LIGHT_LAYER_COLORS : DARK_LAYER_COLORS;
+        setColors(theme === 'light' ? LIGHT_COLORS : DARK_COLORS);
+        setLayerColors(theme === 'light' ? LIGHT_LAYER_COLORS : DARK_getLayerColors());
     }
     var _b=useState(''),repoUrl=_b[0],setRepoUrl=_b[1];
     var _c=useState(''),token=_c[0],setToken=_c[1];
@@ -176,6 +180,7 @@ function App(){
     var zipFileRef=useRef(null);
     var folderInputRef=useRef(null);
     var localFilesRef=useRef(null);
+    var dirCacheRef=useRef(new Map());
     var pendingExcludePatternsRef=useRef(null);
     var confirmResolverRef=useRef(null);
     var selectedRef=useRef(null);
@@ -651,7 +656,7 @@ function App(){
         }
         
         resetAnalysisState();
-        setLocalDirHandle(null);
+        dirCacheRef.current.clear();setLocalDirHandle(null);
         setLocalSourceKind(null);
         zipArchiveRef.current=null;
         zipFileRef.current=null;
@@ -866,7 +871,7 @@ function App(){
         window.showDirectoryPicker().then(function(dirHandle){
             resetAnalysisState();
             setRepoInfo(null);
-            setLocalDirHandle(dirHandle);
+            dirCacheRef.current.clear();setLocalDirHandle(dirHandle);
             setLocalSourceKind('folder');
             zipArchiveRef.current=null;
             zipFileRef.current=null;
@@ -900,7 +905,7 @@ function App(){
         if(!file)return;
         resetAnalysisState();
         setRepoInfo(null);
-        setLocalDirHandle(null);
+        dirCacheRef.current.clear();setLocalDirHandle(null);
         setLocalSourceKind('zip');
         zipArchiveRef.current=null;
         zipFileRef.current=file;
@@ -998,7 +1003,7 @@ function App(){
             localFilesRef.current = files;
             resetAnalysisState();
             setRepoInfo(null);
-            setLocalDirHandle(null);
+            dirCacheRef.current.clear();setLocalDirHandle(null);
             setLocalSourceKind('folder');
             zipArchiveRef.current=null;
             zipFileRef.current=null;
@@ -1018,7 +1023,7 @@ function App(){
         
         resetAnalysisState();
         setRepoInfo(null);
-        setLocalDirHandle(null);
+        dirCacheRef.current.clear();setLocalDirHandle(null);
         setLocalSourceKind('folder');
         zipArchiveRef.current=null;
         zipFileRef.current=null;
@@ -1060,7 +1065,7 @@ function App(){
                 return;
             }
             resetAnalysisState();
-            setLocalDirHandle(null);
+            dirCacheRef.current.clear();setLocalDirHandle(null);
             setLocalSourceKind('zip');
             zipArchiveRef.current=null;
             setLoading(true);
@@ -1307,7 +1312,7 @@ function App(){
 
             zipArchiveRef.current={zip:zip,entriesByPath:entriesByPath,name:zipFile.name};
             zipFileRef.current=zipFile;
-            setLocalDirHandle(null);
+            dirCacheRef.current.clear();setLocalDirHandle(null);
             setLocalSourceKind('zip');
 
             var dataObj=await runAnalysisData({
@@ -1436,10 +1441,10 @@ function App(){
     }
 
     function getNodeColor(d){
-        if(colorMode==='folder')return colorMap[d.folder]||COLORS[0];
-        if(colorMode==='layer')return LAYER_COLORS[d.layer]||LAYER_COLORS['utils'];
+        if(colorMode==='folder')return colorMap[d.folder]||getColors()[0];
+        if(colorMode==='layer')return LAYER_getColors()[d.layer]||LAYER_getColors()['utils'];
         if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
-        return COLORS[0];
+        return getColors()[0];
     }
 
     var togglePath=useCallback(function(p){setExpandedPaths(function(prev){var n=new Set(prev);if(n.has(p))n.delete(p);else n.add(p);return n;});},[]);
@@ -1512,9 +1517,16 @@ function App(){
             (async function(){
                 try{
                     var parts=path.split('/');
+                    var currentPath = "";
                     var currentHandle=localDirHandle;
                     for(var i=0;i<parts.length-1;i++){
-                        currentHandle=await currentHandle.getDirectoryHandle(parts[i]);
+                        currentPath = currentPath ? currentPath + "/" + parts[i] : parts[i];
+                        if (dirCacheRef.current.has(currentPath)) {
+                            currentHandle = dirCacheRef.current.get(currentPath);
+                        } else {
+                            currentHandle = await currentHandle.getDirectoryHandle(parts[i]);
+                            dirCacheRef.current.set(currentPath, currentHandle);
+                        }
                     }
                     var fileHandle=await currentHandle.getFileHandle(parts[parts.length-1]);
                     var fileObj=await fileHandle.getFile();
@@ -1592,8 +1604,8 @@ function App(){
     var colorMap=useMemo(function(){
         if(!data)return{};
         var m={};
-        if(colorMode==='folder'){data.folders.forEach(function(f,i){m[f]=COLORS[i%COLORS.length];});m['root']=COLORS[0];}
-        else if(colorMode==='layer')data.files.forEach(function(f){m[f.path]=LAYER_COLORS[f.layer]||COLORS[0];});
+        if(colorMode==='folder'){data.folders.forEach(function(f,i){m[f]=getColors()[i%getColors().length];});m['root']=getColors()[0];}
+        else if(colorMode==='layer')data.files.forEach(function(f){m[f.path]=LAYER_getColors()[f.layer]||getColors()[0];});
         else if(colorMode==='churn'){
             // ⚡ Bolt: Replaced Math.max.apply(null, map) with a single-pass O(N) loop
             // to avoid maximum call stack size limits on large repos and reduce GC pressure.
@@ -1674,10 +1686,10 @@ function App(){
             return Math.max(8,Math.min(24,5+d.fnCount*0.8));
         }
         function getC(d){
-            if(colorMode==='folder')return colorMap[d.folder]||COLORS[0];
-            if(colorMode==='layer')return LAYER_COLORS[d.layer]||LAYER_COLORS['utils'];
+            if(colorMode==='folder')return colorMap[d.folder]||getColors()[0];
+            if(colorMode==='layer')return LAYER_getColors()[d.layer]||LAYER_getColors()['utils'];
             if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
-            return COLORS[0];
+            return getColors()[0];
         }
         var folders=viewGroupMode==='folder'&&!folderFilter?[]:[...new Set(nodes.map(function(n){return n.folder;}))];
         var cols=Math.max(2,Math.ceil(Math.sqrt(folders.length)));
@@ -1840,7 +1852,7 @@ function App(){
                 if(pts.length<3)return;
                 var hull=d3.polygonHull(pts);
                 if(hull){
-                    var color=colorMap[f]||COLORS[folders.indexOf(f)%COLORS.length];
+                    var color=colorMap[f]||getColors()[folders.indexOf(f)%getColors().length];
                     hullLayer.append('path').attr('d','M'+hull.join('L')+'Z').attr('fill',color).attr('fill-opacity',0.04).attr('stroke',color).attr('stroke-width',2).attr('stroke-opacity',0.25).attr('rx',8);
                     var cx=d3.mean(fn,function(n){return n.x;}),cy=d3.min(fn,function(n){return n.y;})-pad-8;
                     hullLayer.append('text').attr('x',cx).attr('y',cy).attr('text-anchor','middle').attr('fill',color).attr('font-size','10px').attr('font-family','JetBrains Mono').attr('font-weight','600').attr('opacity',0.7).text(f||'root');
@@ -2003,10 +2015,10 @@ function App(){
         }
 
         function getBaseColor(d){
-            if(colorMode==='folder')return colorMap[d.folder]||COLORS[0];
-            if(colorMode==='layer')return LAYER_COLORS[d.layer]||LAYER_COLORS['utils'];
+            if(colorMode==='folder')return colorMap[d.folder]||getColors()[0];
+            if(colorMode==='layer')return LAYER_getColors()[d.layer]||LAYER_getColors()['utils'];
             if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
-            return COLORS[0];
+            return getColors()[0];
         }
 
         function getR(d){
@@ -2356,7 +2368,7 @@ function App(){
         var cells=g.selectAll('g.treemap-cell-g').data(root.leaves()).join('g').attr('class','treemap-cell-g')
             .attr('transform',function(d){return'translate('+d.x0+','+d.y0+')';});
         cells.append('rect').attr('class','treemap-rect').attr('width',function(d){return Math.max(0,d.x1-d.x0);}).attr('height',function(d){return Math.max(0,d.y1-d.y0);})
-            .attr('fill',function(d){return colorMap[d.parent.data.name]||COLORS[hier.children.indexOf(d.parent.data)%COLORS.length];})
+            .attr('fill',function(d){return colorMap[d.parent.data.name]||getColors()[hier.children.indexOf(d.parent.data)%getColors().length];})
             .attr('opacity',0.85).attr('rx',3).attr('stroke','var(--bg0)').attr('stroke-width',1).style('cursor','pointer');
         cells.filter(function(d){return d.x1-d.x0>45&&d.y1-d.y0>22;}).append('text').attr('class','treemap-text')
             .attr('x',4).attr('y',14).attr('fill','white').attr('font-size','10px').attr('font-weight','500').style('text-shadow','0 1px 2px rgba(0,0,0,0.5)').style('pointer-events','none')
@@ -2389,7 +2401,7 @@ function App(){
                     var blast=blastRadius;
                     cells.select('rect').transition().duration(300)
                         .attr('opacity',function(n){return n.data.path===d.data.path?1:(blast&&blast.affected.includes(n.data.path))?0.95:0.4;})
-                        .attr('fill',function(n){return n.data.path===d.data.path?'#ff5f5f':(blast&&blast.affected.includes(n.data.path))?'#ff9f43':colorMap[n.parent.data.name]||COLORS[0];})
+                        .attr('fill',function(n){return n.data.path===d.data.path?'#ff5f5f':(blast&&blast.affected.includes(n.data.path))?'#ff9f43':colorMap[n.parent.data.name]||getColors()[0];})
                         .attr('stroke',function(n){return n.data.path===d.data.path?'#ff5f5f':(blast&&blast.affected.includes(n.data.path))?'var(--orange)':'var(--bg0)';})
                         .attr('stroke-width',function(n){return n.data.path===d.data.path||blast&&blast.affected.includes(n.data.path)?2:1;});
                 },100);
@@ -2397,7 +2409,7 @@ function App(){
         });
         svg.on('click',function(){
             setSelected(null);setBlastRadius(null);
-            cells.select('rect').transition().duration(300).attr('opacity',0.85).attr('fill',function(d){return colorMap[d.parent.data.name]||COLORS[0];}).attr('stroke','var(--bg0)').attr('stroke-width',1);
+            cells.select('rect').transition().duration(300).attr('opacity',0.85).attr('fill',function(d){return colorMap[d.parent.data.name]||getColors()[0];}).attr('stroke','var(--bg0)').attr('stroke-width',1);
         });
         svg.on('dblclick.zoom',function(e){e.preventDefault();svg.transition().duration(300).call(zoom.scaleTo,1);});
     },[data,graphConfig.vizType,colorMap,folderFilter,selected,blastRadius]);
@@ -2490,7 +2502,7 @@ function App(){
         var node=g.selectAll('g.dendro-node').data(root.descendants()).join('g').attr('class','dendro-node')
             .attr('transform',function(d){return'translate('+d.y+','+d.x+')';}).style('cursor','pointer');
         node.append('circle').attr('r',function(d){return d.children?6:8;})
-            .attr('fill',function(d){return d.children?'var(--bg3)':colorMap[d.data.folder]||COLORS[0];})
+            .attr('fill',function(d){return d.children?'var(--bg3)':colorMap[d.data.folder]||getColors()[0];})
             .attr('stroke',function(d){return d.children?'var(--t3)':'var(--bg0)';}).attr('stroke-width',2);
         node.filter(function(d){return!d.children;}).append('text').attr('x',12).attr('dy','0.35em')
             .attr('fill','var(--t1)').attr('font-size','9px').text(function(d){var n=d.data.name.replace(/\.[^.]+$/,'');return n.length>20?n.slice(0,18)+'…':n;});
@@ -2578,7 +2590,7 @@ function App(){
         var tooltip=container.append('div').attr('class','treemap-tooltip').style('display','none').style('position','absolute');
         g.selectAll('path.sankey-link').data(graph.links).join('path').attr('class','sankey-link')
             .attr('d',d3.sankeyLinkHorizontal()).attr('fill','none')
-            .attr('stroke',function(d){return colorMap[d.source.fullPath]||COLORS[d.source.id%COLORS.length];})
+            .attr('stroke',function(d){return colorMap[d.source.fullPath]||getColors()[d.source.id%getColors().length];})
             .attr('stroke-width',function(d){return Math.max(2,d.width);}).attr('stroke-opacity',0.4)
             .on('mouseenter',function(e,d){
                 d3.select(this).attr('stroke-opacity',0.8);
@@ -2590,7 +2602,7 @@ function App(){
         var node=g.selectAll('g.sankey-node').data(graph.nodes).join('g').attr('class','sankey-node').style('cursor','pointer');
         node.append('rect').attr('x',function(d){return d.x0;}).attr('y',function(d){return d.y0;})
             .attr('width',function(d){return d.x1-d.x0;}).attr('height',function(d){return Math.max(4,d.y1-d.y0);})
-            .attr('fill',function(d){return colorMap[d.fullPath]||COLORS[d.id%COLORS.length];}).attr('rx',3);
+            .attr('fill',function(d){return colorMap[d.fullPath]||getColors()[d.id%getColors().length];}).attr('rx',3);
         node.append('text').attr('x',function(d){return d.x0<w/2?d.x1+8:d.x0-8;}).attr('y',function(d){return(d.y0+d.y1)/2;})
             .attr('dy','0.35em').attr('text-anchor',function(d){return d.x0<w/2?'start':'end';})
             .attr('fill','var(--t1)').attr('font-size','10px').attr('font-weight','500').text(function(d){return d.name+' ('+d.fileCount+')';});
@@ -2638,8 +2650,8 @@ function App(){
         g.selectAll('rect.cluster-bg').data(folders).join('rect').attr('class','cluster-bg')
             .attr('x',function(d,i){return(i%cols)*cellW+10;}).attr('y',function(d,i){return Math.floor(i/cols)*cellH+10;})
             .attr('width',cellW-20).attr('height',cellH-20).attr('rx',12)
-            .attr('fill',function(d){return colorMap[d]||COLORS[folders.indexOf(d)%COLORS.length];}).attr('opacity',0.08)
-            .attr('stroke',function(d){return colorMap[d]||COLORS[folders.indexOf(d)%COLORS.length];}).attr('stroke-width',1).attr('stroke-opacity',0.3);
+            .attr('fill',function(d){return colorMap[d]||getColors()[folders.indexOf(d)%getColors().length];}).attr('opacity',0.08)
+            .attr('stroke',function(d){return colorMap[d]||getColors()[folders.indexOf(d)%getColors().length];}).attr('stroke-width',1).attr('stroke-opacity',0.3);
         g.selectAll('text.cluster-label').data(folders).join('text').attr('class','cluster-label')
             .attr('x',function(d,i){return(i%cols)*cellW+20;}).attr('y',function(d,i){return Math.floor(i/cols)*cellH+28;})
             .attr('fill','var(--t2)').attr('font-size','11px').attr('font-weight','600').text(function(d){return d.split('/').pop()||'root';});
@@ -2650,7 +2662,7 @@ function App(){
             .call(d3.drag().on('start',function(e,d){if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;})
                 .on('drag',function(e,d){d.fx=e.x;d.fy=e.y;}).on('end',function(e,d){if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
         node.append('circle').attr('class','disjoint-circle').attr('r',function(d){return Math.max(6,Math.min(14,4+d.fns));})
-            .attr('fill',function(d){return colorMap[d.folder]||COLORS[0];}).attr('stroke','var(--bg0)').attr('stroke-width',1.5);
+            .attr('fill',function(d){return colorMap[d.folder]||getColors()[0];}).attr('stroke','var(--bg0)').attr('stroke-width',1.5);
         node.on('mouseenter',function(e,d){
             tooltip.html(renderTooltipHtml(d.name,[
                 {label:'Lines',value:d.lines||0},
@@ -2737,7 +2749,7 @@ function App(){
         var tooltip=container.append('div').attr('class','treemap-tooltip').style('display','none').style('position','absolute');
         var node=mainG.selectAll('g.bundle-node').data(nodes).join('g').attr('class','bundle-node').style('cursor','pointer')
             .attr('transform',function(d){return'rotate('+(d.angle*180/Math.PI-90)+') translate('+radius+',0)'+(d.angle>Math.PI?' rotate(180)':'');});
-        node.append('circle').attr('class','bundle-circle').attr('r',6).attr('fill',function(d){return colorMap[d.folder]||COLORS[0];}).attr('stroke','var(--bg0)').attr('stroke-width',1.5)
+        node.append('circle').attr('class','bundle-circle').attr('r',6).attr('fill',function(d){return colorMap[d.folder]||getColors()[0];}).attr('stroke','var(--bg0)').attr('stroke-width',1.5)
             .attr('transform',function(d){return d.angle>Math.PI?'translate(-6,0)':'translate(6,0)';});
         node.append('text').attr('dy','0.31em').attr('x',function(d){return d.angle>Math.PI?-14:14;}).attr('text-anchor',function(d){return d.angle>Math.PI?'end':'start';})
             .attr('fill','var(--t2)').attr('font-size','9px').text(function(d){var n=d.name.replace(/\.[^.]+$/,'');return n.length>16?n.slice(0,13)+'…':n;});
@@ -2747,7 +2759,7 @@ function App(){
                 .attr('stroke-width',1.8)
                 .attr('stroke',getBundleLinkColor);
             node.selectAll('.bundle-circle').transition().duration(200)
-                .attr('fill',function(d){return colorMap[d.folder]||COLORS[0];})
+                .attr('fill',function(d){return colorMap[d.folder]||getColors()[0];})
                 .attr('opacity',1)
                 .attr('r',6)
                 .attr('stroke','var(--bg0)')
@@ -2773,7 +2785,7 @@ function App(){
                 .attr('stroke-width',function(linkDatum){return isBundleLinkMatch(nodeId,linkDatum)?3.6:1.15;})
                 .attr('stroke',function(linkDatum){return isBundleLinkMatch(nodeId,linkDatum)?'#ff9f43':getBundleLinkColor(linkDatum);});
             node.selectAll('.bundle-circle').transition().duration(300)
-                .attr('fill',function(nodeDatum){return nodeDatum.id===nodeId?'#ff5f5f':affectedSet.has(nodeDatum.id)?'#ff9f43':colorMap[nodeDatum.folder]||COLORS[0];})
+                .attr('fill',function(nodeDatum){return nodeDatum.id===nodeId?'#ff5f5f':affectedSet.has(nodeDatum.id)?'#ff9f43':colorMap[nodeDatum.folder]||getColors()[0];})
                 .attr('opacity',function(nodeDatum){return directConnections.has(nodeDatum.id)||affectedSet.has(nodeDatum.id)?1:0.22;})
                 .attr('r',function(nodeDatum){return nodeDatum.id===nodeId?9:6;})
                 .attr('stroke',function(nodeDatum){return nodeDatum.id===nodeId?'var(--acc)':'var(--bg0)';})
@@ -2808,7 +2820,7 @@ function App(){
             var folder=entry[0],count=entry[1].length;
             var span=2*Math.PI*count/files.length;
             mainG.append('path').attr('d',arcGen({startAngle:folderAngleStart,endAngle:folderAngleStart+span}))
-                .attr('fill',colorMap[folder]||COLORS[i%COLORS.length]).attr('opacity',0.5).style('cursor','pointer')
+                .attr('fill',colorMap[folder]||getColors()[i%getColors().length]).attr('opacity',0.5).style('cursor','pointer')
                 .on('click',function(){filterByFolder(folder);});
             if(span>0.15){
                 var midAngle=folderAngleStart+span/2-Math.PI/2;
@@ -3378,7 +3390,7 @@ function App(){
         navigator.clipboard.writeText(shareUrl).then(function(){showNotification('Link copied to clipboard!');}).catch(function(){showNotification('Failed to copy link','error');});
     }
     function analyzePR(){if(!prUrl||!repoInfo)return;var m=prUrl.match(/\/pull\/(\d+)/);if(!m){showNotification('Invalid PR URL','error');return;}GitHub.getPR(repoInfo.owner,repoInfo.repo,m[1]).then(function(pr){if(pr)setPrData(pr);else showNotification('Could not load PR','error');});}
-    function resetAnalysis(){setData(null);setSelected(null);setBlastRadius(null);setOwnership(null);setRepoInfo(null);setRepoUrl('');setPrData(null);setFolderFilter(null);setLocalDirHandle(null);setLocalSourceKind(null);setArchitectureIncludeTests(false);setArchitectureIncludeBuildOutput(false);zipArchiveRef.current=null;zipFileRef.current=null;window.history.replaceState({},'',window.location.pathname);}
+    function resetAnalysis(){setData(null);setSelected(null);setBlastRadius(null);setOwnership(null);setRepoInfo(null);setRepoUrl('');setPrData(null);setFolderFilter(null);dirCacheRef.current.clear();setLocalDirHandle(null);setLocalSourceKind(null);setArchitectureIncludeTests(false);setArchitectureIncludeBuildOutput(false);zipArchiveRef.current=null;zipFileRef.current=null;window.history.replaceState({},'',window.location.pathname);}
     function filterByFolder(path){setFolderFilter(function(prev){return prev===path?null:path;});}
     function getArchitectureViewStats(diagram,includeTests,includeBuildOutput){
         if(!diagram)return{blocks:0,dependencies:0,routes:0,apiRoutes:0,databaseTouchpoints:0,warnings:0};
@@ -3757,11 +3769,11 @@ function App(){
                         ),
                         data.stats.languages&&data.stats.languages.length>0&&React.createElement(React.Fragment,null,
                             React.createElement('div',{className:'lang-bar'},
-                                data.stats.languages.slice(0,6).map(function(l,i){return React.createElement('div',{key:l.ext,className:'lang-bar-segment',style:{width:l.pct+'%',background:COLORS[i%COLORS.length]}});})
+                                data.stats.languages.slice(0,6).map(function(l,i){return React.createElement('div',{key:l.ext,className:'lang-bar-segment',style:{width:l.pct+'%',background:getColors()[i%getColors().length]}});})
                             ),
                             React.createElement('div',{className:'lang-legend'},
                                 data.stats.languages.slice(0,6).map(function(l,i){return React.createElement('div',{key:l.ext,className:'lang-item'},
-                                    React.createElement('div',{className:'lang-dot',style:{background:COLORS[i%COLORS.length]}}),
+                                    React.createElement('div',{className:'lang-dot',style:{background:getColors()[i%getColors().length]}}),
                                     React.createElement('span',null,l.ext,' ',l.pct,'%')
                                 );})
                             )
@@ -3884,9 +3896,9 @@ function App(){
                             React.createElement('span',{className:'legend-toggle'},'▼')
                         ),
                         React.createElement('div',{className:'legend-content'},
-                            colorMode==='folder'&&data.folders.slice(0,12).map(function(f,i){return React.createElement('div',{key:f,className:'legend-item'+(folderFilter===f?' active':''),onClick:function(e){e.stopPropagation();filterByFolder(f);}},React.createElement('div',{className:'legend-color',style:{background:colorMap[f]||COLORS[i%COLORS.length]}}),f||'root');}),
+                            colorMode==='folder'&&data.folders.slice(0,12).map(function(f,i){return React.createElement('div',{key:f,className:'legend-item'+(folderFilter===f?' active':''),onClick:function(e){e.stopPropagation();filterByFolder(f);}},React.createElement('div',{className:'legend-color',style:{background:colorMap[f]||getColors()[i%getColors().length]}}),f||'root');}),
                             colorMode==='folder'&&data.folders.length>12&&React.createElement('div',{style:{fontSize:9,color:'var(--t3)',marginTop:4}},'+',data.folders.length-12,' more'),
-                            colorMode==='layer'&&Object.entries(LAYER_COLORS).map(function(e){return React.createElement('div',{key:e[0],className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:e[1]}}),e[0]=== 'modules' ? 'Modules' : e[0]=== 'forms' ? 'UserForms' : e[0]=== 'classes' ? 'Classes' : e[0]);}),
+                            colorMode==='layer'&&Object.entries(getLayerColors()).map(function(e){return React.createElement('div',{key:e[0],className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:e[1]}}),e[0]=== 'modules' ? 'Modules' : e[0]=== 'forms' ? 'UserForms' : e[0]=== 'classes' ? 'Classes' : e[0]);}),
                             colorMode==='churn'&&React.createElement(React.Fragment,null,React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#ff5f5f'}}),'High (7+ commits)'),React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#ff9f43'}}),'Medium (4-6)'),React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#22c55e'}}),'Low (0-3)'))
                         )
                     ),
@@ -4026,8 +4038,8 @@ function App(){
                                 expandedCards.has('own')&&React.createElement('div',{className:'card-body'},
                                     ownerLoading?React.createElement('div',{className:'loading-owner'},'Loading ownership data...'):
                                     ownership&&ownership.length>0?React.createElement(React.Fragment,null,
-                                        React.createElement('div',{className:'owner-bar'},ownership.slice(0,5).map(function(o,i){return React.createElement('div',{key:i,className:'owner-segment',style:{width:o.percent+'%',background:COLORS[i%COLORS.length]}});})),
-                                        React.createElement('div',{className:'owner-list'},ownership.slice(0,5).map(function(o,i){return React.createElement('div',{key:i,className:'owner-item'},React.createElement('div',{className:'owner-avatar',style:{background:COLORS[i%COLORS.length]}},o.name[0].toUpperCase()),React.createElement('span',{className:'owner-name'},o.name),React.createElement('span',{className:'owner-percent'},o.percent,'%'));}))
+                                        React.createElement('div',{className:'owner-bar'},ownership.slice(0,5).map(function(o,i){return React.createElement('div',{key:i,className:'owner-segment',style:{width:o.percent+'%',background:getColors()[i%getColors().length]}});})),
+                                        React.createElement('div',{className:'owner-list'},ownership.slice(0,5).map(function(o,i){return React.createElement('div',{key:i,className:'owner-item'},React.createElement('div',{className:'owner-avatar',style:{background:getColors()[i%getColors().length]}},o.name[0].toUpperCase()),React.createElement('span',{className:'owner-name'},o.name),React.createElement('span',{className:'owner-percent'},o.percent,'%'));}))
                                     ):React.createElement('div',{style:{fontSize:10,color:'var(--t3)',padding:8}},'No ownership data available')
                                 )
                             ),
