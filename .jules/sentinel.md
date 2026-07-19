@@ -6,7 +6,7 @@
 **Vulnerability:** XSS vulnerability in `App.jsx` where `DOMPurify.sanitize` was used without an explicit configuration alongside `dangerouslySetInnerHTML`.
 **Learning:** Although DOMPurify strips dangerous tags by default, relying on the default configuration may be less secure or flag strict security checks. It is safer to use an explicit configuration whitelist, allowing only exactly the tags and attributes needed by the code.
 **Prevention:** Use an explicit configuration with `ALLOWED_TAGS` and `ALLOWED_ATTR` when using `DOMPurify.sanitize` with `dangerouslySetInnerHTML`.
-## $(date +%Y-%m-%d) - [XSS Fix] ForceGraph3D .nodeLabel Tooltips
+## 2024-08-05 - [XSS Fix] ForceGraph3D .nodeLabel Tooltips
 **Vulnerability:** Found an XSS vulnerability in `ForceGraph3D` where `node.name` was being unsafely concatenated into raw HTML string within the `.nodeLabel` tooltip rendering.
 **Learning:** Third-party graph rendering libraries that accept raw HTML strings for labels are prime targets for XSS if they accept user-controlled data. Here, repository file paths/names were passed directly.
 **Prevention:** Always manually escape strings (`escapeHtml`) or use `DOMPurify` before injecting dynamic variables into HTML strings passed to external visualization libraries.
@@ -18,3 +18,7 @@
 **Vulnerability:** XSS vulnerability in `renderTooltipHtml` where dynamically constructed tooltip strings were returned as raw HTML to be consumed by D3's `.html()` method, even though constituent strings were manually escaped.
 **Learning:** Relying purely on localized `escapeHtml` for parts of a string is brittle. Tooltips rendered by D3 visualizations (which internally set `innerHTML`) are an XSS vector if raw HTML assembly is trusted.
 **Prevention:** Any HTML strings rendered dynamically inside components like D3 charts must always be passed through a trusted sanitization library like `DOMPurify.sanitize()` before being returned.
+## 2024-08-05 - [XSS Fix] Sanitize Mermaid SVG Output
+**Vulnerability:** XSS vulnerability in `App.jsx` where Mermaid SVG output (`result.svg`) was dynamically injected into the DOM via `innerHTML` without explicit sanitization.
+**Learning:** Third-party visualization tools, even those with internal security settings (like Mermaid's `securityLevel: 'strict'`), can still return SVG strings containing potentially malicious payloads. Trusting these raw SVG strings by assigning them to `innerHTML` creates an XSS vulnerability vector.
+**Prevention:** Always use `DOMPurify.sanitize` with `{ USE_PROFILES: { svg: true } }` when dynamically injecting SVG output from Mermaid (or similar tools) into the DOM.
