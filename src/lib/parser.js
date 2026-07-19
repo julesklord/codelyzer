@@ -526,47 +526,76 @@ const Parser={
     },
     detectPatterns:function(files){
         var patterns=[];
-        var singletons=files.filter(function(f){return f.content&&(f.content.includes('getInstance')||f.content.match(/let\s+instance\s*=/)||f.content.match(/private\s+static\s+instance/));});
+        var singletons=[],factories=[],observers=[],hooks=[],hocs=[],providers=[];
+        var vbaUserForms=[],vbaModules=[],vbaClasses=[];
+        var decoratorFiles=[],pyDecorators=[],dataclasses=[],abcFiles=[],ctxManagers=[],pyMixins=[],pySignals=[],pyMiddleware=[];
+        var godFiles=[],longFiles=[],vbaGodFiles=[];
+
+        for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            var c = f.content;
+            var isCode = f.isCode !== false;
+
+            if (isCode) {
+                if (f.functions) {
+                    if (f.functions.length > 15) godFiles.push(f);
+                    if (f.functions.length > 20) vbaGodFiles.push(f);
+                }
+                if (f.lines > 500) longFiles.push(f);
+            }
+
+            if (!c) continue;
+
+            var n = f.name;
+            var nl = n.toLowerCase();
+            var py = n.endsWith('.py');
+
+            if (c.includes('getInstance') || c.match(/let\s+instance\s*=/) || c.match(/private\s+static\s+instance/)) singletons.push(f);
+            if (nl.includes('factory') || c.match(/create[A-Z]\w*\s*\(/) || c.includes('return new')) factories.push(f);
+            if (c.includes('subscribe') || c.includes('addEventListener') || c.includes('.on(') || c.includes('emit(')) observers.push(f);
+            if (c.match(/export\s+(?:const|function)\s+use[A-Z]/)) hooks.push(f);
+            if (c.match(/with[A-Z]\w*\s*=\s*\(/) || c.match(/export\s+default\s+connect/)) hocs.push(f);
+            if (c.includes('createContext') || c.includes('Provider') || c.includes('useContext')) providers.push(f);
+
+            // VBA
+            if (c.match(/Attribute\s+VB_Name\s*=\s*["']UserForm/i) || n.match(/UserForm/i)) vbaUserForms.push(f);
+            if (c.match(/Attribute\s+VB_Name\s*=\s*["']Module/i) || n.match(/Module/i)) vbaModules.push(f);
+            if (c.match(/Attribute\s+VB_Name\s*=\s*["']Class/i) || n.match(/Class/i)) vbaClasses.push(f);
+
+            // Python
+            if (py) {
+                var isDecorator = c.match(/@\w+\s*(?:\(.*\))?\s*\n\s*(?:def|class)/);
+                if (isDecorator) {
+                    decoratorFiles.push(f);
+                    if (c.match(/@(?:app\.route|router\.|blueprint\.|get|post|put|delete|patch)\s*\(/)) pyDecorators.push(f);
+                }
+                if (c.match(/@dataclass/)) dataclasses.push(f);
+                if (c.match(/\bABC\b/) || c.match(/@abstractmethod/) || c.match(/ABCMeta/)) abcFiles.push(f);
+                if (c.match(/@contextmanager/) || c.match(/def\s+__enter__/)) ctxManagers.push(f);
+                if (c.match(/class\s+\w*Mixin\w*\s*[\(:]?/)) pyMixins.push(f);
+                if (c.match(/Signal\s*\(/) || c.match(/@receiver\s*\(/) || c.match(/\.connect\s*\(/)) pySignals.push(f);
+                if (c.match(/class\s+\w*Middleware/) || c.match(/def\s+middleware\s*\(/) || nl.includes('middleware')) pyMiddleware.push(f);
+            }
+        }
+
         if(singletons.length)patterns.push({name:'Singleton',icon:'lock',desc:'Ensures a class has only one instance. Common for configuration, logging, or connection pools.',severity:'info',files:singletons.map(function(f){return{name:f.name,path:f.path};}),metrics:{instances:singletons.length}});
-        var factories=files.filter(function(f){return f.content&&(f.name.toLowerCase().includes('factory')||f.content.match(/create[A-Z]\w*\s*\(/)||f.content.includes('return new'));});
         if(factories.length)patterns.push({name:'Factory',icon:'factory',desc:'Creates objects without specifying exact class. Enables loose coupling and extensibility.',severity:'info',files:factories.map(function(f){return{name:f.name,path:f.path};}),metrics:{factories:factories.length}});
-        var observers=files.filter(function(f){return f.content&&(f.content.includes('subscribe')||f.content.includes('addEventListener')||f.content.includes('.on(')||f.content.includes('emit('));});
         if(observers.length)patterns.push({name:'Observer/Event',icon:'eye',desc:'Defines a subscription mechanism for event-driven architecture. Great for decoupling.',severity:'info',files:observers.map(function(f){return{name:f.name,path:f.path};}),metrics:{emitters:observers.length}});
-        var hooks=files.filter(function(f){return f.content&&f.content.match(/export\s+(?:const|function)\s+use[A-Z]/);});
         if(hooks.length)patterns.push({name:'Custom Hooks',icon:'hook',desc:'React hooks for reusable stateful logic. Promotes code reuse and separation of concerns.',severity:'info',files:hooks.map(function(f){return{name:f.name,path:f.path};}),metrics:{hooks:hooks.length}});
-        var hocs=files.filter(function(f){return f.content&&(f.content.match(/with[A-Z]\w*\s*=\s*\(/)||f.content.match(/export\s+default\s+connect/));});
         if(hocs.length)patterns.push({name:'Higher-Order Component',icon:'spark',desc:'Functions that take a component and return an enhanced component.',severity:'info',files:hocs.map(function(f){return{name:f.name,path:f.path};}),metrics:{hocs:hocs.length}});
-        var providers=files.filter(function(f){return f.content&&(f.content.includes('createContext')||f.content.includes('Provider')||f.content.includes('useContext'));});
         if(providers.length)patterns.push({name:'Context Provider',icon:'globe',desc:'React Context for global state. Alternative to prop drilling.',severity:'info',files:providers.map(function(f){return{name:f.name,path:f.path};}),metrics:{contexts:providers.length}});
-        // VBA-specific patterns
-        var vbaUserForms=files.filter(function(f){return f.content&&(f.content.match(/Attribute\s+VB_Name\s*=\s*["']UserForm/i)||f.name.match(/UserForm/i));});
         if(vbaUserForms.length)patterns.push({name:'UserForms',icon:'layout',desc:'VBA UserForms for UI components. Common in Excel/Access automation.',severity:'info',files:vbaUserForms.map(function(f){return{name:f.name,path:f.path};}),metrics:{forms:vbaUserForms.length}});
-        var vbaModules=files.filter(function(f){return f.content&&(f.content.match(/Attribute\s+VB_Name\s*=\s*["']Module/i)||f.name.match(/Module/i));});
         if(vbaModules.length)patterns.push({name:'Modules',icon:'box',desc:'VBA Modules for reusable code and business logic.',severity:'info',files:vbaModules.map(function(f){return{name:f.name,path:f.path};}),metrics:{modules:vbaModules.length}});
-        var vbaClasses=files.filter(function(f){return f.content&&(f.content.match(/Attribute\s+VB_Name\s*=\s*["']Class/i)||f.name.match(/Class/i));});
         if(vbaClasses.length)patterns.push({name:'Class Modules',icon:'building',desc:'VBA Class Modules for object-oriented programming patterns.',severity:'info',files:vbaClasses.map(function(f){return{name:f.name,path:f.path};}),metrics:{classes:vbaClasses.length}});
-        // Python-specific patterns
-        var decoratorFiles=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&f.content.match(/@\w+\s*(?:\(.*\))?\s*\n\s*(?:def|class)/);});
-        var pyDecorators=decoratorFiles.filter(function(f){return f.content.match(/@(?:app\.route|router\.|blueprint\.|get|post|put|delete|patch)\s*\(/);});
         if(pyDecorators.length)patterns.push({name:'Route Decorators',icon:'route',desc:'Flask/FastAPI/Django route decorators for URL routing. Common in Python web frameworks.',severity:'info',files:pyDecorators.map(function(f){return{name:f.name,path:f.path};}),metrics:{routes:pyDecorators.length}});
-        var dataclasses=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&f.content.match(/@dataclass/);});
         if(dataclasses.length)patterns.push({name:'Dataclasses',icon:'database',desc:'Python dataclasses for structured data. Reduces boilerplate for data-holding classes.',severity:'info',files:dataclasses.map(function(f){return{name:f.name,path:f.path};}),metrics:{dataclasses:dataclasses.length}});
-        var abcFiles=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&(f.content.match(/\bABC\b/)||f.content.match(/@abstractmethod/)||f.content.match(/ABCMeta/));});
         if(abcFiles.length)patterns.push({name:'Abstract Base Classes',icon:'layers',desc:'Python ABCs enforce interface contracts. Ensures subclasses implement required methods.',severity:'info',files:abcFiles.map(function(f){return{name:f.name,path:f.path};}),metrics:{abcs:abcFiles.length}});
-        var ctxManagers=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&(f.content.match(/@contextmanager/)||f.content.match(/def\s+__enter__/));});
         if(ctxManagers.length)patterns.push({name:'Context Managers',icon:'refresh',desc:'Python context managers for resource management (with statement). Ensures proper cleanup.',severity:'info',files:ctxManagers.map(function(f){return{name:f.name,path:f.path};}),metrics:{managers:ctxManagers.length}});
-        var pyMixins=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&f.content.match(/class\s+\w*Mixin\w*\s*[\(:]?/);});
         if(pyMixins.length)patterns.push({name:'Mixins',icon:'puzzle',desc:'Python mixins for reusable behavior through multiple inheritance.',severity:'info',files:pyMixins.map(function(f){return{name:f.name,path:f.path};}),metrics:{mixins:pyMixins.length}});
-        var pySignals=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&(f.content.match(/Signal\s*\(/)||f.content.match(/@receiver\s*\(/)||f.content.match(/\.connect\s*\(/));});
         if(pySignals.length)patterns.push({name:'Django Signals',icon:'radio',desc:'Django signals for decoupled event-driven communication between components.',severity:'info',files:pySignals.map(function(f){return{name:f.name,path:f.path};}),metrics:{signals:pySignals.length}});
-        var pyMiddleware=files.filter(function(f){return f.content&&f.name.endsWith('.py')&&(f.content.match(/class\s+\w*Middleware/)||f.content.match(/def\s+middleware\s*\(/)||f.name.toLowerCase().includes('middleware'));});
         if(pyMiddleware.length)patterns.push({name:'Middleware',icon:'link',desc:'Request/response middleware for cross-cutting concerns (auth, logging, CORS).',severity:'info',files:pyMiddleware.map(function(f){return{name:f.name,path:f.path};}),metrics:{middleware:pyMiddleware.length}});
-        var godFiles=files.filter(function(f){return f.isCode!==false&&f.functions&&f.functions.length>15;});
         if(godFiles.length)patterns.push({name:'God Object',icon:'warning',desc:'Files with too many responsibilities (15+ functions). Consider splitting into smaller modules.',severity:'warning',isAnti:true,files:godFiles.map(function(f){return{name:f.name,path:f.path,fns:f.functions.length};}),metrics:{files:godFiles.length,avgFns:Math.round(godFiles.reduce(function(s,f){return s+f.functions.length;},0)/godFiles.length)}});
-        var longFiles=files.filter(function(f){return f.isCode!==false&&f.lines&&f.lines>500;});
         if(longFiles.length)patterns.push({name:'Long File',icon:'scroll',desc:'Files over 500 lines are harder to maintain. Consider breaking into smaller modules.',severity:'warning',isAnti:true,files:longFiles.map(function(f){return{name:f.name,path:f.path,lines:f.lines};}),metrics:{files:longFiles.length,avgLines:Math.round(longFiles.reduce(function(s,f){return s+f.lines;},0)/longFiles.length)}});
-        // VBA-specific anti-patterns
-        var vbaGodFiles=files.filter(function(f){return f.isCode!==false&&f.functions&&f.functions.length>20;});
         if(vbaGodFiles.length)patterns.push({name:'VBA God Module',icon:'warning',desc:'VBA modules with 20+ procedures. Consider splitting into smaller modules.',severity:'warning',isAnti:true,files:vbaGodFiles.map(function(f){return{name:f.name,path:f.path,fns:f.functions.length,lines:f.lines};}),metrics:{files:vbaGodFiles.length,avgFns:Math.round(vbaGodFiles.reduce(function(s,f){return s+f.functions.length;},0)/vbaGodFiles.length)}});
         return patterns;
     },
