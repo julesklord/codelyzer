@@ -31,3 +31,20 @@ test('src/App.jsx React app implements useEffect for 3D force graph rendering', 
   assert.ok(appSource.includes('graph3dInstanceRef.current.pauseAnimation()'), '3D Graph cleanup pauseAnimation is missing');
   assert.ok(appSource.includes('graph3dInstanceRef.current.graphData({nodes:[],links:[]})'), '3D Graph cleanup graphData is missing');
 });
+
+const iconSource = readFileSync(join(__dirname, '..', 'src', 'components', 'Icon.jsx'), 'utf8');
+
+test('getSeverityColor returns correct colors based on severity level', () => {
+  const match = iconSource.match(/export function getSeverityColor\s*\([^)]*\)\s*\{([^}]*)\}/);
+  assert.ok(match, 'Could not find getSeverityColor function in Icon.jsx');
+
+  const fnBody = match[1];
+  const getSeverityColor = new Function('level', fnBody);
+
+  assert.equal(getSeverityColor('critical'), 'var(--red)');
+  assert.equal(getSeverityColor('high'), 'var(--red)');
+  assert.equal(getSeverityColor('medium'), 'var(--orange)');
+  assert.equal(getSeverityColor('low'), 'var(--blue)');
+  assert.equal(getSeverityColor('info'), 'var(--blue)');
+  assert.equal(getSeverityColor(undefined), 'var(--blue)');
+});
