@@ -22,3 +22,6 @@
 ## 2026-07-18 - Missing global focus-visible styles
 **Learning:** Found that this application lacked global `:focus-visible` styles for interactive elements, resulting in poor keyboard navigation accessibility where users could not easily see which element was focused when tabbing through the UI.
 **Action:** Always verify that a global `:focus-visible` rule exists for interactive elements (buttons, inputs, selects, textareas, links, and role="button" elements) to ensure consistent focus indicators for keyboard navigation across the entire application.
+## 2026-07-20 - Interactive Element Accessibility (Sliders)
+**Learning:** Found that custom range sliders (<input type='range'>) in the graph configuration lacked proper semantic association with their text labels (<span>). This impacts screen reader users who rely on semantically connected labels to understand the purpose of form inputs.
+**Action:** Replaced <span> elements with <label htmlFor='...'> and added matching ids to the <input type='range'> elements to ensure full accessibility.

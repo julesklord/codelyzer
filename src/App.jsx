@@ -3845,13 +3845,13 @@ function App(){
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:graphConfig.vizType==='graph'?8:0}},'Spacing'),
                         React.createElement('div',{className:'config-row'},
-                            React.createElement('span',{className:'config-label'},'Spread'),
-                            React.createElement('input',{type:'range',className:'config-slider',min:'50',max:'500',value:graphConfig.spacing,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{spacing:parseInt(e.target.value)}));}}),
+                            React.createElement('label',{className:'config-label',htmlFor:'config-spacing'},'Spread'),
+                            React.createElement('input',{type:'range',id:'config-spacing',className:'config-slider',min:'50',max:'500',value:graphConfig.spacing,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{spacing:parseInt(e.target.value)}));}}),
                             React.createElement('span',{className:'config-value'},graphConfig.spacing)
                         ),
                         React.createElement('div',{className:'config-row'},
-                            React.createElement('span',{className:'config-label'},'Links'),
-                            React.createElement('input',{type:'range',className:'config-slider',min:'30',max:'200',value:graphConfig.linkDist,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{linkDist:parseInt(e.target.value)}));}}),
+                            React.createElement('label',{className:'config-label',htmlFor:'config-link-dist'},'Links'),
+                            React.createElement('input',{type:'range',id:'config-link-dist',className:'config-slider',min:'30',max:'200',value:graphConfig.linkDist,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{linkDist:parseInt(e.target.value)}));}}),
                             React.createElement('span',{className:'config-value'},graphConfig.linkDist)
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Grouping'),
