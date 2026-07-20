@@ -97,13 +97,13 @@ function App(){
 
     if (themeStyle === 'glass') {
         setColors(theme === 'light' ? GLASS_LIGHT_COLORS : GLASS_DARK_COLORS);
-        setLayerColors(theme === 'light' ? GLASS_LIGHT_LAYER_COLORS : GLASS_DARK_getLayerColors());
+        setLayerColors(theme === 'light' ? GLASS_LIGHT_LAYER_COLORS : GLASS_DARK_LAYER_COLORS);
     } else if (themeStyle === 'cyber') {
         setColors(theme === 'light' ? CYBER_LIGHT_COLORS : CYBER_DARK_COLORS);
-        setLayerColors(theme === 'light' ? CYBER_DARK_LAYER_COLORS : CYBER_DARK_getLayerColors());
+        setLayerColors(theme === 'light' ? CYBER_LIGHT_LAYER_COLORS : CYBER_DARK_LAYER_COLORS);
     } else {
         setColors(theme === 'light' ? LIGHT_COLORS : DARK_COLORS);
-        setLayerColors(theme === 'light' ? LIGHT_LAYER_COLORS : DARK_getLayerColors());
+        setLayerColors(theme === 'light' ? LIGHT_LAYER_COLORS : DARK_LAYER_COLORS);
     }
     var _b=useState(''),repoUrl=_b[0],setRepoUrl=_b[1];
     var _c=useState(''),token=_c[0],setToken=_c[1];
@@ -1442,7 +1442,7 @@ function App(){
 
     function getNodeColor(d){
         if(colorMode==='folder')return colorMap[d.folder]||getColors()[0];
-        if(colorMode==='layer')return LAYER_getColors()[d.layer]||LAYER_getColors()['utils'];
+        if(colorMode==='layer')return getLayerColors()[d.layer]||getLayerColors()['utils'];
         if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
         return getColors()[0];
     }
@@ -1605,7 +1605,7 @@ function App(){
         if(!data)return{};
         var m={};
         if(colorMode==='folder'){data.folders.forEach(function(f,i){m[f]=getColors()[i%getColors().length];});m['root']=getColors()[0];}
-        else if(colorMode==='layer')data.files.forEach(function(f){m[f.path]=LAYER_getColors()[f.layer]||getColors()[0];});
+        else if(colorMode==='layer')data.files.forEach(function(f){m[f.path]=getLayerColors()[f.layer]||getColors()[0];});
         else if(colorMode==='churn'){
             // ⚡ Bolt: Replaced Math.max.apply(null, map) with a single-pass O(N) loop
             // to avoid maximum call stack size limits on large repos and reduce GC pressure.
@@ -1687,7 +1687,7 @@ function App(){
         }
         function getC(d){
             if(colorMode==='folder')return colorMap[d.folder]||getColors()[0];
-            if(colorMode==='layer')return LAYER_getColors()[d.layer]||LAYER_getColors()['utils'];
+            if(colorMode==='layer')return getLayerColors()[d.layer]||getLayerColors()['utils'];
             if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
             return getColors()[0];
         }
@@ -2016,7 +2016,7 @@ function App(){
 
         function getBaseColor(d){
             if(colorMode==='folder')return colorMap[d.folder]||getColors()[0];
-            if(colorMode==='layer')return LAYER_getColors()[d.layer]||LAYER_getColors()['utils'];
+            if(colorMode==='layer')return getLayerColors()[d.layer]||getLayerColors()['utils'];
             if(colorMode==='churn')return colorMap[d.id]||'#22c55e';
             return getColors()[0];
         }
