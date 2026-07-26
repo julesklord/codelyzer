@@ -22,3 +22,7 @@
 ## 2026-07-18 - Missing global focus-visible styles
 **Learning:** Found that this application lacked global `:focus-visible` styles for interactive elements, resulting in poor keyboard navigation accessibility where users could not easily see which element was focused when tabbing through the UI.
 **Action:** Always verify that a global `:focus-visible` rule exists for interactive elements (buttons, inputs, selects, textareas, links, and role="button" elements) to ensure consistent focus indicators for keyboard navigation across the entire application.
+
+## 2024-05-24 - [Avoid `aria-label` overriding visible text]
+**Learning:** Applying `aria-label` attributes to buttons that already have visible text overrides the text in screen readers, hiding important details like dynamically generated counts or conditional state labels. This causes an accessibility regression rather than an improvement.
+**Action:** Only apply `aria-label` attributes to strictly icon-only elements. When a component's visible text is conditionally rendered, ensure the `aria-label` is similarly conditionally applied (only present when the visible text is absent).
