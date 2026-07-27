@@ -122,7 +122,7 @@ Your GitHub token (if used) is only stored in your browser's memory and is clear
 ## Quick Start
 
 ### Option 1: Use Online (Recommended)
-Just visit [Codelyzer](https://codelyzer-five.vercel.app/) and paste any GitHub URL.
+Just visit [Codelyzer](julesklord.github.io/codelyzer/) and paste any GitHub URL.
 
 ### Option 2: Self-Host
 ```bash
