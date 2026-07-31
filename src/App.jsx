@@ -3697,11 +3697,11 @@ function App(){
                 )
             ),
             isMobile&&React.createElement('div',{className:'mobile-panel-actions'},
-                React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),title:'Toggle explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
+                React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),'aria-pressed':mobilePanel==='explorer',title:'Toggle explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
                     React.createElement(Icon,{name:'folder',size:'m'}),
                     'Explorer'
                 ),
-                React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),title:'Toggle details panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
+                React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),'aria-pressed':mobilePanel==='details',title:'Toggle details panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
                     React.createElement(Icon,{name:selected?'file':'layout',size:'m'}),
                     selected?'Inspector':'Insights'
                 )
@@ -3751,9 +3751,9 @@ function App(){
                     React.createElement('div',{className:'sidebar-section'},
                         React.createElement('div',{className:'sidebar-title'},'Color By'),
                         React.createElement('div',{className:'view-modes'},
-                            React.createElement('div',{className:'view-mode'+(colorMode==='folder'?' active':''),onClick:function(){setColorMode('folder');}},React.createElement(Icon,{name:'folder',size:'m',className:'view-mode-icon'}),'Folder'),
-                            React.createElement('div',{className:'view-mode'+(colorMode==='layer'?' active':''),onClick:function(){setColorMode('layer');}},React.createElement(Icon,{name:'layers',size:'m',className:'view-mode-icon'}),'Layer'),
-                            React.createElement('div',{className:'view-mode'+(colorMode==='churn'?' active':''),onClick:function(){setColorMode('churn');}},React.createElement(Icon,{name:'activity',size:'m',className:'view-mode-icon'}),'Churn')
+                            React.createElement('button',{type:'button',className:'view-mode'+(colorMode==='folder'?' active':''),'aria-pressed':colorMode==='folder',onClick:function(){setColorMode('folder');}},React.createElement(Icon,{name:'folder',size:'m',className:'view-mode-icon'}),'Folder'),
+                            React.createElement('button',{type:'button',className:'view-mode'+(colorMode==='layer'?' active':''),'aria-pressed':colorMode==='layer',onClick:function(){setColorMode('layer');}},React.createElement(Icon,{name:'layers',size:'m',className:'view-mode-icon'}),'Layer'),
+                            React.createElement('button',{type:'button',className:'view-mode'+(colorMode==='churn'?' active':''),'aria-pressed':colorMode==='churn',onClick:function(){setColorMode('churn');}},React.createElement(Icon,{name:'activity',size:'m',className:'view-mode-icon'}),'Churn')
                         )
                     ),
                     React.createElement('div',{className:'sidebar-section'},
@@ -3830,18 +3830,18 @@ function App(){
                         React.createElement('button',{className:'tool-btn',onClick:zoomOut,'aria-label':'Zoom out',title:'Zoom out'},'−'),
                         React.createElement('button',{className:'tool-btn',onClick:resetZoom,'aria-label':'Reset zoom',title:'Reset zoom'},'⟲'),
                         React.createElement('button',{className:'tool-btn',onClick:fitView,'aria-label':'Fit view',title:'Fit view'},'⊡'),
-                        React.createElement('button',{className:'tool-btn'+(showGraphConfig?' active':''),onClick:function(){setShowGraphConfig(!showGraphConfig);},'aria-label':'Graph settings',title:'Graph settings',style:showGraphConfig?{background:'var(--accbg)',borderColor:'var(--acc)'}:{}},
+                        React.createElement('button',{className:'tool-btn'+(showGraphConfig?' active':''),'aria-pressed':showGraphConfig,onClick:function(){setShowGraphConfig(!showGraphConfig);},'aria-label':'Graph settings',title:'Graph settings',style:showGraphConfig?{background:'var(--accbg)',borderColor:'var(--acc)'}:{}},
                             React.createElement(Icon,{name:'settings',size:'m'})
                         )
                     ),
                     (graphConfig.vizType==='graph'||graphConfig.vizType==='graph3d')&&showGraphConfig&&React.createElement('div',{className:'graph-config'},
                         graphConfig.vizType==='graph'&&React.createElement('div',{className:'graph-config-title'},'Layout'),
                         graphConfig.vizType==='graph'&&React.createElement('div',{className:'view-toggle',style:{flexWrap:'wrap'}},
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='force'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'force'}));}},'Force'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='radial'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'radial'}));}},'Radial'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='hierarchical'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'hierarchical'}));}},'Layers'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='grid'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'grid'}));}},'Grid'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='metro'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'metro'}));}},'Metro')
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='force'?' active':''),'aria-pressed':graphConfig.viewMode==='force',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'force'}));}},'Force'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='radial'?' active':''),'aria-pressed':graphConfig.viewMode==='radial',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'radial'}));}},'Radial'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='hierarchical'?' active':''),'aria-pressed':graphConfig.viewMode==='hierarchical',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'hierarchical'}));}},'Layers'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='grid'?' active':''),'aria-pressed':graphConfig.viewMode==='grid',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'grid'}));}},'Grid'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='metro'?' active':''),'aria-pressed':graphConfig.viewMode==='metro',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'metro'}));}},'Metro')
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:graphConfig.vizType==='graph'?8:0}},'Spacing'),
                         React.createElement('div',{className:'config-row'},
@@ -3856,8 +3856,8 @@ function App(){
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Grouping'),
                         React.createElement('div',{className:'view-toggle',style:{marginBottom:8}},
-                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='file'?' active':''),onClick:function(){setViewGroupMode('file');}},'Files'),
-                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='folder'?' active':''),onClick:function(){setViewGroupMode('folder');}},'Folders')
+                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='file'?' active':''),'aria-pressed':viewGroupMode==='file',onClick:function(){setViewGroupMode('file');}},'Files'),
+                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='folder'?' active':''),'aria-pressed':viewGroupMode==='folder',onClick:function(){setViewGroupMode('folder');}},'Folders')
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Display'),
                         React.createElement('label',{className:'config-check',htmlFor:'config-show-labels'},
@@ -3896,7 +3896,7 @@ function App(){
                             React.createElement('span',{className:'legend-toggle'},'▼')
                         ),
                         React.createElement('div',{className:'legend-content'},
-                            colorMode==='folder'&&data.folders.slice(0,12).map(function(f,i){return React.createElement('div',{key:f,className:'legend-item'+(folderFilter===f?' active':''),onClick:function(e){e.stopPropagation();filterByFolder(f);}},React.createElement('div',{className:'legend-color',style:{background:colorMap[f]||getColors()[i%getColors().length]}}),f||'root');}),
+                            colorMode==='folder'&&data.folders.slice(0,12).map(function(f,i){return React.createElement('button',{type:'button',key:f,className:'legend-item'+(folderFilter===f?' active':''),'aria-pressed':folderFilter===f,onClick:function(e){e.stopPropagation();filterByFolder(f);}},React.createElement('div',{className:'legend-color',style:{background:colorMap[f]||getColors()[i%getColors().length]}}),f||'root');}),
                             colorMode==='folder'&&data.folders.length>12&&React.createElement('div',{style:{fontSize:9,color:'var(--t3)',marginTop:4}},'+',data.folders.length-12,' more'),
                             colorMode==='layer'&&Object.entries(getLayerColors()).map(function(e){return React.createElement('div',{key:e[0],className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:e[1]}}),e[0]=== 'modules' ? 'Modules' : e[0]=== 'forms' ? 'UserForms' : e[0]=== 'classes' ? 'Classes' : e[0]);}),
                             colorMode==='churn'&&React.createElement(React.Fragment,null,React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#ff5f5f'}}),'High (7+ commits)'),React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#ff9f43'}}),'Medium (4-6)'),React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#22c55e'}}),'Low (0-3)'))
@@ -3924,10 +3924,10 @@ function App(){
                 }}),
                 data?React.createElement(React.Fragment,null,
                     React.createElement('div',{className:'panel-tabs'},
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='details'?' active':''),onClick:function(){setRightTab('details');setDrillDown(null);}},selected?iconLabel('file','FILE'):(graphConfig.vizType==='architecture'?iconLabel('layers','ARCH'):iconLabel('search','ISSUES'))),
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='patterns'?' active':''),onClick:function(){setRightTab('patterns');setDrillDown(null);}},iconLabel('puzzle','PATTERNS'),' ',React.createElement('span',{className:'badge badge-default'},data.patterns.length)),
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='security'?' active':''),onClick:function(){setRightTab('security');setDrillDown(null);}},iconLabel('security','SECURITY'),data.stats.security>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.stats.security)),
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='suggestions'?' active':''),onClick:function(){setRightTab('suggestions');setDrillDown(null);}},iconLabel('action','ACTIONS'),data.suggestions&&data.suggestions.length>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.suggestions.length))
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='details'?' active':''),'aria-pressed':rightTab==='details',onClick:function(){setRightTab('details');setDrillDown(null);}},selected?iconLabel('file','FILE'):(graphConfig.vizType==='architecture'?iconLabel('layers','ARCH'):iconLabel('search','ISSUES'))),
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='patterns'?' active':''),'aria-pressed':rightTab==='patterns',onClick:function(){setRightTab('patterns');setDrillDown(null);}},iconLabel('puzzle','PATTERNS'),' ',React.createElement('span',{className:'badge badge-default'},data.patterns.length)),
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='security'?' active':''),'aria-pressed':rightTab==='security',onClick:function(){setRightTab('security');setDrillDown(null);}},iconLabel('security','SECURITY'),data.stats.security>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.stats.security)),
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='suggestions'?' active':''),'aria-pressed':rightTab==='suggestions',onClick:function(){setRightTab('suggestions');setDrillDown(null);}},iconLabel('action','ACTIONS'),data.suggestions&&data.suggestions.length>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.suggestions.length))
                     ),
                     React.createElement('div',{className:'panel-content'},
                         rightTab==='details'&&(selected?React.createElement(React.Fragment,null,
@@ -4365,15 +4365,15 @@ function App(){
             )
         ),
         isMobile&&React.createElement('div',{className:'mobile-bottom-nav'},
-            React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),title:'Open explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
+            React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),'aria-pressed':mobilePanel==='explorer',title:'Open explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
                 React.createElement(Icon,{name:'folder',size:'m'}),
                 'Explorer'
             ),
-            React.createElement('button',{className:'top-btn'+(!mobilePanel?' active':''),title:'Show canvas',onClick:function(){setMobilePanel(null);},type:'button'},
+            React.createElement('button',{className:'top-btn'+(!mobilePanel?' active':''),'aria-pressed':!mobilePanel,title:'Show canvas',onClick:function(){setMobilePanel(null);},type:'button'},
                 React.createElement(Icon,{name:'graph',size:'m'}),
                 'Canvas'
             ),
-            React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),title:'Open insights panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
+            React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),'aria-pressed':mobilePanel==='details',title:'Open insights panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
                 React.createElement(Icon,{name:selected?'file':'layout',size:'m'}),
                 selected?'Inspector':'Insights'
             )

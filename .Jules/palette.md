@@ -25,4 +25,6 @@
 
 ## 2026-07-20 - Interactive Element Accessibility (Sliders)
 **Learning:** Found that custom range sliders (<input type='range'>) in the graph configuration lacked proper semantic association with their text labels (<span>). This impacts screen reader users who rely on semantically connected labels to understand the purpose of form inputs.
-**Action:** Replaced <span> elements with <label htmlFor='...'> and added matching ids to the <input type='range'> elements to ensure full accessibility.
+**Action:** Replaced <span> elements with <label htmlFor='...'> and added matching ids to the <input type='range'> elements to ensure full accessibility.## 2026-07-31 - [Add aria-pressed to active CSS class toggle buttons]
+**Learning:** [a11y: In React components that rely on an 'active' CSS class to communicate button state, screen readers miss the state entirely without an accompanying 'aria-pressed' attribute. This pattern is common in custom toggle groups]
+**Action:** [Always ensure custom toggle buttons include 'aria-pressed={condition}' mirroring the 'active' CSS class logic.]
