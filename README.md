@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-[**Try it Now**](https://codelyzer-five.vercel.app/) · [Report Bug](https://github.com/julesklord/codelyzer/issues) · [Request Feature](https://github.com/julesklord/codelyzer/issues)
+[**Try it Now**](https://julesklord.github.io/codelyzer/) · [Report Bug](https://github.com/julesklord/codelyzer/issues) · [Request Feature](https://github.com/julesklord/codelyzer/issues)
 
 <img src="./screenshot.png" alt="Codelyzer Screenshot" width="100%"/>
 
@@ -122,7 +122,7 @@ Your GitHub token (if used) is only stored in your browser's memory and is clear
 ## Quick Start
 
 ### Option 1: Use Online (Recommended)
-Just visit [Codelyzer](https://codelyzer-five.vercel.app/) and paste any GitHub URL.
+Just visit [Codelyzer](https://julesklord.github.io/codelyzer/) and paste any GitHub URL.
 
 ### Option 2: Self-Host
 ```bash
