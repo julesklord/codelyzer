@@ -31,3 +31,6 @@
 ## 2024-05-24 - Interactive Divs and Keyboard Navigation
 **Learning:** Custom interactive components (like file tree nodes) implemented with `div` or `span` tags must explicitly include `tabIndex={0}`, ARIA roles (e.g. `treeitem` or `button`), and `onKeyDown` handlers for `Enter` and `Space` to be accessible to keyboard-only and screen reader users.
 **Action:** Always add keyboard accessibility attributes when applying `onClick` to non-interactive elements, or prefer using native `<button>` elements.
+## 2024-05-24 - Dynamic title for disabled buttons
+**Learning:** Found that disabled buttons (like the main "Analyze" button) lacked explanatory tooltips, leaving users confused about why the action is unavailable (e.g. no repository URL provided).
+**Action:** Always consider replacing static `title` attributes with dynamic ones that explain *why* the button is disabled, improving clarity and discoverability.
