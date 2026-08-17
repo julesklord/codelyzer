@@ -31,3 +31,6 @@
 ## 2024-05-24 - Interactive Divs and Keyboard Navigation
 **Learning:** Custom interactive components (like file tree nodes) implemented with `div` or `span` tags must explicitly include `tabIndex={0}`, ARIA roles (e.g. `treeitem` or `button`), and `onKeyDown` handlers for `Enter` and `Space` to be accessible to keyboard-only and screen reader users.
 **Action:** Always add keyboard accessibility attributes when applying `onClick` to non-interactive elements, or prefer using native `<button>` elements.
+## 2026-08-15 - Adding aria-selected to role='treeitem' elements
+**Learning:** Found that custom tree nodes (like the file browser) implemented with role='treeitem' often use an 'active' CSS class to show selection, but lack the corresponding `aria-selected={true|false}` attribute. Screen readers need this to announce selection state.
+**Action:** Always verify that elements with `role='treeitem'` (or similar selectable roles like `option`, `tab`) that use a custom visual selection state also include the `aria-selected` attribute mirroring that state.

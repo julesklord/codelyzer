@@ -29,7 +29,7 @@ export const TreeNode = React.memo(function TreeNodeInner(props){
         ),
         isOpen&&React.createElement('div',{className:'tree-children'},
             children.map(function(c){return React.createElement(TreeNode,{key:c.path,node:c,selected:selected,onSelect:onSelect,expanded:expanded,toggle:toggle,filterFolder:filterFolder,activeFilter:activeFilter});}),
-            node.files.map(function(f){return React.createElement('div',{key:f.path,className:'tree-file'+(selected&&selected.path===f.path?' active':''),tabIndex:0,role:'treeitem',onClick:function(){onSelect(f.path);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(f.path);}}},React.createElement(Icon,{name:'file',size:'s',className:'tree-entry-icon'}),React.createElement('span',{className:'tree-name'},f.name));})
+            node.files.map(function(f){return React.createElement('div',{key:f.path,className:'tree-file'+(selected&&selected.path===f.path?' active':''),tabIndex:0,role:'treeitem','aria-selected':selected&&selected.path===f.path,onClick:function(){onSelect(f.path);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(f.path);}}},React.createElement(Icon,{name:'file',size:'s',className:'tree-entry-icon'}),React.createElement('span',{className:'tree-name'},f.name));})
         )
     );
 }, areEqual);
