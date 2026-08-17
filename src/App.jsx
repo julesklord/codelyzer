@@ -3603,7 +3603,7 @@ function App(){
                             authMethod==='pat'&&React.createElement('input',{className:'repo-input',type:'password','aria-label':'GitHub Token',placeholder:'Personal Access Token',value:token,onChange:function(e){setToken(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();}}),
                             authMethod==='github_app'&&React.createElement(React.Fragment,null,
                                 React.createElement('input',{className:'repo-input','aria-label':'App ID',placeholder:'App ID',value:appId,onChange:function(e){setAppId(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();}}),
-                                React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
+                                React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),'aria-label':'Set Private Key',title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
                                     React.createElement(Icon,{name:privateKey?'key':'shield',size:'m'}),
                                     privateKey?'Key':'Private Key'
                                 )
@@ -3666,7 +3666,7 @@ function App(){
                     authMethod==='pat'&&React.createElement('input',{className:'repo-input',type:'password','aria-label':'GitHub Token',placeholder:'Personal Access Token',value:token,onChange:function(e){setToken(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();},style:{minWidth:140}}),
                     authMethod==='github_app'&&React.createElement(React.Fragment,null,
                         React.createElement('input',{className:'repo-input','aria-label':'App ID',placeholder:'App ID',value:appId,onChange:function(e){setAppId(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();},style:{width:80}}),
-                        React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
+                        React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),'aria-label':'Set Private Key',title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
                             React.createElement(Icon,{name:privateKey?'key':'shield',size:'m'}),
                             privateKey?'Key Set':'Private Key'
                         )
