@@ -3597,7 +3597,7 @@ function App(){
                 React.createElement('div',{className:'mobile-source-controls'},
                     React.createElement('div',{className:'mobile-primary-row'},
                         React.createElement('input',{className:'repo-input','aria-label':'Repository URL',placeholder:'owner/repo or GitHub URL',value:repoUrl,onChange:function(e){setRepoUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();}}),
-                        React.createElement('button',{id:'mobile-analyze-btn',className:'top-btn primary mobile-analyze-btn','aria-label':'Analyze repository',title:'Analyze',onClick:analyze,disabled:loading||!repoUrl,type:'button'},
+                        React.createElement('button',{id:'mobile-analyze-btn',className:'top-btn primary mobile-analyze-btn','aria-label':'Analyze repository',title:(loading ? 'Analysis in progress...' : (!repoUrl ? 'Enter a repository URL to analyze' : 'Analyze')),onClick:analyze,disabled:loading||!repoUrl,type:'button'},
                             React.createElement(Icon,{name:loading?'activity':'search',size:'m'})
                         )
                     ),
@@ -3685,7 +3685,7 @@ function App(){
                     !data&&'Excludes',
                     (!data&&customExcludeCount>0)?' ('+customExcludeCount+')':''
                 ),
-                React.createElement('button',{id:'analyze-btn',className:'top-btn primary',...(!data ? {} : {'aria-label':'Analyze repository'}),title:'Analyze repository',onClick:analyze,disabled:loading||!repoUrl},
+                React.createElement('button',{id:'analyze-btn',className:'top-btn primary',...(!data ? {} : {'aria-label':'Analyze repository'}),title:(loading ? 'Analysis in progress...' : (!repoUrl ? 'Enter a repository URL to analyze' : 'Analyze repository')),onClick:analyze,disabled:loading||!repoUrl},
                     React.createElement(Icon,{name:loading?'activity':'search',size:'m'}),
                     !data&&'Analyze'
                 ),

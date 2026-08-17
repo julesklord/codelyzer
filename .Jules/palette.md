@@ -34,3 +34,6 @@
 ## 2026-08-15 - Adding aria-selected to role='treeitem' elements
 **Learning:** Found that custom tree nodes (like the file browser) implemented with role='treeitem' often use an 'active' CSS class to show selection, but lack the corresponding `aria-selected={true|false}` attribute. Screen readers need this to announce selection state.
 **Action:** Always verify that elements with `role='treeitem'` (or similar selectable roles like `option`, `tab`) that use a custom visual selection state also include the `aria-selected` attribute mirroring that state.
+## 2024-05-24 - Dynamic title for disabled buttons
+**Learning:** Found that disabled buttons (like the main "Analyze" button) lacked explanatory tooltips, leaving users confused about why the action is unavailable (e.g. no repository URL provided).
+**Action:** Always consider replacing static `title` attributes with dynamic ones that explain *why* the button is disabled, improving clarity and discoverability.
