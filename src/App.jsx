@@ -3603,30 +3603,30 @@ function App(){
                             authMethod==='pat'&&React.createElement('input',{className:'repo-input',type:'password','aria-label':'GitHub Token',placeholder:'Personal Access Token',value:token,onChange:function(e){setToken(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();}}),
                             authMethod==='github_app'&&React.createElement(React.Fragment,null,
                                 React.createElement('input',{className:'repo-input','aria-label':'App ID',placeholder:'App ID',value:appId,onChange:function(e){setAppId(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();}}),
-                                React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),'aria-label':'Set Private Key',title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
+                                React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
                                     React.createElement(Icon,{name:privateKey?'key':'shield',size:'m'}),
                                     privateKey?'Key':'Private Key'
                                 )
                             )
                         ),
-                        React.createElement('button',{className:'top-btn','aria-label':'Edit exclude patterns',title:'Edit exclude patterns',onClick:function(){openExcludeModal();},disabled:loading,type:'button',style:customExcludeCount?{borderColor:'var(--acc)',color:'var(--acc)'}:null},
+                        React.createElement('button',{className:'top-btn',title:'Edit exclude patterns',onClick:function(){openExcludeModal();},disabled:loading,type:'button',style:customExcludeCount?{borderColor:'var(--acc)',color:'var(--acc)'}:null},
                             React.createElement(Icon,{name:'ban',size:'m'}),
                             'Excludes',
                             customExcludeCount>0?' ('+customExcludeCount+')':''
                         ),
-                        React.createElement('button',{className:'top-btn','aria-label':'Open local folder',title:'Open local folder',onClick:function(){openLocalFolder();},disabled:loading,type:'button'},
+                        React.createElement('button',{className:'top-btn',title:'Open local folder',onClick:function(){openLocalFolder();},disabled:loading,type:'button'},
                             React.createElement(Icon,{name:'folder',size:'m'}),
                             'Folder'
                         ),
-                        React.createElement('button',{className:'top-btn','aria-label':'Open ZIP archive',title:'Open ZIP archive',onClick:function(){openLocalZip();},disabled:loading,type:'button'},
+                        React.createElement('button',{className:'top-btn',title:'Open ZIP archive',onClick:function(){openLocalZip();},disabled:loading,type:'button'},
                             React.createElement(Icon,{name:'archive',size:'m'}),
                             'ZIP'
                         ),
-                        data&&React.createElement('button',{className:'refresh-btn','aria-label':'Refresh analysis',onClick:refreshAnalysis,disabled:loading,title:'Refresh Analysis',type:'button'},
+                        data&&React.createElement('button',{className:'refresh-btn',onClick:refreshAnalysis,disabled:loading,title:'Refresh Analysis',type:'button'},
                             React.createElement(Icon,{name:'refresh',size:'m'}),
                             'Refresh'
                         ),
-                        data&&React.createElement('button',{className:'reset-btn','aria-label':'Reset analysis',onClick:resetAnalysis,title:'Clear & Reset',type:'button'},
+                        data&&React.createElement('button',{className:'reset-btn',onClick:resetAnalysis,title:'Clear & Reset',type:'button'},
                             React.createElement(Icon,{name:'close',size:'m'}),
                             'Reset'
                         )
@@ -3666,26 +3666,26 @@ function App(){
                     authMethod==='pat'&&React.createElement('input',{className:'repo-input',type:'password','aria-label':'GitHub Token',placeholder:'Personal Access Token',value:token,onChange:function(e){setToken(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();},style:{minWidth:140}}),
                     authMethod==='github_app'&&React.createElement(React.Fragment,null,
                         React.createElement('input',{className:'repo-input','aria-label':'App ID',placeholder:'App ID',value:appId,onChange:function(e){setAppId(e.target.value);},onKeyDown:function(e){if(e.key==='Enter'&&!loading)analyze();},style:{width:80}}),
-                        React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),'aria-label':'Set Private Key',title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
+                        React.createElement('button',{className:'private-key-btn'+(privateKey?' has-key':''),title:'Set Private Key',onClick:function(){setShowKeyModal(true);},type:'button'},
                             React.createElement(Icon,{name:privateKey?'key':'shield',size:'m'}),
                             privateKey?'Key Set':'Private Key'
                         )
                     )
                 ),
-                React.createElement('button',{className:'top-btn','aria-label':'Edit exclude patterns',title:'Edit exclude patterns'+(customExcludeCount>0?' ('+customExcludeCount+')':''),onClick:function(){openExcludeModal();},disabled:loading,style:customExcludeCount?{borderColor:'var(--acc)',color:'var(--acc)'}:null},
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Edit exclude patterns'}),title:'Edit exclude patterns'+(customExcludeCount>0?' ('+customExcludeCount+')':''),onClick:function(){openExcludeModal();},disabled:loading,style:customExcludeCount?{borderColor:'var(--acc)',color:'var(--acc)'}:null},
                     React.createElement(Icon,{name:'ban',size:'m'}),
                     !data&&'Excludes',
                     (!data&&customExcludeCount>0)?' ('+customExcludeCount+')':''
                 ),
-                React.createElement('button',{id:'analyze-btn',className:'top-btn primary','aria-label':'Analyze repository',title:'Analyze repository',onClick:analyze,disabled:loading||!repoUrl},
+                React.createElement('button',{id:'analyze-btn',className:'top-btn primary',...(!data ? {} : {'aria-label':'Analyze repository'}),title:'Analyze repository',onClick:analyze,disabled:loading||!repoUrl},
                     React.createElement(Icon,{name:loading?'activity':'search',size:'m'}),
                     !data&&'Analyze'
                 ),
-                React.createElement('button',{className:'top-btn','aria-label':'Open local folder',title:'Open local folder',onClick:function(){openLocalFolder();},disabled:loading},
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Open local folder'}),title:'Open local folder',onClick:function(){openLocalFolder();},disabled:loading},
                     React.createElement(Icon,{name:'folder',size:'m'}),
                     !data&&'Open Folder'
                 ),
-                React.createElement('button',{className:'top-btn','aria-label':'Open ZIP archive',title:'Open ZIP archive',onClick:function(){openLocalZip();},disabled:loading},
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Open ZIP archive'}),title:'Open ZIP archive',onClick:function(){openLocalZip();},disabled:loading},
                     React.createElement(Icon,{name:'archive',size:'m'}),
                     !data&&'Open ZIP'
                 ),
@@ -3697,26 +3697,26 @@ function App(){
                 )
             ),
             isMobile&&React.createElement('div',{className:'mobile-panel-actions'},
-                React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),'aria-label':'Toggle explorer panel',title:'Toggle explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
+                React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),'aria-pressed':mobilePanel==='explorer',title:'Toggle explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
                     React.createElement(Icon,{name:'folder',size:'m'}),
                     'Explorer'
                 ),
-                React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),'aria-label':'Toggle details panel',title:'Toggle details panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
+                React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),'aria-pressed':mobilePanel==='details',title:'Toggle details panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
                     React.createElement(Icon,{name:selected?'file':'layout',size:'m'}),
                     selected?'Inspector':'Insights'
                 )
             ),
             React.createElement('div',{className:'topbar-actions'},
-                React.createElement('button',{className:'top-btn','aria-label':'Analyze Pull Request',title:'Analyze Pull Request',onClick:function(){setShowPR(true);},disabled:!data||!!localSourceKind},React.createElement(Icon,{name:'pull-request',size:'m'}),!data&&'PR'),
-                React.createElement('button',{className:'top-btn','aria-label':'Export analysis',title:'Export analysis',onClick:function(){setShowExport(true);},disabled:!data},React.createElement(Icon,{name:'export',size:'m'}),!data&&'Export'),
-                React.createElement('button',{className:'top-btn','aria-label':'Copy share link',title:'Copy share link',onClick:copyLink,disabled:!data||!!localSourceKind},React.createElement(Icon,{name:'share',size:'m'}),!data&&'Share'),
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Analyze Pull Request'}),title:'Analyze Pull Request',onClick:function(){setShowPR(true);},disabled:!data||!!localSourceKind},React.createElement(Icon,{name:'pull-request',size:'m'}),!data&&'PR'),
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Export analysis'}),title:'Export analysis',onClick:function(){setShowExport(true);},disabled:!data},React.createElement(Icon,{name:'export',size:'m'}),!data&&'Export'),
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Copy share link'}),title:'Copy share link',onClick:copyLink,disabled:!data||!!localSourceKind},React.createElement(Icon,{name:'share',size:'m'}),!data&&'Share'),
                 React.createElement('select',{className:'auth-select theme-style-select','aria-label':'Estilo de tema',title:'Estilo de tema',value:themeStyle,onChange:function(e){setThemeStyle(e.target.value);},style:{height:32,fontSize:10,fontFamily:'inherit',fontWeight:'700',textTransform:'uppercase',padding:'0 8px',cursor:'pointer',marginRight:4}},
                     React.createElement('option',{value:'brutalist'},'Brutalist'),
                     React.createElement('option',{value:'glass'},'Glassmorphism'),
                     React.createElement('option',{value:'cyber'},'Cyber-Neon')
                 ),
-                React.createElement('button',{className:'top-btn','aria-label':'Toggle theme',title:theme==='dark'?'Switch to light mode':'Switch to dark mode',onClick:function(){setTheme(function(t){return t==='dark'?'light':'dark';});}},React.createElement(Icon,{name:theme==='dark'?'sun':'moon',size:'m'}),!data&&(theme==='dark'?'Light':'Dark')),
-                React.createElement('button',{className:'top-btn','aria-label':'Start Tour',title:'Guía Interactiva',onClick:startWalkthrough},React.createElement(Icon,{name:'help',size:'m'}),!data&&'Tour')
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Toggle theme'}),title:theme==='dark'?'Switch to light mode':'Switch to dark mode',onClick:function(){setTheme(function(t){return t==='dark'?'light':'dark';});}},React.createElement(Icon,{name:theme==='dark'?'sun':'moon',size:'m'}),!data&&(theme==='dark'?'Light':'Dark')),
+                React.createElement('button',{className:'top-btn',...(!data ? {} : {'aria-label':'Start Tour'}),title:'Guía Interactiva',onClick:startWalkthrough},React.createElement(Icon,{name:'help',size:'m'}),!data&&'Tour')
             )
         ),
         React.createElement('div',{className:'main'},
@@ -3751,9 +3751,9 @@ function App(){
                     React.createElement('div',{className:'sidebar-section'},
                         React.createElement('div',{className:'sidebar-title'},'Color By'),
                         React.createElement('div',{className:'view-modes'},
-                            React.createElement('div',{className:'view-mode'+(colorMode==='folder'?' active':''),onClick:function(){setColorMode('folder');}},React.createElement(Icon,{name:'folder',size:'m',className:'view-mode-icon'}),'Folder'),
-                            React.createElement('div',{className:'view-mode'+(colorMode==='layer'?' active':''),onClick:function(){setColorMode('layer');}},React.createElement(Icon,{name:'layers',size:'m',className:'view-mode-icon'}),'Layer'),
-                            React.createElement('div',{className:'view-mode'+(colorMode==='churn'?' active':''),onClick:function(){setColorMode('churn');}},React.createElement(Icon,{name:'activity',size:'m',className:'view-mode-icon'}),'Churn')
+                            React.createElement('button',{type:'button',className:'view-mode'+(colorMode==='folder'?' active':''),'aria-pressed':colorMode==='folder',onClick:function(){setColorMode('folder');}},React.createElement(Icon,{name:'folder',size:'m',className:'view-mode-icon'}),'Folder'),
+                            React.createElement('button',{type:'button',className:'view-mode'+(colorMode==='layer'?' active':''),'aria-pressed':colorMode==='layer',onClick:function(){setColorMode('layer');}},React.createElement(Icon,{name:'layers',size:'m',className:'view-mode-icon'}),'Layer'),
+                            React.createElement('button',{type:'button',className:'view-mode'+(colorMode==='churn'?' active':''),'aria-pressed':colorMode==='churn',onClick:function(){setColorMode('churn');}},React.createElement(Icon,{name:'activity',size:'m',className:'view-mode-icon'}),'Churn')
                         )
                     ),
                     React.createElement('div',{className:'sidebar-section'},
@@ -3830,34 +3830,34 @@ function App(){
                         React.createElement('button',{className:'tool-btn',onClick:zoomOut,'aria-label':'Zoom out',title:'Zoom out'},'−'),
                         React.createElement('button',{className:'tool-btn',onClick:resetZoom,'aria-label':'Reset zoom',title:'Reset zoom'},'⟲'),
                         React.createElement('button',{className:'tool-btn',onClick:fitView,'aria-label':'Fit view',title:'Fit view'},'⊡'),
-                        React.createElement('button',{className:'tool-btn'+(showGraphConfig?' active':''),onClick:function(){setShowGraphConfig(!showGraphConfig);},'aria-label':'Graph settings',title:'Graph settings',style:showGraphConfig?{background:'var(--accbg)',borderColor:'var(--acc)'}:{}},
+                        React.createElement('button',{className:'tool-btn'+(showGraphConfig?' active':''),'aria-pressed':showGraphConfig,onClick:function(){setShowGraphConfig(!showGraphConfig);},'aria-label':'Graph settings',title:'Graph settings',style:showGraphConfig?{background:'var(--accbg)',borderColor:'var(--acc)'}:{}},
                             React.createElement(Icon,{name:'settings',size:'m'})
                         )
                     ),
                     (graphConfig.vizType==='graph'||graphConfig.vizType==='graph3d')&&showGraphConfig&&React.createElement('div',{className:'graph-config'},
                         graphConfig.vizType==='graph'&&React.createElement('div',{className:'graph-config-title'},'Layout'),
                         graphConfig.vizType==='graph'&&React.createElement('div',{className:'view-toggle',style:{flexWrap:'wrap'}},
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='force'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'force'}));}},'Force'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='radial'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'radial'}));}},'Radial'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='hierarchical'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'hierarchical'}));}},'Layers'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='grid'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'grid'}));}},'Grid'),
-                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='metro'?' active':''),onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'metro'}));}},'Metro')
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='force'?' active':''),'aria-pressed':graphConfig.viewMode==='force',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'force'}));}},'Force'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='radial'?' active':''),'aria-pressed':graphConfig.viewMode==='radial',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'radial'}));}},'Radial'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='hierarchical'?' active':''),'aria-pressed':graphConfig.viewMode==='hierarchical',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'hierarchical'}));}},'Layers'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='grid'?' active':''),'aria-pressed':graphConfig.viewMode==='grid',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'grid'}));}},'Grid'),
+                            React.createElement('button',{className:'view-btn'+(graphConfig.viewMode==='metro'?' active':''),'aria-pressed':graphConfig.viewMode==='metro',onClick:function(){setGraphConfig(Object.assign({},graphConfig,{viewMode:'metro'}));}},'Metro')
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:graphConfig.vizType==='graph'?8:0}},'Spacing'),
                         React.createElement('div',{className:'config-row'},
-                            React.createElement('span',{className:'config-label'},'Spread'),
-                            React.createElement('input',{type:'range',className:'config-slider',min:'50',max:'500',value:graphConfig.spacing,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{spacing:parseInt(e.target.value)}));}}),
+                            React.createElement('label',{className:'config-label',htmlFor:'config-spacing'},'Spread'),
+                            React.createElement('input',{type:'range',id:'config-spacing',className:'config-slider',min:'50',max:'500',value:graphConfig.spacing,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{spacing:parseInt(e.target.value)}));}}),
                             React.createElement('span',{className:'config-value'},graphConfig.spacing)
                         ),
                         React.createElement('div',{className:'config-row'},
-                            React.createElement('span',{className:'config-label'},'Links'),
-                            React.createElement('input',{type:'range',className:'config-slider',min:'30',max:'200',value:graphConfig.linkDist,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{linkDist:parseInt(e.target.value)}));}}),
+                            React.createElement('label',{className:'config-label',htmlFor:'config-link-dist'},'Links'),
+                            React.createElement('input',{type:'range',id:'config-link-dist',className:'config-slider',min:'30',max:'200',value:graphConfig.linkDist,onChange:function(e){setGraphConfig(Object.assign({},graphConfig,{linkDist:parseInt(e.target.value)}));}}),
                             React.createElement('span',{className:'config-value'},graphConfig.linkDist)
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Grouping'),
                         React.createElement('div',{className:'view-toggle',style:{marginBottom:8}},
-                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='file'?' active':''),onClick:function(){setViewGroupMode('file');}},'Files'),
-                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='folder'?' active':''),onClick:function(){setViewGroupMode('folder');}},'Folders')
+                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='file'?' active':''),'aria-pressed':viewGroupMode==='file',onClick:function(){setViewGroupMode('file');}},'Files'),
+                            React.createElement('button',{className:'view-btn'+(viewGroupMode==='folder'?' active':''),'aria-pressed':viewGroupMode==='folder',onClick:function(){setViewGroupMode('folder');}},'Folders')
                         ),
                         React.createElement('div',{className:'graph-config-title',style:{marginTop:8}},'Display'),
                         React.createElement('label',{className:'config-check',htmlFor:'config-show-labels'},
@@ -3896,7 +3896,7 @@ function App(){
                             React.createElement('span',{className:'legend-toggle'},'▼')
                         ),
                         React.createElement('div',{className:'legend-content'},
-                            colorMode==='folder'&&data.folders.slice(0,12).map(function(f,i){return React.createElement('div',{key:f,className:'legend-item'+(folderFilter===f?' active':''),onClick:function(e){e.stopPropagation();filterByFolder(f);}},React.createElement('div',{className:'legend-color',style:{background:colorMap[f]||getColors()[i%getColors().length]}}),f||'root');}),
+                            colorMode==='folder'&&data.folders.slice(0,12).map(function(f,i){return React.createElement('button',{type:'button',key:f,className:'legend-item'+(folderFilter===f?' active':''),'aria-pressed':folderFilter===f,onClick:function(e){e.stopPropagation();filterByFolder(f);}},React.createElement('div',{className:'legend-color',style:{background:colorMap[f]||getColors()[i%getColors().length]}}),f||'root');}),
                             colorMode==='folder'&&data.folders.length>12&&React.createElement('div',{style:{fontSize:9,color:'var(--t3)',marginTop:4}},'+',data.folders.length-12,' more'),
                             colorMode==='layer'&&Object.entries(getLayerColors()).map(function(e){return React.createElement('div',{key:e[0],className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:e[1]}}),e[0]=== 'modules' ? 'Modules' : e[0]=== 'forms' ? 'UserForms' : e[0]=== 'classes' ? 'Classes' : e[0]);}),
                             colorMode==='churn'&&React.createElement(React.Fragment,null,React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#ff5f5f'}}),'High (7+ commits)'),React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#ff9f43'}}),'Medium (4-6)'),React.createElement('div',{className:'legend-item'},React.createElement('div',{className:'legend-color',style:{background:'#22c55e'}}),'Low (0-3)'))
@@ -3924,10 +3924,10 @@ function App(){
                 }}),
                 data?React.createElement(React.Fragment,null,
                     React.createElement('div',{className:'panel-tabs'},
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='details'?' active':''),onClick:function(){setRightTab('details');setDrillDown(null);}},selected?iconLabel('file','FILE'):(graphConfig.vizType==='architecture'?iconLabel('layers','ARCH'):iconLabel('search','ISSUES'))),
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='patterns'?' active':''),onClick:function(){setRightTab('patterns');setDrillDown(null);}},iconLabel('puzzle','PATTERNS'),' ',React.createElement('span',{className:'badge badge-default'},data.patterns.length)),
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='security'?' active':''),onClick:function(){setRightTab('security');setDrillDown(null);}},iconLabel('security','SECURITY'),data.stats.security>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.stats.security)),
-                        React.createElement('button',{className:'panel-tab'+(rightTab==='suggestions'?' active':''),onClick:function(){setRightTab('suggestions');setDrillDown(null);}},iconLabel('action','ACTIONS'),data.suggestions&&data.suggestions.length>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.suggestions.length))
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='details'?' active':''),'aria-pressed':rightTab==='details',onClick:function(){setRightTab('details');setDrillDown(null);}},selected?iconLabel('file','FILE'):(graphConfig.vizType==='architecture'?iconLabel('layers','ARCH'):iconLabel('search','ISSUES'))),
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='patterns'?' active':''),'aria-pressed':rightTab==='patterns',onClick:function(){setRightTab('patterns');setDrillDown(null);}},iconLabel('puzzle','PATTERNS'),' ',React.createElement('span',{className:'badge badge-default'},data.patterns.length)),
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='security'?' active':''),'aria-pressed':rightTab==='security',onClick:function(){setRightTab('security');setDrillDown(null);}},iconLabel('security','SECURITY'),data.stats.security>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.stats.security)),
+                        React.createElement('button',{className:'panel-tab'+(rightTab==='suggestions'?' active':''),'aria-pressed':rightTab==='suggestions',onClick:function(){setRightTab('suggestions');setDrillDown(null);}},iconLabel('action','ACTIONS'),data.suggestions&&data.suggestions.length>0&&React.createElement('span',{className:'view-mode-badge',style:{marginLeft:4}},data.suggestions.length))
                     ),
                     React.createElement('div',{className:'panel-content'},
                         rightTab==='details'&&(selected?React.createElement(React.Fragment,null,
@@ -3938,7 +3938,7 @@ function App(){
                                         React.createElement('div',{className:'panel-title'},React.createElement(Icon,{name:'file',size:'m'}),' ',selected.name),
                                         React.createElement('div',{className:'panel-subtitle'},selected.folder||'root',' • ',selected.layer,' • ',selected.lines,' lines',selected.complexity&&selected.complexity.score>0?' • Complexity: '+selected.complexity.score:'')
                                     ),
-                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(){openFilePreview(selected.path);}},iconLabel('eye','View Source'))
+                                    React.createElement('button',{className:'view-file-btn',title:'View file source',onClick:function(){openFilePreview(selected.path);}},iconLabel('eye','View Source'))
                                 )
                             ),
                             blastRadius&&React.createElement('div',{className:'card',style:{marginBottom:12}},
@@ -4243,7 +4243,7 @@ function App(){
                 React.createElement('div',{className:'modal-header'},React.createElement('div',{className:'modal-title'},iconLabel('chart','PR Impact Analyzer','m')),React.createElement('button',{className:'modal-close','aria-label':'Close PR Impact Analyzer dialog',title:'Close PR Impact Analyzer dialog',onClick:function(){setShowPR(false);}},'×')),
                 React.createElement('div',{className:'modal-body',style:{maxHeight:'75vh',overflowY:'auto'}},
                     React.createElement('div',{className:'form-group'},React.createElement('label',{className:'form-label',htmlFor:'pr-url-input'},'Pull Request URL'),React.createElement('input',{id:'pr-url-input',className:'form-input','aria-label':'Pull Request URL',placeholder:'https://github.com/owner/repo/pull/123',value:prUrl,onChange:function(e){setPrUrl(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')analyzePR();}})),
-                    React.createElement('button',{className:'top-btn primary','aria-label':'Analyze Pull Request',title:'Analyze Pull Request',onClick:analyzePR,style:{marginBottom:16,width:'100%'}},iconLabel('search','Analyze PR Impact')),
+                    React.createElement('button',{className:'top-btn primary',title:'Analyze Pull Request',onClick:analyzePR,style:{marginBottom:16,width:'100%'}},iconLabel('search','Analyze PR Impact')),
                     prData&&(function(){
                         var risk = calcPRRisk(prData, data);
                         var reviewers = findSuggestedReviewers(prData, data);
@@ -4365,15 +4365,15 @@ function App(){
             )
         ),
         isMobile&&React.createElement('div',{className:'mobile-bottom-nav'},
-            React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),'aria-label':'Open explorer panel',title:'Open explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
+            React.createElement('button',{className:'top-btn'+(mobilePanel==='explorer'?' active':''),'aria-pressed':mobilePanel==='explorer',title:'Open explorer panel',onClick:function(){toggleMobilePanel('explorer');},type:'button'},
                 React.createElement(Icon,{name:'folder',size:'m'}),
                 'Explorer'
             ),
-            React.createElement('button',{className:'top-btn'+(!mobilePanel?' active':''),'aria-label':'Show canvas',title:'Show canvas',onClick:function(){setMobilePanel(null);},type:'button'},
+            React.createElement('button',{className:'top-btn'+(!mobilePanel?' active':''),'aria-pressed':!mobilePanel,title:'Show canvas',onClick:function(){setMobilePanel(null);},type:'button'},
                 React.createElement(Icon,{name:'graph',size:'m'}),
                 'Canvas'
             ),
-            React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),'aria-label':'Open insights panel',title:'Open insights panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
+            React.createElement('button',{className:'top-btn'+(mobilePanel==='details'?' active':''),'aria-pressed':mobilePanel==='details',title:'Open insights panel',onClick:function(){toggleMobilePanel('details');},disabled:!data,type:'button'},
                 React.createElement(Icon,{name:selected?'file':'layout',size:'m'}),
                 selected?'Inspector':'Insights'
             )
@@ -4401,7 +4401,7 @@ function App(){
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11}},item.name),
                                 item.file&&React.createElement('div',{style:{display:'flex',gap:6}},
-                                    React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(item.file,item.line);}},iconLabel('eye','View')),
+                                    React.createElement('button',{className:'view-file-btn',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(item.file,item.line);}},iconLabel('eye','View')),
                                     React.createElement('button',{style:{fontSize:9,padding:'4px 8px',background:'var(--acc)',color:'var(--bg0)',border:'var(--border-width) solid var(--border)',borderRadius:0,cursor:'pointer',fontWeight:800,textTransform:'uppercase'},onClick:function(e){e.stopPropagation();selectFile(item.file);setDrillDown(null);}},'Go to file →')
                                 )
                             ),
@@ -4443,7 +4443,7 @@ function App(){
                         drillDown.data.files.map(function(f,j){return React.createElement('div',{key:j,style:getAccentBlockStyle('rgba(0,255,157,0.28)','rgba(0,255,157,0.08)',{padding:12,marginBottom:8})},
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11,cursor:'pointer'},onClick:function(){selectFile(f.path);setDrillDown(null);}},f.name),
-                                React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.path);}},iconLabel('eye','View'))
+                                React.createElement('button',{className:'view-file-btn',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.path);}},iconLabel('eye','View'))
                             ),
                             React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginTop:4,fontFamily:'monospace',cursor:'pointer'},onClick:function(){selectFile(f.path);setDrillDown(null);}},f.path),
                             f.fns&&React.createElement('div',{style:{fontSize:10,color:'var(--orange)',marginTop:4}},f.fns,' functions'),
@@ -4464,7 +4464,7 @@ function App(){
                         React.createElement('div',{style:{background:'var(--bg0)',padding:12,borderRadius:8,marginBottom:16}},
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11,cursor:'pointer'},onClick:function(){selectFile(drillDown.data.path);setDrillDown(null);}},drillDown.data.file),
-                                React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(drillDown.data.path,drillDown.data.line);}},iconLabel('eye','View'))
+                                React.createElement('button',{className:'view-file-btn',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(drillDown.data.path,drillDown.data.line);}},iconLabel('eye','View'))
                             ),
                             React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginTop:4,fontFamily:'monospace',cursor:'pointer'},onClick:function(){selectFile(drillDown.data.path);setDrillDown(null);}},drillDown.data.path),
                             drillDown.data.line&&React.createElement('div',{style:{fontSize:10,color:'var(--orange)',marginTop:4}},'Line ',drillDown.data.line)
@@ -4493,7 +4493,7 @@ function App(){
                             : getAccentBlockStyle('rgba(255,159,67,0.34)','rgba(255,159,67,0.08)',{padding:12,marginBottom:8})},
                             React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
                                 React.createElement('div',{style:{fontWeight:600,fontSize:11,cursor:'pointer'},onClick:function(){selectFile(f.file);setDrillDown(null);}},f.name||drillDown.data.name),
-                                React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.file,f.line);}},iconLabel('eye','View'))
+                                React.createElement('button',{className:'view-file-btn',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(f.file,f.line);}},iconLabel('eye','View'))
                             ),
                             React.createElement('div',{style:{fontSize:10,color:'var(--t3)',marginTop:4,fontFamily:'monospace',cursor:'pointer'},onClick:function(){selectFile(f.file);setDrillDown(null);}},f.file),
                             f.line&&React.createElement('div',{style:{fontSize:10,color:'var(--orange)',marginTop:4}},'Line ',f.line)
