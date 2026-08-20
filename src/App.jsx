@@ -3899,7 +3899,7 @@ function App(){
                         )
                     ),
                     graphConfig.vizType!=='architecture'&&React.createElement('div',{className:'legend'+(legendCollapsed?' collapsed':'')},
-                        React.createElement('div',{className:'legend-header',onClick:function(){setLegendCollapsed(!legendCollapsed);}},
+                        React.createElement('div',{className:'legend-header',role:'button',tabIndex:0,'aria-expanded':!legendCollapsed,onClick:function(){setLegendCollapsed(!legendCollapsed);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();setLegendCollapsed(!legendCollapsed);}}},
                             React.createElement('div',{className:'legend-title',style:{margin:0}},colorMode==='folder'?'Folders':colorMode==='layer'?'Layers':'Churn'),
                             React.createElement('span',{className:'legend-toggle'},'▼')
                         ),
@@ -3950,7 +3950,7 @@ function App(){
                                 )
                             ),
                             blastRadius&&React.createElement('div',{className:'card',style:{marginBottom:12}},
-                                React.createElement('div',{className:'card-header',onClick:function(){toggleCard('blast');}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('blast')?' open':'')},'▶'),React.createElement(Icon,{name:'impact',size:'s'}),' Impact Analysis'),React.createElement('span',{className:'badge badge-'+(blastRadius.level==='low'?'success':blastRadius.level==='medium'?'warning':'danger')},blastRadius.level.toUpperCase())),
+                                React.createElement('div',{className:'card-header',role:'button',tabIndex:0,'aria-expanded':expandedCards.has('blast'),onClick:function(){toggleCard('blast');},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCard('blast');}}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('blast')?' open':'')},'▶'),React.createElement(Icon,{name:'impact',size:'s'}),' Impact Analysis'),React.createElement('span',{className:'badge badge-'+(blastRadius.level==='low'?'success':blastRadius.level==='medium'?'warning':'danger')},blastRadius.level.toUpperCase())),
                                 expandedCards.has('blast')&&React.createElement('div',{className:'card-body'},
                                     React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10}},
                                         React.createElement('div',{style:{background:'var(--bg0)',padding:8,border:'1px solid var(--border)',borderRadius:0,textAlign:'center'}},
@@ -3992,14 +3992,14 @@ function App(){
                                 var incoming = selectedConnections.incoming;
                                 var totalConns=outgoing.length+incoming.length;
                                 return totalConns>0&&React.createElement('div',{className:'card',style:{marginBottom:12}},
-                                    React.createElement('div',{className:'card-header',onClick:function(){toggleCard('conns');}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('conns')?' open':'')},'▶'),React.createElement(Icon,{name:'link',size:'s'}),' Connections'),React.createElement('span',{className:'badge badge-default'},totalConns)),
+                                    React.createElement('div',{className:'card-header',role:'button',tabIndex:0,'aria-expanded':expandedCards.has('conns'),onClick:function(){toggleCard('conns');},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCard('conns');}}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('conns')?' open':'')},'▶'),React.createElement(Icon,{name:'link',size:'s'}),' Connections'),React.createElement('span',{className:'badge badge-default'},totalConns)),
                                     expandedCards.has('conns')&&React.createElement('div',{className:'card-body',style:{padding:0}},
                                         outgoing.length>0&&React.createElement(React.Fragment,null,
                                             React.createElement('div',{style:{fontSize:9,fontWeight:600,color:'var(--t3)',padding:'8px 12px',background:'var(--bg2)',borderBottom:'1px solid var(--border)'}},'Uses (',outgoing.length,' files)'),
                                             outgoing.slice(0,15).map(function(conn){
                                                 var isOpen=expandedCards.has('conn-out-'+conn.file);
                                                 return React.createElement('div',{key:conn.file,className:'conn-item'},
-                                                    React.createElement('div',{className:'conn-header',onClick:function(e){e.stopPropagation();toggleCard('conn-out-'+conn.file);}},
+                                                    React.createElement('div',{className:'conn-header',role:'button',tabIndex:0,'aria-expanded':isOpen,onClick:function(e){e.stopPropagation();toggleCard('conn-out-'+conn.file);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();toggleCard('conn-out-'+conn.file);}}},
                                                         React.createElement('span',{className:'card-toggle'+(isOpen?' open':''),style:{fontSize:8,marginRight:6}},'▶'),
                                                         React.createElement('span',{className:'conn-file-icon'},React.createElement(Icon,{name:'file',size:'s'})),
                                                         React.createElement('span',{className:'conn-file-name'},conn.file.split('/').pop()),
@@ -4021,7 +4021,7 @@ function App(){
                                             incoming.slice(0,15).map(function(conn){
                                                 var isOpen=expandedCards.has('conn-in-'+conn.file);
                                                 return React.createElement('div',{key:conn.file,className:'conn-item'},
-                                                    React.createElement('div',{className:'conn-header',onClick:function(e){e.stopPropagation();toggleCard('conn-in-'+conn.file);}},
+                                                    React.createElement('div',{className:'conn-header',role:'button',tabIndex:0,'aria-expanded':isOpen,onClick:function(e){e.stopPropagation();toggleCard('conn-in-'+conn.file);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();toggleCard('conn-in-'+conn.file);}}},
                                                         React.createElement('span',{className:'card-toggle'+(isOpen?' open':''),style:{fontSize:8,marginRight:6}},'▶'),
                                                         React.createElement('span',{className:'conn-file-icon'},React.createElement(Icon,{name:'file',size:'s'})),
                                                         React.createElement('span',{className:'conn-file-name'},conn.file.split('/').pop()),
@@ -4042,7 +4042,7 @@ function App(){
                                 );
                             })(),
                             React.createElement('div',{className:'card',style:{marginBottom:12}},
-                                React.createElement('div',{className:'card-header',onClick:function(){toggleCard('own');}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('own')?' open':'')},'▶'),React.createElement(Icon,{name:'users',size:'s'}),' Ownership')),
+                                React.createElement('div',{className:'card-header',role:'button',tabIndex:0,'aria-expanded':expandedCards.has('own'),onClick:function(){toggleCard('own');},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCard('own');}}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('own')?' open':'')},'▶'),React.createElement(Icon,{name:'users',size:'s'}),' Ownership')),
                                 expandedCards.has('own')&&React.createElement('div',{className:'card-body'},
                                     ownerLoading?React.createElement('div',{className:'loading-owner'},'Loading ownership data...'):
                                     ownership&&ownership.length>0?React.createElement(React.Fragment,null,
@@ -4052,7 +4052,7 @@ function App(){
                                 )
                             ),
                             React.createElement('div',{className:'card'},
-                                React.createElement('div',{className:'card-header',onClick:function(){toggleCard('fns');}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('fns')?' open':'')},'▶'),React.createElement(Icon,{name:'bolt',size:'s'}),' Functions (',selected.functions.length,')')),
+                                React.createElement('div',{className:'card-header',role:'button',tabIndex:0,'aria-expanded':expandedCards.has('fns'),onClick:function(){toggleCard('fns');},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCard('fns');}}},React.createElement('div',{className:'card-title'},React.createElement('span',{className:'card-toggle'+(expandedCards.has('fns')?' open':'')},'▶'),React.createElement(Icon,{name:'bolt',size:'s'}),' Functions (',selected.functions.length,')')),
                                 expandedCards.has('fns')&&React.createElement('div',{className:'card-body',style:{padding:8}},
                                     selected.functions.length===0?React.createElement('div',{style:{fontSize:10,color:'var(--t3)',padding:8,textAlign:'center'}},'No functions detected'):
                                     selected.functions.map(function(fn){
@@ -4060,7 +4060,7 @@ function App(){
                                         var isExpanded=expandedFns.has(fn.name);
                                         var intCalls=st?st.internal:0,extCalls=st?st.external:0;
                                         return React.createElement('div',{key:fn.name,className:'fn-item'},
-                                            React.createElement('div',{className:'fn-header',onClick:function(){toggleFn(fn.name);}},
+                                            React.createElement('div',{className:'fn-header',role:'button',tabIndex:0,'aria-expanded':isExpanded,onClick:function(){toggleFn(fn.name);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFn(fn.name);}}},
                                                 React.createElement('span',{className:'fn-name'},fn.name,'()'),
                                                 React.createElement('span',{style:{display:'flex',alignItems:'center',gap:4}},
                                                     React.createElement('button',{className:'view-file-btn','aria-label':'View file source',title:'View file source',onClick:function(e){e.stopPropagation();openFilePreview(selected.path,fn.line);}},React.createElement(Icon,{name:'eye',size:'s'})),
@@ -4593,7 +4593,7 @@ function App(){
                     data.deadFunctions.map(function(fn,i){
                         var isExpanded=expandedFns.has('dead-'+fn.name);
                         return React.createElement('div',{key:i,className:'unused-fn'},
-                            React.createElement('div',{className:'unused-fn-header',onClick:function(){toggleFn('dead-'+fn.name);}},
+                            React.createElement('div',{className:'unused-fn-header',role:'button',tabIndex:0,'aria-expanded':isExpanded,onClick:function(){toggleFn('dead-'+fn.name);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFn('dead-'+fn.name);}}},
                                 React.createElement('div',null,
                                     React.createElement('span',{className:'unused-fn-name'},fn.name,'()'),
                                     React.createElement('div',{className:'unused-fn-path'},

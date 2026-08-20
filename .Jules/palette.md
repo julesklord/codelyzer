@@ -37,3 +37,7 @@
 ## 2024-05-24 - Dynamic title for disabled buttons
 **Learning:** Found that disabled buttons (like the main "Analyze" button) lacked explanatory tooltips, leaving users confused about why the action is unavailable (e.g. no repository URL provided).
 **Action:** Always consider replacing static `title` attributes with dynamic ones that explain *why* the button is disabled, improving clarity and discoverability.
+
+## 2025-02-23 - Interactive Divs Need Button Semantics
+**Learning:** In the Codelyzer UI, many interactive toggle elements (like `card-header`, `conn-header`, `fn-header`, `unused-fn-header`, and `legend-header`) were implemented as `div` tags with `onClick` handlers but lacked native keyboard support.
+**Action:** When implementing custom collapsible sections or accordion headers in this codebase, always ensure they include `role="button"`, `tabIndex={0}`, `aria-expanded={boolean}`, and an `onKeyDown` listener that triggers on `Enter` and `Space` to maintain full keyboard and screen reader accessibility.
