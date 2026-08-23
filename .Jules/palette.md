@@ -37,3 +37,7 @@
 ## 2024-05-24 - Dynamic title for disabled buttons
 **Learning:** Found that disabled buttons (like the main "Analyze" button) lacked explanatory tooltips, leaving users confused about why the action is unavailable (e.g. no repository URL provided).
 **Action:** Always consider replacing static `title` attributes with dynamic ones that explain *why* the button is disabled, improving clarity and discoverability.
+
+## 2024-05-19 - Accessible Collapsible Sections
+**Learning:** Custom collapsible UI elements implemented using non-semantic tags (like `div`) in React must include proper accessibility attributes (`role="button"`, `tabIndex={0}`, `aria-expanded={boolean}`) and keyboard support (`onKeyDown` for Enter and Space) to ensure they are usable by keyboard and screen reader users.
+**Action:** When creating or updating collapsible headers, legends, or cards (such as those in `src/App.jsx`), ensure these properties are consistently applied alongside the standard `onClick` handler.
