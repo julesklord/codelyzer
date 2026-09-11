@@ -28,12 +28,15 @@
 **Action:** Replaced <span> elements with <label htmlFor='...'> and added matching ids to the <input type='range'> elements to ensure full accessibility.## 2026-07-31 - [Add aria-pressed to active CSS class toggle buttons]
 **Learning:** [a11y: In React components that rely on an 'active' CSS class to communicate button state, screen readers miss the state entirely without an accompanying 'aria-pressed' attribute. This pattern is common in custom toggle groups]
 **Action:** [Always ensure custom toggle buttons include 'aria-pressed={condition}' mirroring the 'active' CSS class logic.]
+
 ## 2024-05-24 - Interactive Divs and Keyboard Navigation
 **Learning:** Custom interactive components (like file tree nodes) implemented with `div` or `span` tags must explicitly include `tabIndex={0}`, ARIA roles (e.g. `treeitem` or `button`), and `onKeyDown` handlers for `Enter` and `Space` to be accessible to keyboard-only and screen reader users.
 **Action:** Always add keyboard accessibility attributes when applying `onClick` to non-interactive elements, or prefer using native `<button>` elements.
+
 ## 2026-08-15 - Adding aria-selected to role='treeitem' elements
 **Learning:** Found that custom tree nodes (like the file browser) implemented with role='treeitem' often use an 'active' CSS class to show selection, but lack the corresponding `aria-selected={true|false}` attribute. Screen readers need this to announce selection state.
 **Action:** Always verify that elements with `role='treeitem'` (or similar selectable roles like `option`, `tab`) that use a custom visual selection state also include the `aria-selected` attribute mirroring that state.
+
 ## 2024-05-24 - Dynamic title for disabled buttons
 **Learning:** Found that disabled buttons (like the main "Analyze" button) lacked explanatory tooltips, leaving users confused about why the action is unavailable (e.g. no repository URL provided).
 **Action:** Always consider replacing static `title` attributes with dynamic ones that explain *why* the button is disabled, improving clarity and discoverability.
@@ -41,3 +44,7 @@
 ## 2025-02-23 - Interactive Divs Need Button Semantics
 **Learning:** In the Codelyzer UI, many interactive toggle elements (like `card-header`, `conn-header`, `fn-header`, `unused-fn-header`, and `legend-header`) were implemented as `div` tags with `onClick` handlers but lacked native keyboard support.
 **Action:** When implementing custom collapsible sections or accordion headers in this codebase, always ensure they include `role="button"`, `tabIndex={0}`, `aria-expanded={boolean}`, and an `onKeyDown` listener that triggers on `Enter` and `Space` to maintain full keyboard and screen reader accessibility.
+
+## 2026-08-22 - Adding accessibility roles to interactive elements
+**Learning:** The application had several instances where standard 'div's were used as interactive headers without semantic roles, tabindex or keyboard event handlers.
+**Action:** Implemented the accessible interactive elements by ensuring that whenever a non-native interactive component is made, it incorporates 'role="button"', 'tabIndex={0}', 'aria-expanded', and 'onKeyDown' logic handling both Enter and Space keys.
