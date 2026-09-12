@@ -1,3 +1,6 @@
 ## 2026-08-22 - Adding accessibility roles to interactive elements
 **Learning:** The application had several instances where standard 'div's were used as interactive headers without semantic roles, tabindex or keyboard event handlers.
 **Action:** Implemented the accessible interactive elements by ensuring that whenever a non-native interactive component is made, it incorporates 'role="button"', 'tabIndex={0}', 'aria-expanded', and 'onKeyDown' logic handling both Enter and Space keys.
+## 2026-09-12 - Explicit screen reader context for icon-only text elements
+**Learning:** The application uses plain text characters (like '▶') inside `span` tags as custom icon-only toggle buttons (e.g., expanding/collapsing folders in the tree view). These lack native semantics and without an `aria-label`, screen readers might only announce the character ("black right-pointing triangle") which doesn't convey its purpose. Additionally, sighted users benefit from a `title` attribute for native browser tooltips.
+**Action:** When using generic tags (`span`, `div`) for custom icon-only buttons containing only visual unicode characters, always include an explicit `aria-label` (e.g., 'Expand folder') and a corresponding `title` attribute to ensure their purpose is properly conveyed to all users.
