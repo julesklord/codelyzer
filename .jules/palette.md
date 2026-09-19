@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility for Visual Character Buttons
+**Learning:** In Codelyzer, icon-only buttons built using generic tags (like `span` or `div`) that rely on purely visual Unicode characters (e.g., `'▶'`) are completely opaque to screen readers if they lack explicit ARIA labels. Users relying on assistive technology will not know what the button does.
+**Action:** When implementing custom toggle buttons or controls containing only visual characters, always ensure they have an explicit `aria-label` (e.g., 'Expand folder' / 'Collapse folder') and a `title` attribute for sighted users' native browser tooltips.
