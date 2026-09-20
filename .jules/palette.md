@@ -1,0 +1,3 @@
+## 2024-06-25 - Icon-only visual toggles need ARIA and native tooltips
+**Learning:** In the `TreeNode` component, the custom folder expand/collapse toggle is a `span` containing only a visual Unicode character ('▶'). These types of elements are invisible to screen readers without an `aria-label`, and providing a native `title` tooltip simultaneously satisfies micro-UX expectations for sighted users hovering over the small touch target.
+**Action:** When implementing custom selectable elements or toggles (like tree nodes or accordions) using generic tags like `span` or `div` containing visual characters, always ensure full accessibility by including an explicit `aria-label` (e.g., 'Expand folder' / 'Collapse folder') and a corresponding `title` attribute.
