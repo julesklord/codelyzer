@@ -1,0 +1,3 @@
+## 2026-09-28 - Accessible Icon-Only Toggles in Custom UI
+**Learning:** When using non-semantic tags like `span` for custom icon-only toggle buttons containing only visual unicode characters (e.g., '▶' in TreeNode), relying solely on visual state change is insufficient for accessibility and usability. Without `aria-label`, screen readers announce nothing useful (just '▶' or 'button'), and sighted users get no tooltip explaining the interaction.
+**Action:** Always include a dynamic `aria-label` and matching `title` attribute that reflects the current state (e.g., 'Expand folder' vs. 'Collapse folder') on icon-only interactive elements to ensure proper screen reader accessibility and native tooltips for all users.
