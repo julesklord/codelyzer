@@ -1,0 +1,3 @@
+## 2026-10-03 - Icon-only toggles containing unicode characters
+**Learning:** In custom React components (like TreeNode) that use generic tags (e.g. span) as buttons (with `role="button"`) containing only unicode characters (e.g. '▶') to represent state, it's critical to provide dynamic `aria-label` and `title` attributes. Otherwise, screen readers will not announce the button's purpose or state, and sighted users won't get native browser tooltips.
+**Action:** When implementing custom toggle elements using generic tags with unicode characters, always include a dynamic `aria-label` and `title` that reflect the current state (e.g., 'Collapse folder' vs. 'Expand folder').
