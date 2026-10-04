@@ -22,7 +22,7 @@ export const TreeNode = React.memo(function TreeNodeInner(props){
     var fileCount=React.useMemo(function(){return countFiles(node);}, [node]);
     return React.createElement('div',{role:'group'},
         React.createElement('div',{className:'tree-folder'+(isFiltered?' filtered':''),'aria-selected':isFiltered?true:undefined,tabIndex:0,role:'treeitem','aria-expanded':isOpen,onClick:function(){if(node.path==='')filterFolder(null);else filterFolder(node.path);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();if(node.path==='')filterFolder(null);else filterFolder(node.path);}}},
-            React.createElement('span',{className:'tree-toggle'+(isOpen?' open':''),tabIndex:0,role:'button','aria-expanded':isOpen,onClick:function(e){e.stopPropagation();toggle(node.path);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();toggle(node.path);}}},children.length>0||node.files.length>0?'▶':''),
+            React.createElement('span',{className:'tree-toggle'+(isOpen?' open':''),tabIndex:0,role:'button','aria-expanded':isOpen,'aria-label':isOpen?'Collapse folder':'Expand folder',title:isOpen?'Collapse folder':'Expand folder',onClick:function(e){e.stopPropagation();toggle(node.path);},onKeyDown:function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();toggle(node.path);}}},children.length>0||node.files.length>0?'▶':''),
             React.createElement(Icon,{name:isOpen?'folder-open':'folder',size:'m',className:'tree-entry-icon'}),
             React.createElement('span',{className:'tree-name'},node.name),
             React.createElement('span',{className:'tree-count'},fileCount)
